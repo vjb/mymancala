@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   Play, Pause, RotateCcw, Award, Settings, BarChart3, 
-  Sparkles, Volume2, VolumeX, Eye, 
+  Sparkles, Volume2, VolumeX, Eye, EyeOff,
   ArrowRight, AlertTriangle, Zap, CheckCircle2, ShieldCheck, X,
-  ShieldAlert, HelpCircle, EyeOff, LayoutGrid, Palette, Bot, User
+  ShieldAlert, HelpCircle, LayoutGrid, Bot, User, ChevronDown, ChevronUp
 } from 'lucide-react';
 import {
   createInitialState,
@@ -36,7 +36,13 @@ export default function App() {
   // Game modes: 'pve', 'pvp', 'ai_vs_ai', 'sandbox'
   const [gameMode, setGameMode] = useState<string>('pve');
   const [humanPlayer, setHumanPlayer] = useState<number>(0); // 0 = P1 (South), 1 = P2 (North)
+  
+  // Coach & Evaluation Visibility Controls (Decoupled!)
   const [tutorMode, setTutorMode] = useState(true);
+  const [showMoveHints, setShowMoveHints] = useState(false); // Default FALSE: clean, spoiler-free board!
+  const [evalBarCollapsed, setEvalBarCollapsed] = useState(false);
+  const [coachSensitivity, setCoachSensitivity] = useState<'all' | 'blunders_only'>('all');
+
   const [isAiRunning, setIsAiRunning] = useState(false);
   const [aiSpeedMs, setAiSpeedMs] = useState(600);
   const [instantSpeed, setInstantSpeed] = useState(false);
@@ -128,7 +134,11 @@ export default function App() {
       // Check tutor warning if Human in Tutor mode
       if (!force && tutorMode && gameMode === 'pve' && gameState.currentPlayer === humanPlayer) {
         const moveEval = analysisResults.find(m => m.pit === pitIndex);
-        if (moveEval && (moveEval.classification === 'Mistake' || moveEval.classification === 'Blunder')) {
+        const shouldWarn = coachSensitivity === 'blunders_only'
+          ? moveEval?.classification === 'Blunder'
+          : (moveEval?.classification === 'Mistake' || moveEval?.classification === 'Blunder');
+
+        if (moveEval && shouldWarn) {
           setTutorWarning({
             pit: pitIndex,
             eval: moveEval,
@@ -196,7 +206,7 @@ export default function App() {
         isMoveLocked.current = false;
       }, instantSpeed ? 10 : 80);
     }
-  }, [gameState, tutorMode, gameMode, humanPlayer, analysisResults, rules, instantSpeed]);
+  }, [gameState, tutorMode, coachSensitivity, gameMode, humanPlayer, analysisResults, rules, instantSpeed]);
 
   // AI turn automation
   useEffect(() => {
@@ -306,272 +316,242 @@ export default function App() {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${theme.appBg} ${theme.appText} transition-colors duration-300`}>
+    <div className={`flex flex-col min-h-screen ${theme.appBg} ${theme.appText} transition-colors duration-300 overflow-x-hidden w-full`}>
       
-      {/* Refined Modern Header */}
-      <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2.5 transition-colors`}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      {/* Refined Header - Strict Mobile Zero-Overflow */}
+      <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2 transition-colors w-full overflow-hidden`}>
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
           
           {/* Brand Mark */}
-          <div className="flex items-center space-x-3">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-sm border ${
+          <div className="flex items-center space-x-2 shrink-0">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold border shadow-xs ${
               currentSkin === 'porcelain' 
                 ? 'bg-[#eae3d5] border-[#d8cfbe] text-[#342e29]' 
                 : currentSkin === 'walnut'
                 ? 'bg-[#2b1b12] border-[#4a2e1d] text-amber-300'
                 : 'bg-[#181a24] border-[#292d3b] text-sky-300'
             }`}>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="8" cy="12" r="3.5" />
                 <circle cx="16" cy="12" r="3.5" />
               </svg>
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="font-extrabold text-base sm:text-lg tracking-tight">
+              <div className="flex items-center space-x-1.5">
+                <h1 className="font-extrabold text-sm sm:text-base tracking-tight">
                   Mancala
                 </h1>
-                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${
+                <span className={`text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full border ${
                   currentSkin === 'porcelain'
                     ? 'bg-[#eee7dc] text-[#5e5346] border-[#d8cfbe]'
                     : currentSkin === 'walnut'
                     ? 'bg-[#2a1a12] text-amber-300/90 border-[#4a2e1d]'
                     : 'bg-[#151722] text-sky-300 border-[#2b3042]'
                 }`}>
-                  Tournament AI
+                  AI
                 </span>
               </div>
-              <p className={`text-[11px] ${theme.cardTextMuted} hidden xs:block`}>
-                {theme.tagline}
-              </p>
             </div>
           </div>
 
-          {/* Clean Segmented Controls & Theme Switcher */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+          {/* Theme Switcher & Fast Reset */}
+          <div className="flex items-center space-x-1.5 shrink-0">
             
             {/* Skin Selector Pill */}
-            <div className={`flex items-center rounded-xl p-0.5 border ${
+            <div className={`flex items-center rounded-xl p-0.5 border text-xs ${
               currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/10'
             }`}>
               <button
                 onClick={() => setCurrentSkin('walnut')}
-                title="Warm Walnut (Artisanal Wood)"
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                title="Warm Walnut"
+                className={`px-2 py-1 rounded-lg font-semibold transition ${
                   currentSkin === 'walnut' 
-                    ? 'bg-[#3b2316] text-amber-200 shadow-sm' 
+                    ? 'bg-[#3b2316] text-amber-200 shadow-xs' 
                     : `${theme.cardTextMuted} hover:opacity-100`
                 }`}
               >
-                <span>Walnut</span>
+                Walnut
               </button>
 
               <button
                 onClick={() => setCurrentSkin('porcelain')}
-                title="Nordic Clay (Minimal Ceramic)"
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                title="Nordic Clay"
+                className={`px-2 py-1 rounded-lg font-semibold transition ${
                   currentSkin === 'porcelain' 
-                    ? 'bg-white text-[#2c2723] shadow-sm' 
+                    ? 'bg-white text-[#2c2723] shadow-xs' 
                     : `${theme.cardTextMuted} hover:opacity-100`
                 }`}
               >
-                <span>Clay</span>
+                Clay
               </button>
 
               <button
                 onClick={() => setCurrentSkin('obsidian')}
-                title="Midnight Slate (Dark Obsidian)"
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                title="Midnight Slate"
+                className={`px-2 py-1 rounded-lg font-semibold transition ${
                   currentSkin === 'obsidian' 
-                    ? 'bg-[#202330] text-sky-200 shadow-sm' 
+                    ? 'bg-[#202330] text-sky-200 shadow-xs' 
                     : `${theme.cardTextMuted} hover:opacity-100`
                 }`}
               >
-                <span>Slate</span>
+                Slate
               </button>
             </div>
 
-            {/* Audio Toggle */}
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              title={soundEnabled ? "Mute sound" : "Enable sound"}
-              className={`p-2 rounded-xl border transition ${
-                currentSkin === 'porcelain'
-                  ? 'bg-white/80 border-[#ded5c6] text-[#4a3e35] hover:bg-white'
-                  : 'bg-black/30 border-white/10 text-slate-300 hover:bg-white/5'
-              }`}
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-50" />}
-            </button>
-
-            {/* Tutor Mode Pill */}
-            <button
-              onClick={() => setTutorMode(!tutorMode)}
-              data-testid="tutor-toggle"
-              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition ${
-                tutorMode 
-                  ? currentSkin === 'porcelain'
-                    ? 'bg-[#faebd7] border-[#e2be9b] text-[#9c5a23]'
-                    : 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm'
-                  : currentSkin === 'porcelain'
-                    ? 'bg-white/80 border-[#ded5c6] text-[#7d7368]'
-                    : 'bg-black/30 border-white/10 text-slate-400'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden xs:inline">Coach</span>
-            </button>
-
-            {/* New Game Button */}
+            {/* Quick Reset Button */}
             <button
               onClick={handleResetGame}
               data-testid="reset-game-btn"
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm ${
+              title="Reset Board"
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-xs font-bold transition shadow-xs ${
                 currentSkin === 'porcelain'
                   ? 'bg-[#2c2723] hover:bg-[#1a1714] text-white border-transparent'
                   : 'bg-white/10 hover:bg-white/15 text-white border-white/15'
               }`}
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>New</span>
+              <span className="hidden xs:inline">New</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto w-full p-2.5 sm:p-5 pb-20 lg:pb-8 flex-1 flex flex-col gap-3.5 sm:gap-5 overflow-x-hidden">
+      {/* Main Content Area - pb-20 guarantees clearance above sticky bottom bar */}
+      <main className="max-w-5xl mx-auto w-full p-2.5 sm:p-5 pb-24 lg:pb-8 flex-1 flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
         
-        {/* Modern Live Win Probability & Evaluation Card */}
+        {/* Live Win Probability & Focus / Zen Mode Card */}
         <section 
           data-testid="eval-gauge"
-          className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
+          className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
         >
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
-            
-            {/* Player 2 (North / Top) */}
-            <div className="flex items-center justify-between sm:justify-start space-x-3 w-full sm:w-auto">
-              <div className="flex items-center space-x-2.5">
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${
-                  gameState.currentPlayer === 1 && !gameState.isGameOver
-                    ? 'ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 text-emerald-300'
+          {/* Header Row: Title & Collapse Button */}
+          <div className="flex items-center justify-between pb-1.5 mb-1 border-b border-white/5">
+            <div className="flex items-center space-x-2">
+              <span className="text-[11px] font-bold tracking-tight opacity-75">
+                Live Win Probability
+              </span>
+              {showMoveHints && (
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  Hints Visible
+                </span>
+              )}
+            </div>
+
+            <button
+              onClick={() => setEvalBarCollapsed(!evalBarCollapsed)}
+              className={`flex items-center space-x-1 text-[11px] font-semibold px-2 py-0.5 rounded-lg transition ${theme.cardTextMuted} hover:opacity-100`}
+              title={evalBarCollapsed ? "Expand win gauge" : "Collapse win gauge (Focus mode)"}
+            >
+              <span>{evalBarCollapsed ? "Show Bar" : "Focus"}</span>
+              {evalBarCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
+          {!evalBarCollapsed ? (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-6 pt-1">
+              
+              {/* Player 2 (North / Top) */}
+              <div className="flex items-center justify-between sm:justify-start space-x-2.5 w-full sm:w-auto">
+                <div className="flex items-center space-x-2">
+                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center border ${
+                    gameState.currentPlayer === 1 && !gameState.isGameOver
+                      ? 'ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                      : 'bg-black/10 border-white/10 opacity-70'
+                  }`}>
+                    <Bot className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <div className={`text-[10px] font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
+                      <span>North (P2)</span>
+                      {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[8px] px-1 py-0.1 rounded-full bg-black/20 font-bold">Engine</span>}
+                    </div>
+                    <div className="text-xs sm:text-sm font-extrabold tracking-tight">
+                      {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Broadcast-Style Smooth Balance Bar */}
+              <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1">
+                <div className="flex justify-between text-[10px] font-semibold">
+                  <span className={currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400'}>
+                    South: {(p1CurrentWinProb * 100).toFixed(1)}%
+                  </span>
+                  <span className={currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400'}>
+                    North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                  </span>
+                </div>
+
+                <div className={`h-2.5 sm:h-3 rounded-full border ${theme.barBg} overflow-hidden flex shadow-inner relative`}>
+                  <div 
+                    className={`h-full transition-all duration-500 ease-out ${
+                      colorblindSafe 
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
+                        : theme.barP1
+                    }`}
+                    style={{ width: `${p1CurrentWinProb * 100}%` }}
+                  />
+                  <div 
+                    className={`h-full transition-all duration-500 ease-out ${
+                      colorblindSafe 
+                        ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
+                        : theme.barP2
+                    }`}
+                    style={{ width: `${(1 - p1CurrentWinProb) * 100}%` }}
+                  />
+                  <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider}`} />
+                </div>
+
+                <div className={`flex justify-between text-[9px] font-mono ${theme.cardTextMuted}`}>
+                  <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
+                  <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
+                </div>
+              </div>
+
+              {/* Player 1 (South / Bottom) */}
+              <div className="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
+                <div className="text-left sm:text-right">
+                  <div className={`text-[10px] font-semibold flex items-center justify-start sm:justify-end gap-1 ${theme.cardTextMuted}`}>
+                    {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[8px] px-1 py-0.1 rounded-full bg-black/20 font-bold">You</span>}
+                    <span>South (P1)</span>
+                  </div>
+                  <div className="text-xs sm:text-sm font-extrabold tracking-tight">
+                    {(p1CurrentWinProb * 100).toFixed(1)}%
+                  </div>
+                </div>
+                <div className={`w-7 h-7 rounded-xl flex items-center justify-center border ${
+                  gameState.currentPlayer === 0 && !gameState.isGameOver
+                    ? 'ring-2 ring-amber-500/60 bg-amber-500/20 border-amber-500 text-amber-300'
                     : 'bg-black/10 border-white/10 opacity-70'
                 }`}>
-                  <Bot className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className={`text-[11px] font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
-                    <span>Player 2 (North)</span>
-                    {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-black/20 font-bold">Engine</span>}
-                  </div>
-                  <div className="text-sm sm:text-base font-extrabold tracking-tight">
-                    {((1 - p1CurrentWinProb) * 100).toFixed(1)}% <span className={`text-[10px] font-normal ${theme.cardTextMuted}`}>chance</span>
-                  </div>
+                  <User className="w-3.5 h-3.5" />
                 </div>
               </div>
+
             </div>
-
-            {/* Broadcast-Style Smooth Balance Bar */}
-            <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1.5">
-              <div className="flex justify-between text-[11px] font-semibold">
-                <span className={currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400'}>
-                  South: {(p1CurrentWinProb * 100).toFixed(1)}%
-                </span>
-                <span className={currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400'}>
-                  North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
-                </span>
-              </div>
-
-              {/* Silky Capsule Equity Meter */}
-              <div className={`h-3 sm:h-3.5 rounded-full border ${theme.barBg} overflow-hidden flex shadow-inner relative`}>
-                <div 
-                  className={`h-full transition-all duration-500 ease-out ${
-                    colorblindSafe 
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
-                      : theme.barP1
-                  }`}
-                  style={{ width: `${p1CurrentWinProb * 100}%` }}
-                />
-                <div 
-                  className={`h-full transition-all duration-500 ease-out ${
-                    colorblindSafe 
-                      ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
-                      : theme.barP2
-                  }`}
-                  style={{ width: `${(1 - p1CurrentWinProb) * 100}%` }}
-                />
-                <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider} shadow-xs`} />
-              </div>
-
-              {/* Quality & PR Ratings */}
-              <div className={`flex justify-between text-[10px] font-mono ${theme.cardTextMuted}`}>
-                <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
-                <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
-              </div>
+          ) : (
+            /* Collapsed Zen Mode Ribbon */
+            <div className="flex items-center justify-between text-xs py-0.5">
+              <span className={currentSkin === 'porcelain' ? 'text-[#b85038] font-bold' : 'text-amber-400 font-bold'}>
+                South: {(p1CurrentWinProb * 100).toFixed(1)}%
+              </span>
+              <span className={`text-[10px] font-mono ${theme.cardTextMuted}`}>
+                PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}
+              </span>
+              <span className={currentSkin === 'porcelain' ? 'text-[#3b6654] font-bold' : 'text-emerald-400 font-bold'}>
+                North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+              </span>
             </div>
-
-            {/* Player 1 (South / Bottom) */}
-            <div className="flex items-center justify-between sm:justify-end space-x-3 w-full sm:w-auto">
-              <div className="text-left sm:text-right">
-                <div className={`text-[11px] font-semibold flex items-center justify-start sm:justify-end gap-1 ${theme.cardTextMuted}`}>
-                  {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-black/20 font-bold">You</span>}
-                  <span>Player 1 (South)</span>
-                </div>
-                <div className="text-sm sm:text-base font-extrabold tracking-tight">
-                  {(p1CurrentWinProb * 100).toFixed(1)}% <span className={`text-[10px] font-normal ${theme.cardTextMuted}`}>chance</span>
-                </div>
-              </div>
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${
-                gameState.currentPlayer === 0 && !gameState.isGameOver
-                  ? 'ring-2 ring-amber-500/60 bg-amber-500/20 border-amber-500 text-amber-300'
-                  : 'bg-black/10 border-white/10 opacity-70'
-              }`}>
-                <User className="w-4 h-4" />
-              </div>
-            </div>
-
-          </div>
+          )}
         </section>
 
-        {/* Mobile Segmented Navigation Tabs */}
-        <div className={`flex lg:hidden rounded-2xl p-1 gap-1 border ${
-          currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/40 border-white/10'
-        }`}>
-          <button
-            onClick={() => setMobileTab('board')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'board' ? theme.tabActiveBg : theme.tabInactiveText
-            }`}
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Board</span>
-          </button>
-          <button
-            onClick={() => setMobileTab('analysis')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'analysis' ? theme.tabActiveBg : theme.tabInactiveText
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Analysis</span>
-          </button>
-          <button
-            onClick={() => setMobileTab('settings')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'settings' ? theme.tabActiveBg : theme.tabInactiveText
-            }`}
-          >
-            <Settings className="w-3.5 h-3.5" />
-            <span>Settings</span>
-          </button>
-        </div>
-
-        {/* Tactile Mancala Board Section */}
+        {/* Board View Tab */}
         <section className={`${mobileTab !== 'board' ? 'hidden lg:block' : ''}`}>
           
-          {/* Status Ribbon & Indicators */}
-          <div className="mb-2 sm:mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-            <div className="flex items-center flex-wrap gap-2">
+          {/* Status Ribbon: Turn, Conservation Invariant, Trajectory Preview */}
+          <div className="mb-2 sm:mb-2.5 flex flex-wrap items-center justify-between gap-1.5 px-1">
+            <div className="flex items-center flex-wrap gap-1.5">
               <span 
                 data-testid="turn-indicator"
                 className={`px-3 py-1 rounded-full text-xs font-bold border shadow-xs transition-colors ${
@@ -602,7 +582,7 @@ export default function App() {
               )}
 
               {hoverPreview && (
-                <span className={`text-[11px] flex items-center space-x-1.5 ${theme.cardTextMuted}`}>
+                <span className={`text-[10px] sm:text-[11px] flex items-center space-x-1 ${theme.cardTextMuted}`}>
                   <Eye className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span className="truncate">
                     Landing: {hoverPreview.lastLanding === P1_STORE ? 'Your Store (Bonus Turn!)' : hoverPreview.lastLanding === P2_STORE ? 'Opponent Store' : `Pit ${hoverPreview.lastLanding + 1}`}
@@ -631,7 +611,7 @@ export default function App() {
           {/* Carved Physical Board Frame */}
           <div className={`relative ${theme.boardBg} border-2 ${theme.boardBorder} rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 shadow-2xl transition-colors duration-300`}>
             
-            {/* Subtle Carved Wood Inlay Trim */}
+            {/* Inlay Trim */}
             <div className={`absolute inset-1 sm:inset-2 border ${theme.boardTrim} rounded-xl sm:rounded-2xl pointer-events-none`} />
 
             <div className="relative flex items-center justify-between gap-1.5 sm:gap-3">
@@ -640,7 +620,7 @@ export default function App() {
               <div 
                 data-testid="store-13"
                 title="Player 2 Kalah Store"
-                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1.5 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
+                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
                   hoverPreview?.lastLanding === P2_STORE 
                     ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P2_STORE)
@@ -652,7 +632,6 @@ export default function App() {
                   P2
                 </div>
 
-                {/* Natural Store Pebble Mound */}
                 <div className="flex-1 flex items-center justify-center w-full px-0.5">
                   <PebbleCluster count={gameState.board[P2_STORE]} theme={currentSkin} player="p2" maxVisible={14} />
                 </div>
@@ -711,10 +690,11 @@ export default function App() {
                               : ''
                         } h-24 sm:h-36`}
                       >
-                        {/* Pit Label & Subtle Rank */}
+                        {/* Pit Label & Optional Move Hint Badge */}
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
                           <span>P{13 - pitIndex}</span>
-                          {evalData && (
+                          {/* ONLY RENDER EVAL BADGE IF SHOWMOVEHINTS IS TRUE */}
+                          {showMoveHints && evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
                               <span className="sm:hidden">{evalData.rank === 1 ? '★' : `#${evalData.rank}`}</span>
                               <span className="hidden sm:inline">{evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}</span>
@@ -787,7 +767,8 @@ export default function App() {
                       >
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
                           <span>P{pitIndex + 1}</span>
-                          {evalData && (
+                          {/* ONLY RENDER EVAL BADGE IF SHOWMOVEHINTS IS TRUE */}
+                          {showMoveHints && evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
                               <span className="sm:hidden">{evalData.rank === 1 ? '★' : `#${evalData.rank}`}</span>
                               <span className="hidden sm:inline">{evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}</span>
@@ -835,7 +816,7 @@ export default function App() {
               <div 
                 data-testid="store-6"
                 title="Player 1 Kalah Store"
-                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1.5 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
+                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
                   hoverPreview?.lastLanding === P1_STORE 
                     ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P1_STORE)
@@ -847,7 +828,6 @@ export default function App() {
                   P1
                 </div>
 
-                {/* Natural Store Pebble Mound */}
                 <div className="flex-1 flex items-center justify-center w-full px-0.5">
                   <PebbleCluster count={gameState.board[P1_STORE]} theme={currentSkin} player="p1" maxVisible={14} />
                 </div>
@@ -884,14 +864,14 @@ export default function App() {
           </div>
         </section>
 
-        {/* Coach Suggestion Card (Tutor Mode) */}
+        {/* Coach Suggestion Card (Tutor Mode Warning Interception) */}
         {tutorWarning && (
           <div 
             data-testid="tutor-modal"
-            className={`p-3.5 sm:p-4 rounded-2xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl backdrop-blur-md animate-in fade-in ${
+            className={`p-3 sm:p-4 rounded-2xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl backdrop-blur-md animate-in fade-in ${
               currentSkin === 'porcelain'
                 ? 'bg-[#fff5ea] border-[#f0c08a] text-[#5c3a1a]'
-                : 'bg-amber-950/80 border-amber-500/70 text-amber-200'
+                : 'bg-amber-950/90 border-amber-500/80 text-amber-200'
             }`}
           >
             <div className="flex items-center space-x-3">
@@ -902,7 +882,7 @@ export default function App() {
                 <h4 className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
                   <span>Coach Recommendation</span>
                   <span className="text-[10px] px-2 py-0.2 rounded-full bg-amber-500/20 border border-amber-500/40">
-                    {tutorWarning.eval.classification}
+                    {tutorWarning.eval.classification} Alert
                   </span>
                 </h4>
                 <p className="text-xs opacity-90 mt-0.5">
@@ -1052,8 +1032,83 @@ export default function App() {
               <h3 className="font-bold text-xs sm:text-sm">Game Settings & Controls</h3>
             </div>
 
+            {/* Move Hints & Coach Controls */}
+            <div className={`flex flex-col gap-2 p-3 rounded-xl border ${
+              currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
+            }`}>
+              <span className="text-xs font-bold">Coach & Hint Controls</span>
+              
+              <label className="flex items-center justify-between text-xs cursor-pointer">
+                <span>Show Move Hints on Board (★ / #)</span>
+                <input 
+                  type="checkbox" 
+                  checked={showMoveHints}
+                  onChange={(e) => setShowMoveHints(e.target.checked)}
+                  className="rounded accent-amber-500 w-4 h-4 cursor-pointer"
+                />
+              </label>
+
+              <label className="flex items-center justify-between text-xs cursor-pointer">
+                <span>Coach Mode (Intervene on Errors)</span>
+                <input 
+                  type="checkbox" 
+                  checked={tutorMode}
+                  onChange={(e) => setTutorMode(e.target.checked)}
+                  className="rounded accent-emerald-500 w-4 h-4 cursor-pointer"
+                />
+              </label>
+
+              {tutorMode && (
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5">
+                  <span className={theme.cardTextMuted}>Coach Sensitivity:</span>
+                  <select 
+                    value={coachSensitivity}
+                    onChange={(e) => setCoachSensitivity(e.target.value as 'all' | 'blunders_only')}
+                    className={`rounded-lg px-2 py-0.5 text-xs font-semibold border ${
+                      currentSkin === 'porcelain'
+                        ? 'bg-white text-[#2c2723] border-[#cdc3b2]'
+                        : 'bg-slate-900 text-slate-200 border-white/10'
+                    }`}
+                  >
+                    <option value="all">Mistakes & Blunders</option>
+                    <option value="blunders_only">Blunders Only</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* Sound & Appearance */}
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold">Game Audio:</span>
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl border text-xs font-semibold transition ${
+                  soundEnabled
+                    ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/30'
+                    : `${theme.cardTextMuted} border-white/10`
+                }`}
+              >
+                {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                <span>{soundEnabled ? "Sound On" : "Muted"}</span>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold">Colorblind Palette:</span>
+              <button
+                onClick={() => setColorblindSafe(!colorblindSafe)}
+                className={`px-3 py-1 rounded-xl border text-xs font-semibold transition ${
+                  colorblindSafe
+                    ? 'bg-fuchsia-600/20 text-fuchsia-300 border-fuchsia-500/40'
+                    : `${theme.cardTextMuted} border-white/10`
+                }`}
+              >
+                {colorblindSafe ? "High-Contrast Safe" : "Default Colors"}
+              </button>
+            </div>
+
             {/* Game Mode */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 pt-2 border-t border-white/5">
               <label className={`text-[11px] font-semibold ${theme.cardTextMuted}`}>Game Mode</label>
               <div className="grid grid-cols-2 gap-1.5 text-xs">
                 {[
@@ -1153,7 +1208,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Instant Speed & Rules Modifiers */}
+            {/* Rules Modifiers */}
             <div className={`flex flex-col gap-2 pt-2 border-t ${theme.cardBorder}`}>
               <label className="flex items-center justify-between text-[11px] font-semibold cursor-pointer">
                 <span>Instant Sowing Animations</span>
@@ -1198,7 +1253,7 @@ export default function App() {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>Run Invariant Pre-Flight Tests</span>
+                <span>Run Pre-Flight Invariant Tests</span>
               </button>
             </div>
 
@@ -1208,56 +1263,66 @@ export default function App() {
 
       </main>
 
-      {/* Docked Mobile Thumb Bar */}
-      <div className={`fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md border-t py-1 px-4 flex lg:hidden items-center justify-around gap-2 text-xs transition-colors ${theme.thumbBarBg} ${theme.thumbBarBorder}`}>
+      {/* Permanently Docked Sticky Bottom Navigation Bar */}
+      <nav 
+        className={`fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t py-1 px-3 flex lg:hidden items-center justify-around shadow-2xl transition-colors ${theme.thumbBarBg} ${theme.thumbBarBorder}`}
+        style={{ paddingBottom: 'max(0.6rem, env(safe-area-inset-bottom))' }}
+      >
         <button
           onClick={() => setMobileTab('board')}
-          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
             mobileTab === 'board' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
-          <LayoutGrid className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Board</span>
+          <LayoutGrid className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Board</span>
         </button>
 
         <button
           onClick={() => setMobileTab('analysis')}
-          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
             mobileTab === 'analysis' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
-          <BarChart3 className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Analysis</span>
+          <BarChart3 className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Analysis</span>
         </button>
 
+        {/* 1-Tap Toggle for Move Hints / Best Move Indicators */}
         <button
-          onClick={() => setTutorMode(!tutorMode)}
-          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
-            tutorMode ? 'text-amber-500 font-bold' : theme.cardTextMuted
+          onClick={() => setShowMoveHints(!showMoveHints)}
+          title={showMoveHints ? "Move hints are visible" : "Move hints are hidden"}
+          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+            showMoveHints ? 'text-amber-500 font-bold' : theme.cardTextMuted
           }`}
         >
-          <Sparkles className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Coach</span>
+          {showMoveHints ? <Eye className="w-5 h-5 text-amber-500" /> : <EyeOff className="w-5 h-5" />}
+          <span className="text-[10px] font-semibold mt-0.5">{showMoveHints ? "Hints On" : "Hints Off"}</span>
         </button>
 
+        {/* 1-Tap Toggle for Coach Mode */}
         <button
-          onClick={handleResetGame}
-          className={`flex flex-col items-center py-1 px-3 rounded-xl ${theme.cardTextMuted} hover:opacity-100 transition`}
+          onClick={() => setTutorMode(!tutorMode)}
+          data-testid="tutor-toggle"
+          title={tutorMode ? "Coach mode active" : "Coach mode off"}
+          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+            tutorMode ? 'text-emerald-500 font-bold' : theme.cardTextMuted
+          }`}
         >
-          <RotateCcw className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Reset</span>
+          <Sparkles className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">{tutorMode ? "Coach On" : "Coach Off"}</span>
         </button>
 
         <button
           onClick={() => setMobileTab('settings')}
-          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
             mobileTab === 'settings' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
-          <Settings className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Settings</span>
+          <Settings className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Settings</span>
         </button>
-      </div>
+      </nav>
 
       {/* Pre-Flight Diagnostics Modal */}
       {diagnosticsOpen && (
