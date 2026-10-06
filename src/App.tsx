@@ -45,7 +45,35 @@ export default function App() {
 
   const [isAiRunning, setIsAiRunning] = useState(false);
   const [aiSpeedMs, setAiSpeedMs] = useState(600);
-  const [instantSpeed, setInstantSpeed] = useState(false);
+  const [sowSpeed, setSowSpeed] = useState<'slow' | 'normal' | 'fast' | 'instant'>('normal');
+  const instantSpeed = sowSpeed === 'instant';
+
+  // Sowing Animation & Move Tracking State
+  const [animatingState, setAnimatingState] = useState<{
+    sourcePit: number;
+    currentPit: number | null;
+    player: number;
+    stonesInHand: number;
+    initialStones: number;
+    phase: 'lift' | 'sow' | 'capture' | 'free_turn' | 'complete';
+    capturedPit: number | null;
+    capturedStones: number;
+    earnedFreeTurn: boolean;
+  } | null>(null);
+  const [visualBoard, setVisualBoard] = useState<number[] | null>(null);
+  const [isAiThinking, setIsAiThinking] = useState(false);
+  const [lastMoveSummary, setLastMoveSummary] = useState<{
+    player: number;
+    pit: number;
+    initialStones: number;
+    lastLanding: number;
+    captured: number;
+    capturedPit: number | null;
+    freeTurn: boolean;
+    isGameOver: boolean;
+    winner: number | null;
+  } | null>(null);
+  const activeAnimationId = useRef(0);
 
   // Red Team Accessibility & Layout Features
   const [colorblindSafe, setColorblindSafe] = useState(false);
@@ -53,6 +81,29 @@ export default function App() {
 
   // Input debouncing & concurrency mutex lock
   const isMoveLocked = useRef(false);
+
+  // Animation timing profiles
+  const getSpeedDelays = (speed: 'slow' | 'normal' | 'fast' | 'instant') => {
+    switch (speed) {
+      case 'slow':
+        return { lift: 450, step: 280, capture: 550, freeTurn: 450, thinking: 900 };
+      case 'fast':
+        return { lift: 160, step: 85, capture: 260, freeTurn: 220, thinking: 350 };
+      case 'instant':
+        return { lift: 0, step: 0, capture: 0, freeTurn: 0, thinking: 20 };
+      case 'normal':
+      default:
+        return { lift: 320, step: 175, capture: 450, freeTurn: 350, thinking: 650 };
+    }
+  };
+
+  const getPitDisplayName = (pitIndex: number): string => {
+    if (pitIndex === P1_STORE) return 'South Store (P1)';
+    if (pitIndex === P2_STORE) return 'North Store (P2)';
+    if (pitIndex >= 0 && pitIndex <= 5) return `South Pit ${pitIndex + 1}`;
+    if (pitIndex >= 7 && pitIndex <= 12) return `North Pit ${13 - pitIndex}`;
+    return `Pit ${pitIndex}`;
+  };
 
   // Analysis state
   const [analysisResults, setAnalysisResults] = useState<EvaluatedMove[]>([]);
@@ -116,7 +167,7 @@ export default function App() {
     }
   }, [gameState.board, gameState.currentPlayer, gameState.isGameOver, runAnalysis]);
 
-  const executeMove = useCallback((pitIndex: number, force = false) => {
+  const executeMove = useCallback(async (pitIndex: number, force = false) => {
     if (gameState.isGameOver) return;
     
     // Concurrency mutex check
@@ -149,9 +200,6 @@ export default function App() {
         }
       }
 
-      // Play procedural audio
-      sounds.playSow(gameState.board[pitIndex]);
-
       // Track PR stats
       const chosenEval = analysisResults.find(m => m.pit === pitIndex);
       if (chosenEval) {
@@ -169,20 +217,134 @@ export default function App() {
         });
       }
 
-      const result = simulateMove(gameState.board, gameState.currentPlayer, pitIndex, rules);
+      const currentBoard = [...gameState.board];
+      const player = gameState.currentPlayer;
+      const initialStones = currentBoard[pitIndex];
+      const result = simulateMove(currentBoard, player, pitIndex, rules);
 
-      if (!instantSpeed) {
-        if (result.capturedStones > 0) {
-          setTimeout(() => sounds.playCapture(), 120);
-        }
-        if (result.earnedFreeTurn && !result.isGameOver) {
-          setTimeout(() => sounds.playFreeTurn(), 80);
-        }
-        if (result.isGameOver) {
-          setTimeout(() => sounds.playGameOver(), 200);
-        }
+      const isInstant = sowSpeed === 'instant';
+
+      if (isInstant) {
+        sounds.playSow(initialStones);
+        if (result.capturedStones > 0) sounds.playCapture();
+        if (result.earnedFreeTurn && !result.isGameOver) sounds.playFreeTurn();
+        if (result.isGameOver) sounds.playGameOver();
+
+        setGameState(prev => ({
+          board: result.newBoard,
+          currentPlayer: result.nextPlayer,
+          isGameOver: result.isGameOver,
+          winner: result.winner,
+          moveHistory: [
+            ...prev.moveHistory,
+            {
+              player: prev.currentPlayer,
+              pit: pitIndex,
+              freeTurn: result.earnedFreeTurn,
+              captures: result.capturedStones
+            }
+          ],
+          lastMovedPit: pitIndex
+        }));
+
+        setLastMoveSummary({
+          player,
+          pit: pitIndex,
+          initialStones,
+          lastLanding: result.lastLanding,
+          captured: result.capturedStones,
+          capturedPit: result.capturedFromPit,
+          freeTurn: result.earnedFreeTurn,
+          isGameOver: result.isGameOver,
+          winner: result.winner
+        });
+
+        isMoveLocked.current = false;
+        setTutorWarning(null);
+        return;
       }
 
+      // ANIMATED SOWING PIPELINE
+      const animId = ++activeAnimationId.current;
+      const delays = getSpeedDelays(sowSpeed);
+
+      // Phase 1: Lift stones into hand
+      const intermediate = [...currentBoard];
+      intermediate[pitIndex] = 0;
+      setVisualBoard([...intermediate]);
+      setAnimatingState({
+        sourcePit: pitIndex,
+        currentPit: pitIndex,
+        player,
+        stonesInHand: initialStones,
+        initialStones,
+        phase: 'lift',
+        capturedPit: result.capturedFromPit,
+        capturedStones: result.capturedStones,
+        earnedFreeTurn: result.earnedFreeTurn
+      });
+      sounds.playSow(0);
+
+      await new Promise(r => setTimeout(r, delays.lift));
+      if (activeAnimationId.current !== animId) return;
+
+      // Phase 2: Sowing stones step-by-step
+      for (let i = 0; i < result.path.length; i++) {
+        const target = result.path[i];
+        intermediate[target]++;
+        setVisualBoard([...intermediate]);
+        setAnimatingState({
+          sourcePit: pitIndex,
+          currentPit: target,
+          player,
+          stonesInHand: initialStones - (i + 1),
+          initialStones,
+          phase: 'sow',
+          capturedPit: result.capturedFromPit,
+          capturedStones: result.capturedStones,
+          earnedFreeTurn: result.earnedFreeTurn
+        });
+        sounds.playSow(i + 1);
+
+        await new Promise(r => setTimeout(r, delays.step));
+        if (activeAnimationId.current !== animId) return;
+      }
+
+      // Phase 3: Resolution (Capture or Free Turn)
+      if (result.capturedStones > 0) {
+        setAnimatingState(prev => prev ? { ...prev, phase: 'capture', currentPit: result.lastLanding } : null);
+        sounds.playCapture();
+        await new Promise(r => setTimeout(r, delays.capture));
+        if (activeAnimationId.current !== animId) return;
+
+        intermediate[result.capturedFromPit!] = 0;
+        intermediate[result.lastLanding] = 0;
+        intermediate[player === 0 ? P1_STORE : P2_STORE] += result.capturedStones;
+        setVisualBoard([...intermediate]);
+        await new Promise(r => setTimeout(r, Math.round(delays.capture * 0.6)));
+        if (activeAnimationId.current !== animId) return;
+      } else if (result.earnedFreeTurn && !result.isGameOver) {
+        setAnimatingState(prev => prev ? { ...prev, phase: 'free_turn', currentPit: player === 0 ? P1_STORE : P2_STORE } : null);
+        sounds.playFreeTurn();
+        await new Promise(r => setTimeout(r, delays.freeTurn));
+        if (activeAnimationId.current !== animId) return;
+      }
+
+      if (result.isGameOver) {
+        sounds.playGameOver();
+      }
+
+      if (result.earnedFreeTurn) {
+        await new Promise(r => setTimeout(r, 220));
+      }
+      if (activeAnimationId.current !== animId) return;
+
+      isMoveLocked.current = false;
+      setVisualBoard(null);
+      setAnimatingState(null);
+      setTutorWarning(null);
+
+      // Phase 4: Finalize game state cleanly
       setGameState(prev => ({
         board: result.newBoard,
         currentPlayer: result.nextPlayer,
@@ -200,18 +362,42 @@ export default function App() {
         lastMovedPit: pitIndex
       }));
 
-      setTutorWarning(null);
-    } finally {
-      setTimeout(() => {
-        isMoveLocked.current = false;
-      }, instantSpeed ? 10 : 80);
-    }
-  }, [gameState, tutorMode, coachSensitivity, gameMode, humanPlayer, analysisResults, rules, instantSpeed]);
+      setLastMoveSummary({
+        player,
+        pit: pitIndex,
+        initialStones,
+        lastLanding: result.lastLanding,
+        captured: result.capturedStones,
+        capturedPit: result.capturedFromPit,
+        freeTurn: result.earnedFreeTurn,
+        isGameOver: result.isGameOver,
+        winner: result.winner
+      });
 
-  // AI turn automation
+    } catch (err) {
+      console.error('Move execution error:', err);
+      isMoveLocked.current = false;
+      setAnimatingState(null);
+      setVisualBoard(null);
+    }
+  }, [
+    gameState.board,
+    gameState.currentPlayer,
+    gameState.isGameOver,
+    tutorMode,
+    coachSensitivity,
+    gameMode,
+    humanPlayer,
+    analysisResults,
+    rules,
+    sowSpeed
+  ]);
+
+  // AI turn automation with deliberate thinking pause
   useEffect(() => {
     if (gameState.isGameOver) {
       setIsAiRunning(false);
+      setIsAiThinking(false);
       return;
     }
 
@@ -219,19 +405,47 @@ export default function App() {
       (gameMode === 'ai_vs_ai' && isAiRunning) || 
       (gameMode === 'pve' && gameState.currentPlayer !== humanPlayer);
 
-    if (isEngineTurn && analysisResults.length > 0 && !isAnalyzing) {
+    if (isEngineTurn && analysisResults.length > 0 && !isAnalyzing && !animatingState && !isMoveLocked.current) {
+      setIsAiThinking(true);
+      const delays = getSpeedDelays(sowSpeed);
+      const thinkDelay = sowSpeed === 'instant' 
+        ? 20 
+        : (gameMode === 'ai_vs_ai' ? aiSpeedMs : delays.thinking);
+
       const timer = setTimeout(() => {
+        setIsAiThinking(false);
         const topMove = analysisResults[0];
-        if (topMove) {
+        if (topMove && !isMoveLocked.current) {
           executeMove(topMove.pit, true);
         }
-      }, instantSpeed ? 20 : (gameMode === 'ai_vs_ai' ? aiSpeedMs : 450));
+      }, thinkDelay);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        setIsAiThinking(false);
+      };
     }
-  }, [gameState.currentPlayer, gameState.isGameOver, gameMode, humanPlayer, isAiRunning, analysisResults, isAnalyzing, executeMove, aiSpeedMs, instantSpeed]);
+  }, [
+    gameState.currentPlayer, 
+    gameState.isGameOver, 
+    gameMode, 
+    humanPlayer, 
+    isAiRunning, 
+    analysisResults, 
+    isAnalyzing, 
+    animatingState, 
+    executeMove, 
+    aiSpeedMs, 
+    sowSpeed
+  ]);
 
   const handleResetGame = () => {
+    activeAnimationId.current++;
+    setAnimatingState(null);
+    setVisualBoard(null);
+    setLastMoveSummary(null);
+    setIsAiThinking(false);
+    isMoveLocked.current = false;
     transpositionTable.clear();
     setGameState(createInitialState(stonesConfig));
     setTutorWarning(null);
@@ -246,6 +460,7 @@ export default function App() {
   };
 
   const handleSandboxPitAdjust = (pitIndex: number, delta: number) => {
+    if (animatingState) return;
     setGameState(prev => {
       const newBoard = [...prev.board];
       newBoard[pitIndex] = Math.max(0, (newBoard[pitIndex] || 0) + delta);
@@ -253,20 +468,26 @@ export default function App() {
     });
   };
 
+  const displayBoard = visualBoard ?? gameState.board;
+
   const hoverPreview = useMemo(() => {
-    if (hoveredPit === null || gameState.board[hoveredPit] === 0) return null;
+    if (animatingState || hoveredPit === null || displayBoard[hoveredPit] === 0) return null;
     const isP1 = gameState.currentPlayer === 0;
     const legalPits = isP1 ? P1_PITS : P2_PITS;
     if (!(legalPits as readonly number[]).includes(hoveredPit)) return null;
 
     const sim = simulateMove(gameState.board, gameState.currentPlayer, hoveredPit, rules);
     return sim;
-  }, [hoveredPit, gameState.board, gameState.currentPlayer, rules]);
+  }, [animatingState, hoveredPit, displayBoard, gameState.board, gameState.currentPlayer, rules]);
 
-  // Total stone sum for Zero-Leak DOM assertion
+  // Total stone sum for Zero-Leak DOM assertion (preserves exact 48 stones even mid-sowing)
   const totalBoardStones = useMemo(() => {
+    if (visualBoard && animatingState) {
+      return visualBoard.reduce((a, b) => a + b, 0) + animatingState.stonesInHand;
+    }
     return gameState.board.reduce((a, b) => a + b, 0);
-  }, [gameState.board]);
+  }, [gameState.board, visualBoard, animatingState]);
+
 
   // Win probability calculation for GNU meter (Player 1 perspective)
   const p1CurrentWinProb = useMemo(() => {
@@ -608,6 +829,141 @@ export default function App() {
             )}
           </div>
 
+          {/* Move Announcement & Live Action Banner */}
+          <div className={`mb-2.5 p-2.5 sm:p-3 rounded-2xl border transition-all duration-300 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-sm ${
+            animatingState
+              ? animatingState.phase === 'capture'
+                ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                : animatingState.phase === 'free_turn'
+                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                : currentSkin === 'porcelain'
+                ? 'bg-[#ede5d8] border-[#dbd0c0] text-[#2c2723]'
+                : 'bg-white/10 border-white/20 text-white'
+              : isAiThinking
+              ? currentSkin === 'porcelain'
+                ? 'bg-sky-100 border-sky-300 text-sky-900'
+                : 'bg-sky-500/15 border-sky-500/30 text-sky-200'
+              : lastMoveSummary
+              ? currentSkin === 'porcelain'
+                ? 'bg-[#f4efe6] border-[#e2d9cb] text-[#2c2723]'
+                : 'bg-black/30 border-white/10 text-slate-200'
+              : currentSkin === 'porcelain'
+              ? 'bg-[#f4efe6] border-[#e2d9cb] text-[#7d7368]'
+              : 'bg-black/20 border-white/5 text-slate-400'
+          }`}>
+            {/* Left: Move Description / Animation Live Feed */}
+            <div className="flex items-center space-x-2.5 w-full sm:w-auto">
+              <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border ${
+                animatingState
+                  ? animatingState.player === 0
+                    ? 'bg-amber-500/20 border-amber-500 text-amber-300 animate-pulse'
+                    : 'bg-emerald-500/20 border-emerald-500 text-emerald-300 animate-pulse'
+                  : isAiThinking
+                  ? 'bg-sky-500/20 border-sky-500 text-sky-300 animate-pulse'
+                  : lastMoveSummary
+                  ? lastMoveSummary.player === 0
+                    ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                    : 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                  : 'bg-black/10 border-white/10 opacity-70'
+              }`}>
+                {isAiThinking ? (
+                  <Bot className="w-3.5 h-3.5 animate-bounce" />
+                ) : animatingState ? (
+                  animatingState.player === 0 ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />
+                ) : lastMoveSummary ? (
+                  lastMoveSummary.player === 0 ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5" />
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                {animatingState ? (
+                  <div className="flex flex-col">
+                    <div className="text-xs font-bold flex items-center gap-1.5 flex-wrap">
+                      <span className={animatingState.player === 0 ? 'text-amber-400' : 'text-emerald-400'}>
+                        {animatingState.player === 0 ? (gameMode === 'pve' && humanPlayer === 0 ? 'You' : 'South') : (gameMode === 'pve' && humanPlayer === 0 ? 'Computer' : 'North')}
+                      </span>
+                      <span className="font-normal opacity-90">
+                        {animatingState.phase === 'lift' && `picked up ${animatingState.initialStones} stones from ${getPitDisplayName(animatingState.sourcePit)}`}
+                        {animatingState.phase === 'sow' && `sowing → ${getPitDisplayName(animatingState.currentPit!)}`}
+                        {animatingState.phase === 'capture' && `captured ${animatingState.capturedStones} stones!`}
+                        {animatingState.phase === 'free_turn' && `landed in store — bonus turn!`}
+                      </span>
+                    </div>
+                    <div className="text-[10px] font-mono opacity-80 flex items-center gap-2">
+                      <span className="font-bold text-amber-300">In Hand: {animatingState.stonesInHand}</span>
+                      {animatingState.phase === 'sow' && (
+                        <span className="animate-pulse opacity-75">● Sowing around board...</span>
+                      )}
+                    </div>
+                  </div>
+                ) : isAiThinking ? (
+                  <div className="flex flex-col">
+                    <div className="text-xs font-bold flex items-center gap-1.5">
+                      <span>Computer is calculating...</span>
+                      <span className="text-[10px] font-mono opacity-70">(Depth {searchDepth})</span>
+                    </div>
+                    <div className="text-[10px] opacity-70">Evaluating optimal pit and rollout minimax...</div>
+                  </div>
+                ) : lastMoveSummary ? (
+                  <div className="flex flex-col">
+                    <div className="text-xs font-bold flex items-center gap-1.5 flex-wrap">
+                      <span className={lastMoveSummary.player === 0 ? 'text-amber-400 font-extrabold' : 'text-emerald-400 font-extrabold'}>
+                        {lastMoveSummary.player === 0 ? (gameMode === 'pve' && humanPlayer === 0 ? 'You' : 'South') : (gameMode === 'pve' && humanPlayer === 0 ? 'Computer' : 'North')}
+                      </span>
+                      <span>played {getPitDisplayName(lastMoveSummary.pit)}</span>
+                      <span className="text-[10px] font-mono font-normal opacity-80">({lastMoveSummary.initialStones} stones)</span>
+                      {lastMoveSummary.freeTurn && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse">
+                          ⚡ Free Turn
+                        </span>
+                      )}
+                      {lastMoveSummary.captured > 0 && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                          💥 +{lastMoveSummary.captured} Captured
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] opacity-70 truncate">
+                      Last landed in {getPitDisplayName(lastMoveSummary.lastLanding)}
+                      {gameState.isGameOver ? ' • Game ended' : ` • ${gameState.currentPlayer === 0 ? (gameMode === 'pve' && humanPlayer === 0 ? 'Your' : "South's") : (gameMode === 'pve' && humanPlayer === 0 ? "Computer's" : "North's")} turn`}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs font-medium opacity-80">
+                    {gameMode === 'pve' && gameState.currentPlayer === humanPlayer
+                      ? "Your turn — pick a pit from your side (South P1–P6)"
+                      : "Game started — pick a pit to begin"}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Quick Sowing Speed Selector */}
+            <div className="flex items-center space-x-1 shrink-0 self-end sm:self-center">
+              <span className="text-[9px] font-bold uppercase tracking-wider opacity-60 mr-1 hidden xs:inline">Speed:</span>
+              {(['slow', 'normal', 'fast', 'instant'] as const).map(speed => (
+                <button
+                  key={speed}
+                  onClick={() => setSowSpeed(speed)}
+                  title={`${speed.charAt(0).toUpperCase() + speed.slice(1)} sowing speed`}
+                  className={`px-2 py-0.5 rounded-lg text-[10px] font-bold capitalize transition ${
+                    sowSpeed === speed
+                      ? currentSkin === 'porcelain'
+                        ? 'bg-[#2c2723] text-white shadow-xs'
+                        : 'bg-white/20 text-white border border-white/30 shadow-xs'
+                      : currentSkin === 'porcelain'
+                      ? 'text-[#7d7368] hover:text-[#2c2723]'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {speed}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Carved Physical Board Frame */}
           <div className={`relative ${theme.boardBg} border-2 ${theme.boardBorder} rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 shadow-2xl transition-colors duration-300`}>
             
@@ -621,7 +977,11 @@ export default function App() {
                 data-testid="store-13"
                 title="Player 2 Kalah Store"
                 className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
-                  hoverPreview?.lastLanding === P2_STORE 
+                  animatingState?.currentPit === P2_STORE && animatingState.phase === 'sow'
+                    ? 'ring-2 ring-emerald-400 bg-emerald-950/70 scale-[1.03] shadow-[0_0_24px_rgba(52,211,153,0.7)] animate-drop-ripple'
+                    : animatingState?.phase === 'capture' && animatingState.player === 1
+                    ? 'ring-2 ring-amber-400 bg-amber-950/70 scale-[1.03] shadow-[0_0_24px_rgba(251,191,36,0.7)] animate-pulse'
+                    : hoverPreview?.lastLanding === P2_STORE 
                     ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P2_STORE)
                       ? theme.pathGlow
@@ -633,11 +993,11 @@ export default function App() {
                 </div>
 
                 <div className="flex-1 flex items-center justify-center w-full px-0.5">
-                  <PebbleCluster count={gameState.board[P2_STORE]} theme={currentSkin} player="p2" maxVisible={14} />
+                  <PebbleCluster count={displayBoard[P2_STORE]} theme={currentSkin} player="p2" maxVisible={14} />
                 </div>
 
                 <div className={`text-base sm:text-2xl font-black font-mono ${theme.storeP2Text}`}>
-                  {gameState.board[P2_STORE]}
+                  {displayBoard[P2_STORE]}
                 </div>
 
                 {gameMode === 'sandbox' && (
@@ -664,11 +1024,17 @@ export default function App() {
                 {/* North Row (Indices 12 down to 7) */}
                 <div className="grid grid-cols-6 gap-1 sm:gap-2.5">
                   {[12, 11, 10, 9, 8, 7].map((pitIndex) => {
-                    const stones = gameState.board[pitIndex];
-                    const isLegal = gameState.currentPlayer === 1 && stones > 0 && !gameState.isGameOver;
+                    const stones = displayBoard[pitIndex];
+                    const isLegal = gameState.currentPlayer === 1 && stones > 0 && !gameState.isGameOver && !animatingState && !isMoveLocked.current;
                     const evalData = analysisResults.find(m => m.pit === pitIndex);
-                    const isHighlightedPath = hoverPreview?.path?.includes(pitIndex);
-                    const isLanding = hoverPreview?.lastLanding === pitIndex;
+
+                    const isSource = animatingState?.sourcePit === pitIndex;
+                    const isCurrentlySown = animatingState?.currentPit === pitIndex && animatingState.phase === 'sow';
+                    const isCaptured = animatingState?.capturedPit === pitIndex;
+                    const isLastMoveSource = !animatingState && gameState.lastMovedPit === pitIndex;
+
+                    const isHighlightedPath = !animatingState && hoverPreview?.path?.includes(pitIndex);
+                    const isLanding = !animatingState && hoverPreview?.lastLanding === pitIndex;
 
                     return (
                       <button
@@ -678,21 +1044,52 @@ export default function App() {
                           if (gameMode === 'sandbox') handleSandboxPitAdjust(pitIndex, 1);
                           else if (isLegal) executeMove(pitIndex);
                         }}
-                        onMouseEnter={() => setHoveredPit(pitIndex)}
+                        onMouseEnter={() => !animatingState && setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
                         className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
                           isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
-                          isLanding 
-                            ? theme.landingGlow 
-                            : isHighlightedPath 
-                              ? theme.pathGlow 
-                              : ''
+                          isSource 
+                            ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
+                            : isCurrentlySown 
+                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
+                              : isCaptured 
+                                ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
+                                : isLastMoveSource 
+                                  ? 'ring-1 ring-white/30 border-white/40'
+                                  : isLanding 
+                                    ? theme.landingGlow 
+                                    : isHighlightedPath 
+                                      ? theme.pathGlow 
+                                      : ''
                         } h-24 sm:h-36`}
                       >
-                        {/* Pit Label & Optional Move Hint Badge */}
+                        {/* Pit Label & State Badges */}
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
-                          <span>P{13 - pitIndex}</span>
+                          <div className="flex items-center space-x-1">
+                            <span>P{13 - pitIndex}</span>
+                            {isLastMoveSource && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-white/20 text-white" title="Last move played">
+                                LAST
+                              </span>
+                            )}
+                            {isSource && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/50">
+                                PICK
+                              </span>
+                            )}
+                            {isCurrentlySown && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 animate-bounce">
+                                DROP
+                              </span>
+                            )}
+                            {isCaptured && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-rose-500/50">
+                                CAPT
+                              </span>
+                            )}
+                          </div>
+
                           {/* ONLY RENDER EVAL BADGE IF SHOWMOVEHINTS IS TRUE */}
                           {showMoveHints && evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
@@ -739,11 +1136,17 @@ export default function App() {
                 {/* South Row (Indices 0 to 5) */}
                 <div className="grid grid-cols-6 gap-1 sm:gap-2.5">
                   {[0, 1, 2, 3, 4, 5].map((pitIndex) => {
-                    const stones = gameState.board[pitIndex];
-                    const isLegal = gameState.currentPlayer === 0 && stones > 0 && !gameState.isGameOver;
+                    const stones = displayBoard[pitIndex];
+                    const isLegal = gameState.currentPlayer === 0 && stones > 0 && !gameState.isGameOver && !animatingState && !isMoveLocked.current;
                     const evalData = analysisResults.find(m => m.pit === pitIndex);
-                    const isHighlightedPath = hoverPreview?.path?.includes(pitIndex);
-                    const isLanding = hoverPreview?.lastLanding === pitIndex;
+
+                    const isSource = animatingState?.sourcePit === pitIndex;
+                    const isCurrentlySown = animatingState?.currentPit === pitIndex && animatingState.phase === 'sow';
+                    const isCaptured = animatingState?.capturedPit === pitIndex;
+                    const isLastMoveSource = !animatingState && gameState.lastMovedPit === pitIndex;
+
+                    const isHighlightedPath = !animatingState && hoverPreview?.path?.includes(pitIndex);
+                    const isLanding = !animatingState && hoverPreview?.lastLanding === pitIndex;
 
                     return (
                       <button
@@ -753,20 +1156,51 @@ export default function App() {
                           if (gameMode === 'sandbox') handleSandboxPitAdjust(pitIndex, 1);
                           else if (isLegal) executeMove(pitIndex);
                         }}
-                        onMouseEnter={() => setHoveredPit(pitIndex)}
+                        onMouseEnter={() => !animatingState && setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
                         className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
                           isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
-                          isLanding 
-                            ? theme.landingGlow 
-                            : isHighlightedPath 
-                              ? theme.pathGlow 
-                              : ''
+                          isSource 
+                            ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
+                            : isCurrentlySown 
+                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
+                              : isCaptured 
+                                ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
+                                : isLastMoveSource 
+                                  ? 'ring-1 ring-white/30 border-white/40'
+                                  : isLanding 
+                                    ? theme.landingGlow 
+                                    : isHighlightedPath 
+                                      ? theme.pathGlow 
+                                      : ''
                         } h-24 sm:h-36`}
                       >
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
-                          <span>P{pitIndex + 1}</span>
+                          <div className="flex items-center space-x-1">
+                            <span>P{pitIndex + 1}</span>
+                            {isLastMoveSource && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-white/20 text-white" title="Last move played">
+                                LAST
+                              </span>
+                            )}
+                            {isSource && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/50">
+                                PICK
+                              </span>
+                            )}
+                            {isCurrentlySown && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 animate-bounce">
+                                DROP
+                              </span>
+                            )}
+                            {isCaptured && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-rose-500/50">
+                                CAPT
+                              </span>
+                            )}
+                          </div>
+
                           {/* ONLY RENDER EVAL BADGE IF SHOWMOVEHINTS IS TRUE */}
                           {showMoveHints && evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
@@ -817,7 +1251,11 @@ export default function App() {
                 data-testid="store-6"
                 title="Player 1 Kalah Store"
                 className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
-                  hoverPreview?.lastLanding === P1_STORE 
+                  animatingState?.currentPit === P1_STORE && animatingState.phase === 'sow'
+                    ? 'ring-2 ring-amber-400 bg-amber-950/70 scale-[1.03] shadow-[0_0_24px_rgba(251,191,36,0.7)] animate-drop-ripple'
+                    : animatingState?.phase === 'capture' && animatingState.player === 0
+                    ? 'ring-2 ring-amber-400 bg-amber-950/70 scale-[1.03] shadow-[0_0_24px_rgba(251,191,36,0.7)] animate-pulse'
+                    : hoverPreview?.lastLanding === P1_STORE 
                     ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P1_STORE)
                       ? theme.pathGlow
@@ -829,11 +1267,11 @@ export default function App() {
                 </div>
 
                 <div className="flex-1 flex items-center justify-center w-full px-0.5">
-                  <PebbleCluster count={gameState.board[P1_STORE]} theme={currentSkin} player="p1" maxVisible={14} />
+                  <PebbleCluster count={displayBoard[P1_STORE]} theme={currentSkin} player="p1" maxVisible={14} />
                 </div>
 
                 <div className={`text-base sm:text-2xl font-black font-mono ${theme.storeP1Text}`}>
-                  {gameState.board[P1_STORE]}
+                  {displayBoard[P1_STORE]}
                 </div>
 
                 {gameMode === 'sandbox' && (
@@ -1210,12 +1648,30 @@ export default function App() {
 
             {/* Rules Modifiers */}
             <div className={`flex flex-col gap-2 pt-2 border-t ${theme.cardBorder}`}>
+              <div className="flex items-center justify-between text-[11px] font-semibold">
+                <span>Sowing Animation Speed:</span>
+                <select
+                  value={sowSpeed}
+                  onChange={(e) => setSowSpeed(e.target.value as 'slow' | 'normal' | 'fast' | 'instant')}
+                  className={`rounded-lg px-2 py-0.5 text-xs font-semibold border ${
+                    currentSkin === 'porcelain'
+                      ? 'bg-white text-[#2c2723] border-[#cdc3b2]'
+                      : 'bg-slate-900 text-slate-200 border-white/10'
+                  }`}
+                >
+                  <option value="slow">Slow (Study Moves / 280ms)</option>
+                  <option value="normal">Normal (Smooth / 175ms)</option>
+                  <option value="fast">Fast (85ms)</option>
+                  <option value="instant">Instant (0ms)</option>
+                </select>
+              </div>
+
               <label className="flex items-center justify-between text-[11px] font-semibold cursor-pointer">
                 <span>Instant Sowing Animations</span>
                 <input 
                   type="checkbox" 
-                  checked={instantSpeed}
-                  onChange={(e) => setInstantSpeed(e.target.checked)}
+                  checked={sowSpeed === 'instant'}
+                  onChange={(e) => setSowSpeed(e.target.checked ? 'instant' : 'normal')}
                   className="rounded accent-amber-500"
                 />
               </label>
