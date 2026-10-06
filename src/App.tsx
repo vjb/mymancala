@@ -384,7 +384,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto w-full p-2 sm:p-4 flex-1 flex flex-col gap-3 sm:gap-5 overflow-x-hidden">
+      <main className="max-w-7xl mx-auto w-full p-2 sm:p-4 pb-16 lg:pb-4 flex-1 flex flex-col gap-3 sm:gap-5 overflow-x-hidden">
         
         {/* Top Evaluation & Equity Gauge (GNU/XG Style) */}
         <section 
@@ -524,11 +524,11 @@ export default function App() {
               )}
 
               {hoverPreview && (
-                <span className="text-[11px] text-slate-400 hidden sm:inline-flex items-center space-x-1.5">
-                  <Eye className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>
-                    Simulated landing: {hoverPreview.lastLanding === P1_STORE ? 'P1 Store (Bonus Turn!)' : hoverPreview.lastLanding === P2_STORE ? 'P2 Store' : `Pit ${hoverPreview.lastLanding + 1}`}
-                    {hoverPreview.capturedStones > 0 && ` • Captures +${hoverPreview.capturedStones} stones!`}
+                <span className="text-[10px] sm:text-[11px] text-slate-400 flex items-center space-x-1.5">
+                  <Eye className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span className="truncate">
+                    Landing: {hoverPreview.lastLanding === P1_STORE ? 'P1 Store (Bonus Turn!)' : hoverPreview.lastLanding === P2_STORE ? 'P2 Store' : `Pit ${hoverPreview.lastLanding + 1}`}
+                    {hoverPreview.capturedStones > 0 && ` • Captures +${hoverPreview.capturedStones}!`}
                   </span>
                 </span>
               )}
@@ -640,8 +640,9 @@ export default function App() {
                         <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
                           <span>P{13 - pitIndex}</span>
                           {evalData && (
-                            <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border hidden sm:inline ${evalData.badgeColor}`}>
-                              {evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}
+                            <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
+                              <span className="sm:hidden">{evalData.rank === 1 ? '★' : `#${evalData.rank}`}</span>
+                              <span className="hidden sm:inline">{evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}</span>
                             </span>
                           )}
                         </div>
@@ -724,8 +725,9 @@ export default function App() {
                         <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
                           <span>P{pitIndex + 1}</span>
                           {evalData && (
-                            <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border hidden sm:inline ${evalData.badgeColor}`}>
-                              {evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}
+                            <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
+                              <span className="sm:hidden">{evalData.rank === 1 ? '★' : `#${evalData.rank}`}</span>
+                              <span className="hidden sm:inline">{evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}</span>
                             </span>
                           )}
                         </div>
@@ -892,8 +894,22 @@ export default function App() {
               </span>
             </div>
 
+            {/* Session Performance Rating & Blunders Banner */}
+            <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-slate-950/70 rounded-xl border border-slate-800 text-[11px] font-mono mt-2">
+              <div className="flex items-center space-x-2">
+                <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="text-slate-300 font-semibold">Session PR:</span>
+                <span className="text-cyan-300 font-bold">P1: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-amber-300 font-bold">P2: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span>
+              </div>
+              <div className="text-[10px] text-slate-400">
+                Blunders: <span className="text-rose-400 font-bold">P1({matchStats.p1Blunders})</span> / <span className="text-amber-400 font-bold">P2({matchStats.p2Blunders})</span> • Moves: {matchStats.p1Moves + matchStats.p2Moves}
+              </div>
+            </div>
+
             {/* Candidate Moves Table */}
-            <div className="overflow-x-auto mt-2.5">
+            <div className="overflow-x-auto mt-2">
               <table className="w-full text-left text-xs min-w-[480px]">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 font-mono uppercase text-[9px] sm:text-[10px]">
@@ -924,7 +940,12 @@ export default function App() {
                           #{move.rank}
                         </td>
                         <td className="py-2 px-1.5 font-bold text-cyan-300">
-                          {move.label}
+                          <div>{move.label}</div>
+                          <div className="sm:hidden text-[9px] font-normal text-slate-400 mt-0.5 flex flex-wrap gap-1 items-center">
+                            {move.freeTurn && <span className="text-emerald-400 font-bold">[Free Turn]</span>}
+                            {move.captures > 0 && <span className="text-amber-400 font-bold">[+{move.captures} Cap]</span>}
+                            <span className="text-slate-500">{move.pv.map(p => `P${p+1}`).join('→')}</span>
+                          </div>
                         </td>
                         <td className="py-2 px-1.5">
                           <span className="font-semibold text-slate-100">
