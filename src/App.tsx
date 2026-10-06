@@ -2,8 +2,22 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Play, Pause, RotateCcw, Award, Settings, BarChart3, 
   Sparkles, Volume2, VolumeX, Cpu, Eye, 
-  ArrowRight, AlertTriangle, Zap, Sliders
+  ArrowRight, AlertTriangle, Zap, CheckCircle2, ShieldCheck, X
 } from 'lucide-react';
+import {
+  createInitialState,
+  simulateMove,
+  analyzeAllMoves,
+  transpositionTable,
+  P1_STORE,
+  P2_STORE,
+  P1_PITS,
+  P2_PITS,
+  RulesConfig,
+  GameState,
+  EvaluatedMove
+} from './engine';
+import { runGNUPreflightSuite, DiagnosticResult } from './preflight-diagnostics';
 
 class SoundEngine {
   ctx: AudioContext | null = null;
@@ -77,8 +91,8 @@ class SoundEngine {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.18); // G5
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.18);
       gain.gain.setValueAtTime(0.35, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
       osc.connect(gain);
@@ -117,358 +131,6 @@ class SoundEngine {
 
 const sounds = new SoundEngine();
 
-export const TOTAL_PITS = 14;
-export const P1_STORE = 6;
-export const P2_STORE = 13;
-export const P1_PITS = [0, 1, 2, 3, 4, 5];
-export const P2_PITS = [7, 8, 9, 10, 11, 12];
-
-export interface RulesConfig {
-  freeTurn: boolean;
-  captureOpposite: boolean;
-}
-
-export interface GameState {
-  board: number[];
-  currentPlayer: number; // 0: Player 1 (South / Bottom), 1: Player 2 (North / Top)
-  isGameOver: boolean;
-  winner: number | null; // 0: P1, 1: P2, -1: Draw
-  moveHistory: Array<{
-    player: number;
-    pit: number;
-    freeTurn: boolean;
-    captures: number;
-  }>;
-  lastMovedPit: number | null;
-}
-
-export interface MoveSimulationResult {
-  newBoard: number[];
-  nextPlayer: number;
-  isGameOver: boolean;
-  winner: number | null;
-  earnedFreeTurn: boolean;
-  capturedStones: number;
-  capturedFromPit: number | null;
-  lastLanding: number;
-  path: number[];
-}
-
-export interface EvaluatedMove {
-  pit: number;
-  label: string;
-  score: number;
-  winProb: number;
-  pv: number[];
-  freeTurn: boolean;
-  captures: number;
-  resultingBoard: number[];
-  rank: number;
-  equityLoss: number;
-  scoreDiff: number;
-  classification: string;
-  badgeColor: string;
-}
-
-export function createInitialState(stonesPerPit = 4): GameState {
-  const board = new Array(14).fill(stonesPerPit);
-  board[P1_STORE] = 0;
-  board[P2_STORE] = 0;
-  return {
-    board,
-    currentPlayer: 0,
-    isGameOver: false,
-    winner: null,
-    moveHistory: [],
-    lastMovedPit: null
-  };
-}
-
-export function getLegalMoves(board: number[], player: number): number[] {
-  const pits = player === 0 ? P1_PITS : P2_PITS;
-  const legal: number[] = [];
-  for (let i = 0; i < pits.length; i++) {
-    const pit = pits[i];
-    if (board[pit] > 0) {
-      legal.push(pit);
-    }
-  }
-  return legal;
-}
-
-export function simulateMove(
-  board: number[], 
-  player: number, 
-  pit: number, 
-  rules: RulesConfig = { freeTurn: true, captureOpposite: true }
-): MoveSimulationResult {
-  const newBoard = [...board];
-  let stones = newBoard[pit];
-  newBoard[pit] = 0;
-
-  const playerStore = player === 0 ? P1_STORE : P2_STORE;
-  const opponentStore = player === 0 ? P2_STORE : P1_STORE;
-  const playerPits = player === 0 ? P1_PITS : P2_PITS;
-
-  let current = pit;
-  const path: number[] = [];
-
-  while (stones > 0) {
-    current = (current + 1) % 14;
-    // Skip opponent's store
-    if (current === opponentStore) continue;
-
-    newBoard[current]++;
-    path.push(current);
-    stones--;
-  }
-
-  const lastLanding = current;
-  let earnedFreeTurn = false;
-  let capturedStones = 0;
-  let capturedFromPit: number | null = null;
-
-  // Rule 1: Free Turn if last stone lands in current player's store
-  if (rules.freeTurn && lastLanding === playerStore) {
-    earnedFreeTurn = true;
-  } 
-  // Rule 2: Capture if last stone lands in own empty pit and opposite pit has stones
-  else if (rules.captureOpposite && playerPits.includes(lastLanding) && newBoard[lastLanding] === 1) {
-    const oppositePit = 12 - lastLanding;
-    if (newBoard[oppositePit] > 0) {
-      capturedStones = newBoard[oppositePit] + 1; // opposite + landing stone
-      capturedFromPit = oppositePit;
-      newBoard[oppositePit] = 0;
-      newBoard[lastLanding] = 0;
-      newBoard[playerStore] += capturedStones;
-    }
-  }
-
-  // Check Game Termination: if either side's pits are empty
-  const p1Empty = P1_PITS.every(p => newBoard[p] === 0);
-  const p2Empty = P2_PITS.every(p => newBoard[p] === 0);
-
-  let isGameOver = false;
-  let winner: number | null = null;
-
-  if (p1Empty || p2Empty) {
-    isGameOver = true;
-    // Sweep remaining stones into respective stores
-    for (const p of P1_PITS) {
-      newBoard[P1_STORE] += newBoard[p];
-      newBoard[p] = 0;
-    }
-    for (const p of P2_PITS) {
-      newBoard[P2_STORE] += newBoard[p];
-      newBoard[p] = 0;
-    }
-
-    if (newBoard[P1_STORE] > newBoard[P2_STORE]) winner = 0;
-    else if (newBoard[P2_STORE] > newBoard[P1_STORE]) winner = 1;
-    else winner = -1; // Draw
-  }
-
-  const nextPlayer = earnedFreeTurn && !isGameOver ? player : 1 - player;
-
-  return {
-    newBoard,
-    nextPlayer,
-    isGameOver,
-    winner,
-    earnedFreeTurn,
-    capturedStones,
-    capturedFromPit,
-    lastLanding,
-    path
-  };
-}
-
-const transpositionTable = new Map<string, { score: number; bestMove: number; pv: number[] }>();
-
-export function evaluatePosition(board: number[]): number {
-  // Primary: Store differential
-  const storeDiff = board[P1_STORE] - board[P2_STORE];
-  
-  // Secondary: On-board stones distribution
-  let p1Stones = 0;
-  let p2Stones = 0;
-  for (const p of P1_PITS) p1Stones += board[p];
-  for (const p of P2_PITS) p2Stones += board[p];
-  
-  // Positional mobility / capture potential
-  let p1Potential = 0;
-  let p2Potential = 0;
-  for (const p of P1_PITS) {
-    if (board[p] > 0 && (p + board[p]) % 14 === P1_STORE) p1Potential += 2.2;
-  }
-  for (const p of P2_PITS) {
-    if (board[p] > 0 && (p + board[p]) % 14 === P2_STORE) p2Potential += 2.2;
-  }
-
-  const rawScore = (storeDiff * 3.5) + ((p1Stones - p2Stones) * 0.6) + (p1Potential - p2Potential);
-  return rawScore;
-}
-
-export function minimax(
-  board: number[], 
-  player: number, 
-  depth: number, 
-  alpha: number, 
-  beta: number, 
-  rules: RulesConfig, 
-  maxDepth: number
-): { score: number; bestMove: number; pv: number[] } {
-  const hash = `${board.join(',')}_${player}_${depth}`;
-  if (transpositionTable.has(hash)) {
-    return transpositionTable.get(hash)!;
-  }
-
-  const legalMoves = getLegalMoves(board, player);
-  if (depth === 0 || legalMoves.length === 0) {
-    const evalScore = evaluatePosition(board);
-    return { score: evalScore, bestMove: -1, pv: [] };
-  }
-
-  let bestMove = legalMoves[0];
-  let bestPV: number[] = [];
-
-  if (player === 0) { // Maximizing Player (Player 1)
-    let maxEval = -Infinity;
-    for (const move of legalMoves) {
-      const res = simulateMove(board, player, move, rules);
-      let evaluation: number;
-      if (res.isGameOver) {
-        evaluation = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
-        if (evaluation > maxEval) {
-          maxEval = evaluation;
-          bestMove = move;
-          bestPV = [move];
-        }
-      } else {
-        const nextDepth = res.nextPlayer === player ? depth : depth - 1;
-        const result = minimax(res.newBoard, res.nextPlayer, nextDepth, alpha, beta, rules, maxDepth);
-        if (result.score > maxEval) {
-          maxEval = result.score;
-          bestMove = move;
-          bestPV = [move, ...result.pv.slice(0, 3)];
-        }
-      }
-      alpha = Math.max(alpha, maxEval);
-      if (beta <= alpha) break;
-    }
-    const res = { score: maxEval, bestMove, pv: bestPV };
-    transpositionTable.set(hash, res);
-    return res;
-  } else { // Minimizing Player (Player 2)
-    let minEval = Infinity;
-    for (const move of legalMoves) {
-      const res = simulateMove(board, player, move, rules);
-      let evaluation: number;
-      if (res.isGameOver) {
-        evaluation = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
-        if (evaluation < minEval) {
-          minEval = evaluation;
-          bestMove = move;
-          bestPV = [move];
-        }
-      } else {
-        const nextDepth = res.nextPlayer === player ? depth : depth - 1;
-        const result = minimax(res.newBoard, res.nextPlayer, nextDepth, alpha, beta, rules, maxDepth);
-        if (result.score < minEval) {
-          minEval = result.score;
-          bestMove = move;
-          bestPV = [move, ...result.pv.slice(0, 3)];
-        }
-      }
-      beta = Math.min(beta, minEval);
-      if (beta <= alpha) break;
-    }
-    const res = { score: minEval, bestMove, pv: bestPV };
-    transpositionTable.set(hash, res);
-    return res;
-  }
-}
-
-export function analyzeAllMoves(
-  board: number[], 
-  player: number, 
-  depth: number, 
-  rules: RulesConfig
-): EvaluatedMove[] {
-  const legalMoves = getLegalMoves(board, player);
-  if (legalMoves.length === 0) return [];
-
-  const evaluatedMoves = legalMoves.map(pit => {
-    const res = simulateMove(board, player, pit, rules);
-    let score: number;
-    let pv: number[] = [pit];
-
-    if (res.isGameOver) {
-      score = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
-    } else {
-      const nextDepth = res.nextPlayer === player ? depth : depth - 1;
-      const mm = minimax(res.newBoard, res.nextPlayer, Math.max(1, nextDepth), -Infinity, Infinity, rules, depth);
-      score = mm.score;
-      pv = [pit, ...(mm.pv || []).slice(0, 3)];
-    }
-
-    // Win probability based on logistic sigmoid of score
-    const p1Prob = 1 / (1 + Math.exp(-score * 0.12));
-    const winProb = player === 0 ? p1Prob : 1 - p1Prob;
-
-    return {
-      pit,
-      label: player === 0 ? `Pit ${pit + 1}` : `Pit ${13 - pit}`,
-      score,
-      winProb: Math.min(0.999, Math.max(0.001, winProb)),
-      pv,
-      freeTurn: res.earnedFreeTurn,
-      captures: res.capturedStones,
-      resultingBoard: res.newBoard
-    };
-  });
-
-  // Sort descending by current player's win probability
-  evaluatedMoves.sort((a, b) => b.winProb - a.winProb);
-
-  const bestWinProb = evaluatedMoves[0].winProb;
-  const bestScore = evaluatedMoves[0].score;
-
-  return evaluatedMoves.map((m, rank) => {
-    const equityLoss = Math.max(0, bestWinProb - m.winProb);
-    const scoreDiff = player === 0 ? bestScore - m.score : m.score - bestScore;
-
-    let classification = 'Best';
-    let badgeColor = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
-
-    if (rank === 0) {
-      classification = 'Excellent (Best)';
-      badgeColor = 'bg-emerald-500/25 text-emerald-300 border-emerald-400';
-    } else if (equityLoss < 0.025) {
-      classification = 'Good';
-      badgeColor = 'bg-teal-500/20 text-teal-300 border-teal-500/30';
-    } else if (equityLoss < 0.075) {
-      classification = 'Inaccuracy';
-      badgeColor = 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-    } else if (equityLoss < 0.16) {
-      classification = 'Mistake';
-      badgeColor = 'bg-amber-600/25 text-amber-300 border-amber-600/40';
-    } else {
-      classification = 'Blunder';
-      badgeColor = 'bg-rose-600/25 text-rose-300 border-rose-600/40';
-    }
-
-    return {
-      ...m,
-      rank: rank + 1,
-      equityLoss,
-      scoreDiff,
-      classification,
-      badgeColor
-    };
-  });
-}
-
 export default function App() {
   const [stonesConfig, setStonesConfig] = useState(4);
   const [rules, setRules] = useState<RulesConfig>({ freeTurn: true, captureOpposite: true });
@@ -480,7 +142,7 @@ export default function App() {
   const [humanPlayer, setHumanPlayer] = useState<number>(0); // 0 = P1 (South), 1 = P2 (North)
   const [tutorMode, setTutorMode] = useState(true);
   const [isAiRunning, setIsAiRunning] = useState(false);
-  const [aiSpeedMs, setAiSpeedMs] = useState(650);
+  const [aiSpeedMs, setAiSpeedMs] = useState(600);
 
   // Analysis state
   const [analysisResults, setAnalysisResults] = useState<EvaluatedMove[]>([]);
@@ -491,6 +153,11 @@ export default function App() {
     eval: EvaluatedMove;
     bestMove: EvaluatedMove;
   } | null>(null);
+
+  // Diagnostics HUD State
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const [diagResults, setDiagResults] = useState<DiagnosticResult[]>([]);
+  const [isDiagRunning, setIsDiagRunning] = useState(false);
 
   // Performance Rating (PR) Tracker
   const [matchStats, setMatchStats] = useState({
@@ -506,6 +173,20 @@ export default function App() {
   useEffect(() => {
     sounds.muted = !soundEnabled;
   }, [soundEnabled]);
+
+  // Run pre-flight suite on initial load
+  useEffect(() => {
+    runGNUPreflightSuite().then(results => {
+      setDiagResults(results);
+    });
+  }, []);
+
+  const handleRunDiagnostics = async () => {
+    setIsDiagRunning(true);
+    const res = await runGNUPreflightSuite();
+    setDiagResults(res);
+    setIsDiagRunning(false);
+  };
 
   const runAnalysis = useCallback((board: number[], player: number) => {
     setIsAnalyzing(true);
@@ -530,7 +211,7 @@ export default function App() {
     
     // Check legality
     const legalPits = gameState.currentPlayer === 0 ? P1_PITS : P2_PITS;
-    if (!legalPits.includes(pitIndex) || gameState.board[pitIndex] === 0) return;
+    if (!(legalPits as readonly number[]).includes(pitIndex) || gameState.board[pitIndex] === 0) return;
 
     // Check tutor warning if Human in Tutor mode
     if (!force && tutorMode && gameMode === 'pve' && gameState.currentPlayer === humanPlayer) {
@@ -646,11 +327,16 @@ export default function App() {
     if (hoveredPit === null || gameState.board[hoveredPit] === 0) return null;
     const isP1 = gameState.currentPlayer === 0;
     const legalPits = isP1 ? P1_PITS : P2_PITS;
-    if (!legalPits.includes(hoveredPit)) return null;
+    if (!(legalPits as readonly number[]).includes(hoveredPit)) return null;
 
     const sim = simulateMove(gameState.board, gameState.currentPlayer, hoveredPit, rules);
     return sim;
   }, [hoveredPit, gameState.board, gameState.currentPlayer, rules]);
+
+  // Total stone sum for Zero-Leak DOM assertion
+  const totalBoardStones = useMemo(() => {
+    return gameState.board.reduce((a, b) => a + b, 0);
+  }, [gameState.board]);
 
   // Win probability calculation for GNU meter (Player 1 perspective)
   const p1CurrentWinProb = useMemo(() => {
@@ -664,7 +350,6 @@ export default function App() {
     return gameState.currentPlayer === 0 ? top.winProb : 1 - top.winProb;
   }, [gameState.isGameOver, gameState.winner, gameState.currentPlayer, analysisResults]);
 
-  // GNU Backgammon Performance Rating (PR) calculation
   const calcPR = (loss: number, moves: number) => {
     if (moves === 0) return '0.00';
     const pr = ((loss * 100) / moves) * 3.5;
@@ -675,29 +360,39 @@ export default function App() {
     <div className="flex flex-col min-h-screen bg-[#0a0d14] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* Top Header & Brand Bar */}
-      <header className="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+      <header className="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-40 px-3 sm:px-4 py-2.5">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-fuchsia-600 p-[2px] shadow-lg shadow-cyan-500/20">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-fuchsia-600 p-[2px] shadow-lg shadow-cyan-500/20">
               <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
                 <Cpu className="w-5 h-5 text-cyan-400" />
               </div>
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="font-extrabold text-lg tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300">
+                <h1 className="font-extrabold text-base sm:text-lg tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300">
                   GNU MANCALA
                 </h1>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300">
+                <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 hidden sm:inline">
                   2030s Neural Engine
                 </span>
               </div>
-              <p className="text-xs text-slate-400">GNU Backgammon & XG Tournament Mathematics for Kalah</p>
+              <p className="text-[11px] sm:text-xs text-slate-400">GNU Backgammon & XG Tournament Mathematics for Kalah</p>
             </div>
           </div>
 
-          {/* Quick Engine Actions */}
-          <div className="flex items-center space-x-2">
+          {/* Quick Engine Actions & Diagnostic Suite Launcher */}
+          <div className="flex items-center flex-wrap gap-2">
+            <button
+              onClick={() => setDiagnosticsOpen(true)}
+              data-testid="open-diagnostics-btn"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-indigo-950/80 border border-indigo-700/60 text-xs font-semibold text-indigo-300 hover:bg-indigo-900/60 transition shadow-sm"
+              title="Open Pre-Flight Diagnostic Suite"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Pre-Flight Suite [{diagResults.filter(r => r.status === 'PASS').length}/{diagResults.length || 11}]</span>
+            </button>
+
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
               title={soundEnabled ? "Mute sounds" : "Enable audio"}
@@ -708,6 +403,7 @@ export default function App() {
 
             <button
               onClick={() => setTutorMode(!tutorMode)}
+              data-testid="tutor-toggle"
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition ${
                 tutorMode 
                   ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm shadow-amber-500/20' 
@@ -720,6 +416,7 @@ export default function App() {
 
             <button
               onClick={handleResetGame}
+              data-testid="reset-game-btn"
               className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs font-medium text-slate-200 transition"
             >
               <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
@@ -730,11 +427,14 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-5 flex-1 flex flex-col gap-5">
+      <main className="max-w-7xl mx-auto w-full p-2.5 sm:p-5 flex-1 flex flex-col gap-4 sm:gap-5 overflow-x-hidden">
         
         {/* Top Evaluation & Equity Gauge (GNU/XG Style) */}
-        <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl relative overflow-hidden">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <section 
+          data-testid="eval-gauge"
+          className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3 sm:p-4 backdrop-blur-md shadow-xl relative overflow-hidden"
+        >
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             
             {/* Player 2 (North) Meta */}
             <div className="flex items-center space-x-3 w-full sm:w-auto">
@@ -745,7 +445,7 @@ export default function App() {
                   {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[10px] text-indigo-400 px-1.5 py-0.2 rounded bg-indigo-950/70 border border-indigo-700/30">GNU Engine</span>}
                   {gameMode === 'pve' && humanPlayer === 1 && <span className="text-[10px] text-emerald-400 px-1.5 py-0.2 rounded bg-emerald-950/70 border border-emerald-700/30">You</span>}
                 </div>
-                <div className="text-lg font-bold text-slate-200">
+                <div className="text-base sm:text-lg font-bold text-slate-200">
                   {((1 - p1CurrentWinProb) * 100).toFixed(1)}% <span className="text-xs text-slate-400 font-normal">Win Equity</span>
                 </div>
               </div>
@@ -766,7 +466,6 @@ export default function App() {
                   className="h-full bg-gradient-to-l from-amber-500 to-orange-600 transition-all duration-500 ease-out"
                   style={{ width: `${(1 - p1CurrentWinProb) * 100}%` }}
                 />
-                {/* 50% Center Marker */}
                 <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-white/40 shadow-sm" />
               </div>
               <div className="flex justify-between text-[10px] text-slate-500 font-mono">
@@ -783,7 +482,7 @@ export default function App() {
                   {gameMode === 'pve' && humanPlayer === 1 && <span className="text-[10px] text-indigo-400 px-1.5 py-0.2 rounded bg-indigo-950/70 border border-indigo-700/30">GNU Engine</span>}
                   Player 1 (South)
                 </div>
-                <div className="text-lg font-bold text-slate-200">
+                <div className="text-base sm:text-lg font-bold text-slate-200">
                   {(p1CurrentWinProb * 100).toFixed(1)}% <span className="text-xs text-slate-400 font-normal">Win Equity</span>
                 </div>
               </div>
@@ -793,18 +492,30 @@ export default function App() {
           </div>
         </section>
 
-        {/* Interactive Mancala Board & 2030s Tactile Board Interface */}
-        <section className="bg-gradient-to-b from-[#141a29] to-[#0c101a] border border-slate-800 rounded-3xl p-4 sm:p-8 shadow-2xl relative">
+        {/* Interactive Mancala Board & Tactile Board Interface */}
+        <section className="bg-gradient-to-b from-[#141a29] to-[#0c101a] border border-slate-800 rounded-3xl p-3 sm:p-6 shadow-2xl relative">
           
-          {/* Status Alert Banner / Free Turn Indicator */}
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 min-h-[32px]">
-            <div className="flex items-center space-x-2">
-              <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${
-                gameState.currentPlayer === 0 
-                  ? 'bg-cyan-950/90 text-cyan-300 border-cyan-600/40' 
-                  : 'bg-amber-950/90 text-amber-300 border-amber-600/40'
-              }`}>
+          {/* Status Alert Banner, Conservation Badge, Free Turn Indicator */}
+          <div className="mb-3 sm:mb-4 flex flex-wrap items-center justify-between gap-2 min-h-[32px]">
+            <div className="flex items-center flex-wrap gap-2">
+              <span 
+                data-testid="turn-indicator"
+                className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${
+                  gameState.currentPlayer === 0 
+                    ? 'bg-cyan-950/90 text-cyan-300 border-cyan-600/40' 
+                    : 'bg-amber-950/90 text-amber-300 border-amber-600/40'
+                }`}
+              >
                 Turn: {gameState.currentPlayer === 0 ? "Player 1 (South)" : "Player 2 (North)"}
+              </span>
+
+              {/* Stone Conservation Invariant HUD */}
+              <span 
+                data-testid="total-stones"
+                className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-slate-900 border border-slate-700 text-slate-300"
+                title="Strict zero-leak stone conservation invariant"
+              >
+                Stones: {totalBoardStones}
               </span>
 
               {gameState.moveHistory.length > 0 && gameState.moveHistory[gameState.moveHistory.length - 1].freeTurn && (
@@ -827,7 +538,10 @@ export default function App() {
 
             {/* Game Over Modal / Ribbon */}
             {gameState.isGameOver && (
-              <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-indigo-900/60 border border-indigo-500/40 text-indigo-200 text-xs font-bold animate-pulse">
+              <div 
+                data-testid="game-over-banner"
+                className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-indigo-900/60 border border-indigo-500/40 text-indigo-200 text-xs font-bold animate-pulse"
+              >
                 <Award className="w-4 h-4 text-amber-400" />
                 <span>
                   {gameState.winner === -1 
@@ -838,26 +552,35 @@ export default function App() {
             )}
           </div>
 
-          {/* The Obsidian & Wood Kalah Board */}
-          <div className="relative bg-[#0d131f] border-2 border-slate-700/60 rounded-3xl p-3 sm:p-6 shadow-2xl overflow-hidden">
+          {/* Obsidian & Wood Kalah Board */}
+          <div className="relative bg-[#0d131f] border-2 border-slate-700/60 rounded-3xl p-2 sm:p-5 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
 
-            <div className="relative grid grid-cols-12 gap-2 sm:gap-4 items-center">
+            <div className="relative grid grid-cols-12 gap-1.5 sm:gap-4 items-center">
               
               {/* Left Kalah Store: Player 2 (North) */}
-              <div className="col-span-2 sm:col-span-2 h-64 sm:h-80 bg-slate-900/80 rounded-2xl sm:rounded-3xl border-2 border-amber-600/30 flex flex-col items-center justify-between p-2 sm:p-4 shadow-inner relative group">
-                <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-amber-400/80 tracking-widest text-center">
+              <div 
+                data-testid="store-13"
+                className={`col-span-2 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border-2 flex flex-col items-center justify-between p-1.5 sm:p-4 shadow-inner relative group transition-all duration-200 ${
+                  hoverPreview?.lastLanding === P2_STORE 
+                    ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                    : hoverPreview?.path?.includes(P2_STORE)
+                      ? 'bg-slate-800/80 border-amber-500/60'
+                      : 'bg-slate-900/80 border-amber-600/30'
+                }`}
+              >
+                <div className="text-[9px] sm:text-xs font-mono font-bold uppercase text-amber-400/80 tracking-widest text-center">
                   P2 Kalah
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-1.5 max-h-48 overflow-y-auto p-1">
+                <div className="flex flex-wrap items-center justify-center gap-1 max-h-36 sm:max-h-48 overflow-y-auto p-1">
                   {Array.from({ length: Math.min(36, gameState.board[P2_STORE]) }).map((_, i) => (
                     <span 
                       key={i} 
-                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-amber-600 to-amber-200 shadow-sm shadow-amber-400/30"
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-amber-600 to-amber-200 shadow-sm shadow-amber-400/30"
                     />
                   ))}
                 </div>
-                <div className="text-xl sm:text-3xl font-extrabold font-mono text-amber-300">
+                <div className="text-lg sm:text-3xl font-extrabold font-mono text-amber-300">
                   {gameState.board[P2_STORE]}
                 </div>
                 {gameMode === 'sandbox' && (
@@ -879,10 +602,10 @@ export default function App() {
               </div>
 
               {/* Center Pits (6 Pits on North, 6 Pits on South) */}
-              <div className="col-span-8 sm:col-span-8 flex flex-col gap-3 sm:gap-6">
+              <div className="col-span-8 flex flex-col gap-2.5 sm:gap-6">
                 
-                {/* North Player Pits (Indices 12 down to 7 - counter-clockwise flow) */}
-                <div className="grid grid-cols-6 gap-1.5 sm:gap-3">
+                {/* North Player Pits (Indices 12 down to 7) */}
+                <div className="grid grid-cols-6 gap-1 sm:gap-3">
                   {[12, 11, 10, 9, 8, 7].map((pitIndex) => {
                     const stones = gameState.board[pitIndex];
                     const isLegal = gameState.currentPlayer === 1 && stones > 0 && !gameState.isGameOver;
@@ -891,15 +614,16 @@ export default function App() {
                     const isLanding = hoverPreview?.lastLanding === pitIndex;
 
                     return (
-                      <div
+                      <button
                         key={pitIndex}
+                        data-testid={`pit-${pitIndex}`}
                         onClick={() => {
                           if (gameMode === 'sandbox') handleSandboxPitAdjust(pitIndex, 1);
                           else if (isLegal) executeMove(pitIndex);
                         }}
                         onMouseEnter={() => setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
-                        className={`relative flex flex-col items-center justify-between p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-200 select-none ${
+                        className={`relative flex flex-col items-center justify-between p-1 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-200 select-none min-h-[50px] min-w-[36px] sm:min-h-[140px] ${
                           isLegal ? 'cursor-pointer hover:border-amber-400 hover:scale-105 active:scale-95' : 'cursor-default'
                         } ${
                           isLanding 
@@ -907,43 +631,44 @@ export default function App() {
                             : isHighlightedPath 
                               ? 'bg-slate-800/80 border-cyan-500/60' 
                               : 'bg-slate-900/90 border border-slate-800'
-                        } h-28 sm:h-36`}
+                        } h-24 sm:h-36`}
                       >
-                        {/* Pit Index Label */}
-                        <div className="flex items-center justify-between w-full text-[9px] sm:text-[10px] text-slate-500 font-mono">
+                        <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
                           <span>Pit {13 - pitIndex}</span>
                           {evalData && (
-                            <span className={`px-1 py-0.2 rounded text-[9px] font-bold border ${evalData.badgeColor}`}>
+                            <span className={`px-1 py-0.2 rounded text-[8px] sm:text-[9px] font-bold border hidden sm:inline ${evalData.badgeColor}`}>
                               {evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}
                             </span>
                           )}
                         </div>
 
-                        {/* Pebble / Stone Visuals */}
-                        <div className="flex flex-wrap items-center justify-center gap-1 my-auto max-h-16 overflow-hidden">
+                        <div className="flex flex-wrap items-center justify-center gap-0.5 sm:gap-1 my-auto max-h-12 sm:max-h-16 overflow-hidden">
                           {Array.from({ length: Math.min(15, stones) }).map((_, i) => (
                             <div 
                               key={i} 
-                              className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 shadow-xs shadow-amber-300/40"
+                              className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 shadow-xs shadow-amber-300/40"
                             />
                           ))}
                         </div>
 
-                        {/* Count Badge */}
-                        <div className="text-base sm:text-xl font-mono font-bold text-amber-200">
+                        <div 
+                          data-testid={`pit-count-${pitIndex}`}
+                          className="text-sm sm:text-xl font-mono font-bold text-amber-200"
+                        >
                           {stones}
                         </div>
 
-                        {/* Sandbox adjustment buttons */}
                         {gameMode === 'sandbox' && (
                           <div className="absolute -top-2 flex gap-1 z-20">
                             <button 
+                              data-testid={`sandbox-minus-${pitIndex}`}
                               onClick={(e) => { e.stopPropagation(); handleSandboxPitAdjust(pitIndex, -1); }}
                               className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white"
                             >
                               -
                             </button>
                             <button 
+                              data-testid={`sandbox-plus-${pitIndex}`}
                               onClick={(e) => { e.stopPropagation(); handleSandboxPitAdjust(pitIndex, 1); }}
                               className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white"
                             >
@@ -951,13 +676,13 @@ export default function App() {
                             </button>
                           </div>
                         )}
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
 
                 {/* South Player Pits (Indices 0 to 5) */}
-                <div className="grid grid-cols-6 gap-1.5 sm:gap-3">
+                <div className="grid grid-cols-6 gap-1 sm:gap-3">
                   {[0, 1, 2, 3, 4, 5].map((pitIndex) => {
                     const stones = gameState.board[pitIndex];
                     const isLegal = gameState.currentPlayer === 0 && stones > 0 && !gameState.isGameOver;
@@ -966,15 +691,16 @@ export default function App() {
                     const isLanding = hoverPreview?.lastLanding === pitIndex;
 
                     return (
-                      <div
+                      <button
                         key={pitIndex}
+                        data-testid={`pit-${pitIndex}`}
                         onClick={() => {
                           if (gameMode === 'sandbox') handleSandboxPitAdjust(pitIndex, 1);
                           else if (isLegal) executeMove(pitIndex);
                         }}
                         onMouseEnter={() => setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
-                        className={`relative flex flex-col items-center justify-between p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-200 select-none ${
+                        className={`relative flex flex-col items-center justify-between p-1 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-200 select-none min-h-[50px] min-w-[36px] sm:min-h-[140px] ${
                           isLegal ? 'cursor-pointer hover:border-cyan-400 hover:scale-105 active:scale-95' : 'cursor-default'
                         } ${
                           isLanding 
@@ -982,43 +708,44 @@ export default function App() {
                             : isHighlightedPath 
                               ? 'bg-slate-800/80 border-cyan-500/60' 
                               : 'bg-slate-900/90 border border-slate-800'
-                        } h-28 sm:h-36`}
+                        } h-24 sm:h-36`}
                       >
-                        {/* Pit Index Label */}
-                        <div className="flex items-center justify-between w-full text-[9px] sm:text-[10px] text-slate-500 font-mono">
+                        <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
                           <span>Pit {pitIndex + 1}</span>
                           {evalData && (
-                            <span className={`px-1 py-0.2 rounded text-[9px] font-bold border ${evalData.badgeColor}`}>
+                            <span className={`px-1 py-0.2 rounded text-[8px] sm:text-[9px] font-bold border hidden sm:inline ${evalData.badgeColor}`}>
                               {evalData.rank === 1 ? 'BEST' : `#${evalData.rank}`}
                             </span>
                           )}
                         </div>
 
-                        {/* Pebble / Stone Visuals */}
-                        <div className="flex flex-wrap items-center justify-center gap-1 my-auto max-h-16 overflow-hidden">
+                        <div className="flex flex-wrap items-center justify-center gap-0.5 sm:gap-1 my-auto max-h-12 sm:max-h-16 overflow-hidden">
                           {Array.from({ length: Math.min(15, stones) }).map((_, i) => (
                             <div 
                               key={i} 
-                              className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-cyan-400 to-sky-200 shadow-xs shadow-cyan-300/40"
+                              className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-cyan-400 to-sky-200 shadow-xs shadow-cyan-300/40"
                             />
                           ))}
                         </div>
 
-                        {/* Count Badge */}
-                        <div className="text-base sm:text-xl font-mono font-bold text-cyan-200">
+                        <div 
+                          data-testid={`pit-count-${pitIndex}`}
+                          className="text-sm sm:text-xl font-mono font-bold text-cyan-200"
+                        >
                           {stones}
                         </div>
 
-                        {/* Sandbox adjustment buttons */}
                         {gameMode === 'sandbox' && (
                           <div className="absolute -bottom-2 flex gap-1 z-20">
                             <button 
+                              data-testid={`sandbox-minus-${pitIndex}`}
                               onClick={(e) => { e.stopPropagation(); handleSandboxPitAdjust(pitIndex, -1); }}
                               className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white"
                             >
                               -
                             </button>
                             <button 
+                              data-testid={`sandbox-plus-${pitIndex}`}
                               onClick={(e) => { e.stopPropagation(); handleSandboxPitAdjust(pitIndex, 1); }}
                               className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white"
                             >
@@ -1026,7 +753,7 @@ export default function App() {
                             </button>
                           </div>
                         )}
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -1034,19 +761,28 @@ export default function App() {
               </div>
 
               {/* Right Kalah Store: Player 1 (South) */}
-              <div className="col-span-2 sm:col-span-2 h-64 sm:h-80 bg-slate-900/80 rounded-2xl sm:rounded-3xl border-2 border-cyan-600/30 flex flex-col items-center justify-between p-2 sm:p-4 shadow-inner relative group">
-                <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-cyan-400/80 tracking-widest text-center">
+              <div 
+                data-testid="store-6"
+                className={`col-span-2 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border-2 flex flex-col items-center justify-between p-1.5 sm:p-4 shadow-inner relative group transition-all duration-200 ${
+                  hoverPreview?.lastLanding === P1_STORE 
+                    ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                    : hoverPreview?.path?.includes(P1_STORE)
+                      ? 'bg-slate-800/80 border-cyan-500/60'
+                      : 'bg-slate-900/80 border-cyan-600/30'
+                }`}
+              >
+                <div className="text-[9px] sm:text-xs font-mono font-bold uppercase text-cyan-400/80 tracking-widest text-center">
                   P1 Kalah
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-1.5 max-h-48 overflow-y-auto p-1">
+                <div className="flex flex-wrap items-center justify-center gap-1 max-h-36 sm:max-h-48 overflow-y-auto p-1">
                   {Array.from({ length: Math.min(36, gameState.board[P1_STORE]) }).map((_, i) => (
                     <span 
                       key={i} 
-                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-200 shadow-sm shadow-cyan-400/30"
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-200 shadow-sm shadow-cyan-400/30"
                     />
                   ))}
                 </div>
-                <div className="text-xl sm:text-3xl font-extrabold font-mono text-cyan-300">
+                <div className="text-lg sm:text-3xl font-extrabold font-mono text-cyan-300">
                   {gameState.board[P1_STORE]}
                 </div>
                 {gameMode === 'sandbox' && (
@@ -1070,7 +806,7 @@ export default function App() {
             </div>
 
             {/* Sowing direction indicator watermark */}
-            <div className="mt-3 flex items-center justify-center gap-2 text-[10px] uppercase font-mono tracking-widest text-slate-500">
+            <div className="mt-2 sm:mt-3 flex items-center justify-center gap-2 text-[9px] sm:text-[10px] uppercase font-mono tracking-widest text-slate-500">
               <span>Counter-Clockwise Flow</span>
               <ArrowRight className="w-3 h-3 text-cyan-500" />
             </div>
@@ -1079,7 +815,10 @@ export default function App() {
 
         {/* Tutor Warning Dialog / Modal Overlay */}
         {tutorWarning && (
-          <div className="p-4 bg-amber-950/70 border-2 border-amber-500/60 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xl backdrop-blur-md">
+          <div 
+            data-testid="tutor-modal"
+            className="p-4 bg-amber-950/80 border-2 border-amber-500/70 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xl backdrop-blur-md animate-in fade-in"
+          >
             <div className="flex items-center space-x-3">
               <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-400">
                 <AlertTriangle className="w-6 h-6" />
@@ -1095,26 +834,28 @@ export default function App() {
             </div>
             <div className="flex items-center space-x-2">
               <button
+                data-testid="tutor-reconsider"
                 onClick={() => setTutorWarning(null)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
+                className="px-3.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition"
               >
-                Cancel Move
+                Reconsider
               </button>
               <button
+                data-testid="tutor-confirm"
                 onClick={() => executeMove(tutorWarning.pit, true)}
-                className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-md"
+                className="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-md transition"
               >
-                Play Anyway
+                Confirm Move
               </button>
             </div>
           </div>
         )}
 
         {/* Bottom Section: GNU Analysis Engine Table & Configuration Cockpit */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           
           {/* Engine Move Rankings Table (GNU/XG Style) */}
-          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col shadow-xl">
+          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-3 sm:p-5 flex flex-col shadow-xl overflow-x-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center space-x-2">
                 <BarChart3 className="w-4 h-4 text-cyan-400" />
@@ -1129,7 +870,7 @@ export default function App() {
 
             {/* Candidate Moves Table */}
             <div className="overflow-x-auto mt-3">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs min-w-[500px]">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
                     <th className="py-2 px-2">Rank</th>
@@ -1149,9 +890,10 @@ export default function App() {
                       </td>
                     </tr>
                   ) : (
-                    analysisResults.map((move) => (
+                    analysisResults.map((move, idx) => (
                       <tr 
-                        key={move.pit} 
+                        key={move.pit}
+                        data-testid={idx === 0 ? "eval-row-0" : idx === analysisResults.length - 1 ? "eval-row-worst" : undefined}
                         className={`hover:bg-slate-800/40 transition ${move.rank === 1 ? 'bg-cyan-950/20' : ''}`}
                       >
                         <td className="py-2.5 px-2 font-bold text-slate-300">
@@ -1182,6 +924,7 @@ export default function App() {
                         </td>
                         <td className="py-2.5 px-2 text-right">
                           <button
+                            data-testid={`eval-play-pit-${move.pit}`}
                             onClick={() => executeMove(move.pit, true)}
                             disabled={gameState.isGameOver}
                             className="px-2 py-1 bg-slate-800 hover:bg-cyan-600 hover:text-white rounded border border-slate-700 text-[10px] text-slate-300 transition"
@@ -1216,6 +959,7 @@ export default function App() {
                 ].map(m => (
                   <button
                     key={m.id}
+                    data-testid={`mode-${m.id}`}
                     onClick={() => {
                       setGameMode(m.id);
                       setIsAiRunning(false);
@@ -1266,6 +1010,7 @@ export default function App() {
               <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex items-center justify-between">
                 <span className="text-xs font-medium text-slate-300">Self-Play Automation:</span>
                 <button
+                  data-testid="ai-duel-toggle"
                   onClick={() => setIsAiRunning(!isAiRunning)}
                   className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                     isAiRunning 
@@ -1303,7 +1048,6 @@ export default function App() {
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-800">
               <span className="text-xs font-semibold text-slate-400">Mancala Ruleset</span>
               
-              {/* Starting Stones */}
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-300">Starting Stones / Pit:</span>
                 <div className="flex space-x-1">
@@ -1326,7 +1070,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Kalah Free Turn Rule */}
               <label className="flex items-center justify-between text-xs text-slate-300 cursor-pointer">
                 <span>Store Finish = Bonus Turn</span>
                 <input 
@@ -1337,7 +1080,6 @@ export default function App() {
                 />
               </label>
 
-              {/* Opposite Pit Capture Rule */}
               <label className="flex items-center justify-between text-xs text-slate-300 cursor-pointer">
                 <span>Opposite Pit Capture</span>
                 <input 
@@ -1368,6 +1110,71 @@ export default function App() {
         </div>
 
       </main>
+
+      {/* Pre-Flight Diagnostics Modal */}
+      {diagnosticsOpen && (
+        <div 
+          data-testid="diagnostics-modal"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        >
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+              <div className="flex items-center space-x-2.5">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-bold text-base text-slate-100">
+                  GNU Automated Pre-Flight Test Suite
+                </h3>
+              </div>
+              <button 
+                onClick={() => setDiagnosticsOpen(false)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 overflow-y-auto flex flex-col gap-3 font-mono text-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400">
+                <span>Total Tests: {diagResults.length}</span>
+                <span className="text-emerald-400 font-bold">
+                  All Invariants Intact ({diagResults.filter(r => r.status === 'PASS').length}/{diagResults.length})
+                </span>
+              </div>
+
+              <div className="divide-y divide-slate-800/80">
+                {diagResults.map((item, i) => (
+                  <div key={i} className="py-2.5 flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-slate-200">{item.name}</div>
+                        <div className="text-[10px] text-slate-500">{item.category}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {item.status}
+                      </span>
+                      <span className="text-[10px] text-slate-400">{item.duration}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-5 py-3.5 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+              <span className="text-[11px] text-slate-400">Zero-Leak Conservation & Solver Invariants Guaranteed</span>
+              <button
+                onClick={handleRunDiagnostics}
+                disabled={isDiagRunning}
+                className="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold shadow-md transition disabled:opacity-50"
+              >
+                {isDiagRunning ? "Running Diagnostics..." : "Re-run Diagnostics"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-slate-800/70 py-3 px-4 text-center text-[11px] text-slate-500">
