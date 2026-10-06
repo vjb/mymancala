@@ -28,25 +28,89 @@ export default function App() {
   const [stonesConfig, setStonesConfig] = useState(4);
   const [rules, setRules] = useState<RulesConfig>({ freeTurn: true, captureOpposite: true });
   const [gameState, setGameState] = useState<GameState>(() => createInitialState(4));
-  const [searchDepth, setSearchDepth] = useState(5);
+  const [searchDepth, setSearchDepth] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mancala_search_depth');
+      const val = saved ? parseInt(saved, 10) : 5;
+      return !isNaN(val) && val >= 1 && val <= 10 ? val : 5;
+    } catch {
+      return 5;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_search_depth', String(searchDepth)); } catch {}
+  }, [searchDepth]);
   
-  // Theme / Skin State
-  const [currentSkin, setCurrentSkin] = useState<SkinTheme>('walnut');
+  // Theme / Skin State with localStorage persistence
+  const [currentSkin, setCurrentSkin] = useState<SkinTheme>(() => {
+    try {
+      const saved = localStorage.getItem('mancala_theme') as SkinTheme;
+      return saved && saved in THEMES ? saved : 'walnut';
+    } catch {
+      return 'walnut';
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_theme', currentSkin); } catch {}
+  }, [currentSkin]);
+
   const theme = THEMES[currentSkin];
 
   // Game modes: 'pve', 'pvp', 'ai_vs_ai', 'sandbox'
   const [gameMode, setGameMode] = useState<string>('pve');
   const [humanPlayer, setHumanPlayer] = useState<number>(0); // 0 = P1 (South), 1 = P2 (North)
   
-  // Coach & Evaluation Visibility Controls (Decoupled!)
-  const [tutorMode, setTutorMode] = useState(true);
-  const [showMoveHints, setShowMoveHints] = useState(false); // Default FALSE: clean, spoiler-free board!
+  // Coach & Evaluation Visibility Controls (Decoupled & Persisted!)
+  const [tutorMode, setTutorMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mancala_tutor_mode');
+      return saved !== null ? saved === 'true' : true;
+    } catch {
+      return true;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_tutor_mode', String(tutorMode)); } catch {}
+  }, [tutorMode]);
+
+  const [showMoveHints, setShowMoveHints] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mancala_show_hints');
+      return saved !== null ? saved === 'true' : false;
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_show_hints', String(showMoveHints)); } catch {}
+  }, [showMoveHints]);
+
   const [evalBarCollapsed, setEvalBarCollapsed] = useState(false);
-  const [coachSensitivity, setCoachSensitivity] = useState<'all' | 'blunders_only'>('all');
+  const [coachSensitivity, setCoachSensitivity] = useState<'all' | 'blunders_only'>(() => {
+    try {
+      const saved = localStorage.getItem('mancala_coach_sensitivity');
+      return saved === 'blunders_only' ? 'blunders_only' : 'all';
+    } catch {
+      return 'all';
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_coach_sensitivity', coachSensitivity); } catch {}
+  }, [coachSensitivity]);
 
   const [isAiRunning, setIsAiRunning] = useState(false);
   const [aiSpeedMs, setAiSpeedMs] = useState(600);
-  const [sowSpeed, setSowSpeed] = useState<'slow' | 'normal' | 'fast' | 'instant'>('normal');
+  const [sowSpeed, setSowSpeed] = useState<'slow' | 'normal' | 'fast' | 'instant'>(() => {
+    try {
+      const saved = localStorage.getItem('mancala_sow_speed') as any;
+      return (saved === 'slow' || saved === 'normal' || saved === 'fast' || saved === 'instant') ? saved : 'normal';
+    } catch {
+      return 'normal';
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_sow_speed', sowSpeed); } catch {}
+  }, [sowSpeed]);
   const instantSpeed = sowSpeed === 'instant';
 
   // Sowing Animation & Move Tracking State
@@ -77,7 +141,17 @@ export default function App() {
   const activeAnimationId = useRef(0);
 
   // Red Team Accessibility & Layout Features
-  const [colorblindSafe, setColorblindSafe] = useState(false);
+  const [colorblindSafe, setColorblindSafe] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mancala_colorblind_safe');
+      return saved !== null ? saved === 'true' : false;
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_colorblind_safe', String(colorblindSafe)); } catch {}
+  }, [colorblindSafe]);
   const [mobileTab, setMobileTab] = useState<'board' | 'analysis' | 'settings'>('board');
 
   // Input debouncing & concurrency mutex lock
@@ -134,9 +208,17 @@ export default function App() {
     p2Blunders: 0
   });
 
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mancala_sound_enabled');
+      return saved !== null ? saved === 'true' : true;
+    } catch {
+      return true;
+    }
+  });
   useEffect(() => {
     sounds.muted = !soundEnabled;
+    try { localStorage.setItem('mancala_sound_enabled', String(soundEnabled)); } catch {}
   }, [soundEnabled]);
 
   // Run pre-flight suite on initial load
@@ -1543,8 +1625,8 @@ export default function App() {
         {/* Bottom Section: Analysis Table & Settings */}
         <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-5 ${mobileTab === 'board' ? 'hidden lg:grid' : ''}`}>
           
-          {/* Candidate Analysis Table */}
-          <div className={`lg:col-span-2 ${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-lg overflow-x-auto ${mobileTab === 'settings' ? 'hidden lg:flex' : ''}`}>
+          {/* Candidate Analysis Table & Mobile Cards */}
+          <div className={`lg:col-span-2 ${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3 sm:p-5 flex flex-col shadow-lg overflow-hidden sm:overflow-visible ${mobileTab === 'settings' ? 'hidden lg:flex' : ''}`}>
             
             <div className={`flex items-center justify-between pb-3 border-b ${theme.cardBorder}`}>
               <div className="flex items-center space-x-2">
@@ -1574,8 +1656,131 @@ export default function App() {
               </div>
             </div>
 
-            {/* Candidates Table */}
-            <div className="overflow-x-auto mt-2">
+            {/* Mobile Responsive Cards (100% width, ZERO horizontal scroll) */}
+            <div className="sm:hidden flex flex-col gap-2 mt-2 w-full">
+              {analysisResults.length === 0 ? (
+                <div className={`py-6 text-center text-xs ${theme.cardTextMuted}`}>
+                  {gameState.isGameOver ? "Match completed. No moves available." : "Calculating optimal lines..."}
+                </div>
+              ) : (
+                analysisResults.map((move, idx) => {
+                  const isExpanded = expandedAnalysisPit === move.pit;
+                  const explanation = isExpanded && analysisResults[0]
+                    ? generateTacticalExplanation(gameState.board, gameState.currentPlayer, move, analysisResults[0], rules)
+                    : null;
+
+                  return (
+                    <div 
+                      key={move.pit}
+                      data-testid={idx === 0 ? "eval-row-0" : idx === analysisResults.length - 1 ? "eval-row-worst" : undefined}
+                      className={`rounded-xl border p-2.5 flex flex-col gap-2 transition w-full select-none ${
+                        move.rank === 1 
+                          ? 'bg-amber-500/10 border-amber-500/30' 
+                          : isExpanded 
+                            ? 'bg-white/10 border-white/20' 
+                            : 'bg-black/20 border-white/5'
+                      }`}
+                    >
+                      {/* Main Row: Rank, Pit Name, Win %, Equity Diff, Grade & Play Button */}
+                      <div className="flex items-center justify-between gap-1 w-full">
+                        <div 
+                          className="flex items-center space-x-1.5 flex-1 min-w-0 cursor-pointer"
+                          onClick={() => setExpandedAnalysisPit(prev => prev === move.pit ? null : move.pit)}
+                        >
+                          <span className="font-bold text-xs opacity-75 font-mono">#{move.rank}</span>
+                          <span className="font-bold text-xs truncate">{move.label}</span>
+                          <span className="text-[10px] text-amber-400 shrink-0">
+                            {isExpanded ? <ChevronUp className="w-3.5 h-3.5 inline" /> : <ChevronDown className="w-3.5 h-3.5 inline" />}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-1.5 shrink-0">
+                          <span className="text-xs font-bold font-mono">
+                            {(move.winProb * 100).toFixed(1)}%
+                          </span>
+                          <span className={`text-[10px] font-mono ${move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}`}>
+                            {move.equityLoss === 0 ? '0.0%' : `-${(move.equityLoss * 100).toFixed(1)}%`}
+                          </span>
+                          <div>
+                            {renderGradeBadge(move.classification, move.badgeColor)}
+                          </div>
+                          <button
+                            data-testid={`eval-play-pit-${move.pit}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              executeMove(move.pit, true);
+                            }}
+                            disabled={gameState.isGameOver}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold border shadow-xs transition active:scale-95 ${
+                              currentSkin === 'porcelain'
+                                ? 'bg-amber-600 hover:bg-amber-500 text-white border-amber-700'
+                                : 'bg-amber-600 hover:bg-amber-500 text-white border-amber-500'
+                            }`}
+                          >
+                            Play
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Sub-row: Bonus badges & PV */}
+                      <div 
+                        className="flex items-center justify-between text-[10px] font-mono opacity-80 cursor-pointer"
+                        onClick={() => setExpandedAnalysisPit(prev => prev === move.pit ? null : move.pit)}
+                      >
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
+                          {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
+                          <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join(' → ')}</span>
+                        </div>
+                        <span className={`text-[9px] underline opacity-75 shrink-0 ${
+                          currentSkin === 'porcelain' ? 'text-amber-800' : 'text-amber-300'
+                        }`}>
+                          {isExpanded ? "Hide Details" : "Details"}
+                        </span>
+                      </div>
+
+                      {/* Expanded Tactical Accordion Card */}
+                      {isExpanded && explanation && (
+                        <div className={`mt-1 p-2.5 rounded-lg border text-xs flex flex-col gap-2 ${
+                          currentSkin === 'porcelain' 
+                            ? 'bg-[#faf2e6] border-[#e8d2b8] text-[#2c2723]' 
+                            : 'bg-black/40 border-white/10 text-slate-100'
+                        }`}>
+                          <div className={`flex items-center gap-1.5 font-bold ${
+                            currentSkin === 'porcelain' ? 'text-amber-900' : 'text-amber-400'
+                          }`}>
+                            <Bot className="w-4 h-4 shrink-0" />
+                            <span>Tactical Breakdown for {move.label} ({move.classification}):</span>
+                          </div>
+                          <p className="leading-relaxed opacity-95 text-xs">
+                            {explanation.summary}
+                          </p>
+                          <div className="grid grid-cols-1 gap-1.5">
+                            <div className="p-2 rounded bg-rose-500/10 border border-rose-500/20">
+                              <div className="text-[10px] font-bold text-rose-400 uppercase">Immediate Effect</div>
+                              <div className="text-xs opacity-90 mt-0.5">{explanation.consequence}</div>
+                            </div>
+                            <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
+                              <div className="text-[10px] font-bold text-amber-400 uppercase">Opponent Response</div>
+                              <div className="text-xs opacity-90 mt-0.5">{explanation.threat || "No immediate opponent threat; general positional shift."}</div>
+                            </div>
+                            {move.rank > 1 && (
+                              <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/20">
+                                <div className="text-[10px] font-bold text-emerald-400 uppercase">Why {analysisResults[0]?.label || "Best Move"} is better</div>
+                                <div className="text-xs opacity-90 mt-0.5">{explanation.recommendationComparison}</div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Candidates Table (Hidden on Mobile) */}
+            <div className="hidden sm:block overflow-x-auto mt-2">
               <table className="w-full text-left text-xs min-w-[460px]">
                 <thead>
                   <tr className={`border-b ${theme.cardBorder} ${theme.cardTextMuted} font-mono uppercase text-[10px]`}>
@@ -1665,7 +1870,9 @@ export default function App() {
                             <tr className={currentSkin === 'porcelain' ? 'bg-[#faf2e6]/90' : 'bg-black/30'}>
                               <td colSpan={7} className="p-3 sm:p-4">
                                 <div className="flex flex-col gap-2.5 text-xs">
-                                  <div className="flex items-center gap-2 font-bold text-amber-400">
+                                  <div className={`flex items-center gap-2 font-bold ${
+                                    currentSkin === 'porcelain' ? 'text-amber-900' : 'text-amber-400'
+                                  }`}>
                                     <Bot className="w-4 h-4" />
                                     <span>Tactical Breakdown for {move.label} ({move.classification}):</span>
                                   </div>

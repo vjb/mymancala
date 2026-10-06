@@ -366,8 +366,8 @@ export function analyzeAllMoves(
       pv = [pit, ...(mm.pv || []).slice(0, 3)];
     }
 
-    // Logistic sigmoid bounded win probability
-    const p1Prob = 1 / (1 + Math.exp(-score * 0.12));
+    // Calibrated logistic sigmoid bounded win probability (~54%-56% at opening)
+    const p1Prob = 1 / (1 + Math.exp(-score * 0.022));
     const winProb = player === 0 ? p1Prob : 1 - p1Prob;
 
     return {
