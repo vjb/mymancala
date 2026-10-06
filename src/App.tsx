@@ -18,6 +18,7 @@ import {
   GameState,
   EvaluatedMove
 } from './engine';
+import { generateTacticalExplanation, TacticalExplanation, getPitLabel } from './tactics';
 import { runGNUPreflightSuite, DiagnosticResult } from './preflight-diagnostics';
 import { sounds } from './sound';
 import { SkinTheme, THEMES } from './theme';
@@ -113,7 +114,10 @@ export default function App() {
     pit: number;
     eval: EvaluatedMove;
     bestMove: EvaluatedMove;
+    explanation: TacticalExplanation;
   } | null>(null);
+  const [showCoachDetails, setShowCoachDetails] = useState(false);
+  const [expandedAnalysisPit, setExpandedAnalysisPit] = useState<number | null>(null);
 
   // Diagnostics HUD State
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
@@ -189,12 +193,21 @@ export default function App() {
           ? moveEval?.classification === 'Blunder'
           : (moveEval?.classification === 'Mistake' || moveEval?.classification === 'Blunder');
 
-        if (moveEval && shouldWarn) {
+        if (moveEval && shouldWarn && analysisResults[0]) {
+          const explanation = generateTacticalExplanation(
+            gameState.board,
+            gameState.currentPlayer,
+            moveEval,
+            analysisResults[0],
+            rules
+          );
           setTutorWarning({
             pit: pitIndex,
             eval: moveEval,
-            bestMove: analysisResults[0]
+            bestMove: analysisResults[0],
+            explanation
           });
+          setShowCoachDetails(false);
           isMoveLocked.current = false;
           return;
         }
@@ -1036,6 +1049,11 @@ export default function App() {
                     const isHighlightedPath = !animatingState && hoverPreview?.path?.includes(pitIndex);
                     const isLanding = !animatingState && hoverPreview?.lastLanding === pitIndex;
 
+                    const isTutorChosen = tutorWarning?.pit === pitIndex;
+                    const isTutorBest = tutorWarning?.bestMove.pit === pitIndex;
+                    const isTutorThreat = tutorWarning?.explanation.opponentThreatPit === pitIndex;
+                    const isTutorVulnerable = tutorWarning?.explanation.vulnerablePit === pitIndex;
+
                     return (
                       <button
                         key={pitIndex}
@@ -1049,26 +1067,54 @@ export default function App() {
                         className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
                           isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
-                          isSource 
-                            ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
-                            : isCurrentlySown 
-                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
-                              : isCaptured 
-                                ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
-                                : isLastMoveSource 
-                                  ? 'ring-1 ring-white/30 border-white/40'
-                                  : isLanding 
-                                    ? theme.landingGlow 
-                                    : isHighlightedPath 
-                                      ? theme.pathGlow 
-                                      : ''
+                          isTutorChosen
+                            ? 'ring-2 ring-rose-500 bg-rose-500/20 shadow-[0_0_18px_rgba(244,63,94,0.5)]'
+                            : isTutorBest
+                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 shadow-[0_0_20px_rgba(52,211,153,0.6)] animate-pulse'
+                              : isTutorThreat
+                                ? 'ring-2 ring-dashed ring-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(251,191,36,0.4)]'
+                                : isTutorVulnerable
+                                  ? 'ring-2 ring-dotted ring-rose-400 bg-rose-500/15 shadow-[0_0_14px_rgba(244,63,94,0.3)]'
+                                  : isSource 
+                                    ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
+                                    : isCurrentlySown 
+                                      ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
+                                      : isCaptured 
+                                        ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
+                                        : isLastMoveSource 
+                                          ? 'ring-1 ring-white/30 border-white/40'
+                                          : isLanding 
+                                            ? theme.landingGlow 
+                                            : isHighlightedPath 
+                                              ? theme.pathGlow 
+                                              : ''
                         } h-24 sm:h-36`}
                       >
                         {/* Pit Label & State Badges */}
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
-                          <div className="flex items-center space-x-1">
+                          <div className="flex items-center space-x-1 flex-wrap">
                             <span>P{13 - pitIndex}</span>
-                            {isLastMoveSource && (
+                            {isTutorChosen && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-rose-500/50">
+                                YOUR PICK
+                              </span>
+                            )}
+                            {isTutorBest && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 animate-pulse">
+                                COACH'S PICK
+                              </span>
+                            )}
+                            {isTutorThreat && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-dashed border-amber-500/50">
+                                THREAT
+                              </span>
+                            )}
+                            {isTutorVulnerable && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-dotted border-rose-500/50">
+                                VULN
+                              </span>
+                            )}
+                            {isLastMoveSource && !tutorWarning && (
                               <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-white/20 text-white" title="Last move played">
                                 LAST
                               </span>
@@ -1148,6 +1194,11 @@ export default function App() {
                     const isHighlightedPath = !animatingState && hoverPreview?.path?.includes(pitIndex);
                     const isLanding = !animatingState && hoverPreview?.lastLanding === pitIndex;
 
+                    const isTutorChosen = tutorWarning?.pit === pitIndex;
+                    const isTutorBest = tutorWarning?.bestMove.pit === pitIndex;
+                    const isTutorThreat = tutorWarning?.explanation.opponentThreatPit === pitIndex;
+                    const isTutorVulnerable = tutorWarning?.explanation.vulnerablePit === pitIndex;
+
                     return (
                       <button
                         key={pitIndex}
@@ -1161,25 +1212,53 @@ export default function App() {
                         className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
                           isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
-                          isSource 
-                            ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
-                            : isCurrentlySown 
-                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
-                              : isCaptured 
-                                ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
-                                : isLastMoveSource 
-                                  ? 'ring-1 ring-white/30 border-white/40'
-                                  : isLanding 
-                                    ? theme.landingGlow 
-                                    : isHighlightedPath 
-                                      ? theme.pathGlow 
-                                      : ''
+                          isTutorChosen
+                            ? 'ring-2 ring-rose-500 bg-rose-500/20 shadow-[0_0_18px_rgba(244,63,94,0.5)]'
+                            : isTutorBest
+                              ? 'ring-2 ring-emerald-400 bg-emerald-500/20 shadow-[0_0_20px_rgba(52,211,153,0.6)] animate-pulse'
+                              : isTutorThreat
+                                ? 'ring-2 ring-dashed ring-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(251,191,36,0.4)]'
+                                : isTutorVulnerable
+                                  ? 'ring-2 ring-dotted ring-rose-400 bg-rose-500/15 shadow-[0_0_14px_rgba(244,63,94,0.3)]'
+                                  : isSource 
+                                    ? 'ring-2 ring-amber-400 bg-amber-500/20 shadow-[0_0_18px_rgba(251,191,36,0.5)]'
+                                    : isCurrentlySown 
+                                      ? 'ring-2 ring-emerald-400 bg-emerald-500/20 scale-[1.04] shadow-[0_0_22px_rgba(52,211,153,0.6)] animate-drop-ripple'
+                                      : isCaptured 
+                                        ? 'ring-2 ring-rose-500 bg-rose-950/40 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
+                                        : isLastMoveSource 
+                                          ? 'ring-1 ring-white/30 border-white/40'
+                                          : isLanding 
+                                            ? theme.landingGlow 
+                                            : isHighlightedPath 
+                                              ? theme.pathGlow 
+                                              : ''
                         } h-24 sm:h-36`}
                       >
                         <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
-                          <div className="flex items-center space-x-1">
+                          <div className="flex items-center space-x-1 flex-wrap">
                             <span>P{pitIndex + 1}</span>
-                            {isLastMoveSource && (
+                            {isTutorChosen && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-rose-500/50">
+                                YOUR PICK
+                              </span>
+                            )}
+                            {isTutorBest && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 animate-pulse">
+                                COACH'S PICK
+                              </span>
+                            )}
+                            {isTutorThreat && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-dashed border-amber-500/50">
+                                THREAT
+                              </span>
+                            )}
+                            {isTutorVulnerable && (
+                              <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-rose-500/30 text-rose-300 border border-dotted border-rose-500/50">
+                                VULN
+                              </span>
+                            )}
+                            {isLastMoveSource && !tutorWarning && (
                               <span className="text-[7px] font-extrabold px-1 py-0.2 rounded bg-white/20 text-white" title="Last move played">
                                 LAST
                               </span>
@@ -1303,51 +1382,161 @@ export default function App() {
         </section>
 
         {/* Coach Suggestion Card (Tutor Mode Warning Interception) */}
+        {/* Coach Suggestion Card (Tutor Mode Warning Interception) */}
         {tutorWarning && (
           <div 
             data-testid="tutor-modal"
-            className={`p-3 sm:p-4 rounded-2xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl backdrop-blur-md animate-in fade-in ${
+            className={`p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border-2 flex flex-col gap-3.5 shadow-2xl backdrop-blur-md animate-in fade-in duration-200 transition-all ${
               currentSkin === 'porcelain'
                 ? 'bg-[#fff5ea] border-[#f0c08a] text-[#5c3a1a]'
-                : 'bg-amber-950/90 border-amber-500/80 text-amber-200'
+                : tutorWarning.eval.classification === 'Blunder'
+                  ? 'bg-rose-950/90 border-rose-500/70 text-rose-100 shadow-[0_0_30px_rgba(244,63,94,0.25)]'
+                  : 'bg-amber-950/90 border-amber-500/70 text-amber-100 shadow-[0_0_30px_rgba(251,191,36,0.25)]'
             }`}
           >
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-amber-500/20 rounded-xl text-amber-400">
-                <Sparkles className="w-5 h-5" />
+            {/* Header row: Coach Badge, Warning Type, & Actions */}
+            <div className="flex items-center justify-between gap-2.5 flex-wrap">
+              <div className="flex items-center space-x-2.5">
+                <div className={`p-2 rounded-xl ${
+                  tutorWarning.eval.classification === 'Blunder'
+                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                    : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                }`}>
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-extrabold tracking-wide uppercase">
+                      Coach Advisory
+                    </span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border flex items-center gap-1 ${
+                      tutorWarning.eval.classification === 'Blunder'
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    }`}>
+                      {tutorWarning.eval.classification === 'Blunder' ? (
+                        <ShieldAlert className="w-3 h-3" />
+                      ) : (
+                        <AlertTriangle className="w-3 h-3" />
+                      )}
+                      <span>{tutorWarning.eval.classification} Alert</span>
+                    </span>
+                  </div>
+                  <div className="text-[11px] opacity-80 font-mono mt-0.5">
+                    Sacrifices <strong className="underline font-bold text-rose-300">{(tutorWarning.eval.equityLoss * 100).toFixed(1)}%</strong> win equity compared to <strong>{tutorWarning.bestMove.label}</strong>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h4 className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                  <span>Coach Recommendation</span>
-                  <span className="text-[10px] px-2 py-0.2 rounded-full bg-amber-500/20 border border-amber-500/40">
-                    {tutorWarning.eval.classification} Alert
-                  </span>
-                </h4>
-                <p className="text-xs opacity-90 mt-0.5">
-                  Pit {tutorWarning.pit + 1} sacrifices <strong className="underline">{(tutorWarning.eval.equityLoss * 100).toFixed(1)}%</strong> win chance compared to recommended <strong>{tutorWarning.bestMove.label}</strong>.
-                </p>
+
+              {/* Action Buttons for Mobile/Desktop */}
+              <div className="flex items-center gap-2 ml-auto shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
+                <button
+                  data-testid="tutor-reconsider"
+                  onClick={() => setTutorWarning(null)}
+                  className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border ${
+                    currentSkin === 'porcelain'
+                      ? 'bg-[#ded5c6] text-[#342e29] border-[#cfc4b4] hover:bg-[#cfc4b4]'
+                      : 'bg-white/10 text-slate-200 border-white/15 hover:bg-white/20'
+                  }`}
+                >
+                  Take Back
+                </button>
+                <button
+                  data-testid="tutor-play-best"
+                  onClick={() => executeMove(tutorWarning.bestMove.pit, true)}
+                  className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Play {tutorWarning.bestMove.label}</span>
+                </button>
+                <button
+                  data-testid="tutor-confirm"
+                  onClick={() => executeMove(tutorWarning.pit, true)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium opacity-80 hover:opacity-100 transition border ${
+                    currentSkin === 'porcelain'
+                      ? 'border-[#d0b898] text-[#704d2a] hover:bg-amber-100/50'
+                      : 'border-white/20 text-slate-300 hover:bg-white/5'
+                  }`}
+                  title="Ignore Coach and play your pick"
+                >
+                  Confirm Anyway
+                </button>
               </div>
             </div>
-            <div className="flex items-center space-x-2 shrink-0">
+
+            {/* Natural Language Summary Banner */}
+            <div className={`p-2.5 sm:p-3 rounded-xl border text-xs sm:text-[13px] leading-relaxed flex items-start gap-2.5 ${
+              currentSkin === 'porcelain'
+                ? 'bg-white/70 border-[#f0c08a]/60 text-[#4c3116]'
+                : 'bg-black/30 border-white/10 text-slate-100'
+            }`}>
+              <Bot className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
+              <div className="flex-1">
+                <span className="font-semibold">{tutorWarning.explanation.summary}</span>
+              </div>
+            </div>
+
+            {/* "Why?" Toggle Button */}
+            <div className="flex items-center justify-between border-t border-white/10 pt-2">
               <button
-                data-testid="tutor-reconsider"
-                onClick={() => setTutorWarning(null)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                type="button"
+                onClick={() => setShowCoachDetails(prev => !prev)}
+                className={`text-xs font-bold flex items-center gap-1.5 py-1 px-2.5 rounded-lg transition ${
                   currentSkin === 'porcelain'
-                    ? 'bg-[#ded5c6] text-[#342e29] hover:bg-[#cfc4b4]'
-                    : 'bg-white/10 text-slate-200 hover:bg-white/20'
+                    ? 'hover:bg-amber-200/50 text-[#5c3a1a]'
+                    : 'hover:bg-white/10 text-amber-300'
                 }`}
               >
-                Reconsider
+                <span>{showCoachDetails ? "Hide Tactical Breakdown" : "Why is this a bad move? (Tactical Breakdown)"}</span>
+                {showCoachDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-              <button
-                data-testid="tutor-confirm"
-                onClick={() => executeMove(tutorWarning.pit, true)}
-                className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md transition"
-              >
-                Confirm Move
-              </button>
+
+              <span className="text-[10px] opacity-70 font-mono hidden sm:inline">
+                Highlighted pits on board reveal opponent threats
+              </span>
             </div>
+
+            {/* Expandable Tactical Breakdown Card */}
+            {showCoachDetails && (
+              <div className={`grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3 p-3 rounded-xl border animate-in fade-in duration-150 ${
+                currentSkin === 'porcelain'
+                  ? 'bg-[#faf2e6] border-[#e8d2b8]'
+                  : 'bg-black/40 border-white/10'
+              }`}>
+                {/* 1. Consequence */}
+                <div className="flex flex-col gap-1 p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-400 uppercase tracking-wide">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>1. Immediate Consequence</span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs leading-relaxed opacity-90">
+                    {tutorWarning.explanation.consequence}
+                  </p>
+                </div>
+
+                {/* 2. Opponent Threat */}
+                <div className="flex flex-col gap-1 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400 uppercase tracking-wide">
+                    <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+                    <span>2. Opponent Response</span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs leading-relaxed opacity-90">
+                    {tutorWarning.explanation.threat || "No immediate opponent capture, but concedes valuable tempo or defense."}
+                  </p>
+                </div>
+
+                {/* 3. Coach's Alternative */}
+                <div className="flex flex-col gap-1 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 uppercase tracking-wide">
+                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                    <span>3. Better Line: {tutorWarning.bestMove.label}</span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs leading-relaxed opacity-90">
+                    {tutorWarning.explanation.recommendationComparison}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1407,55 +1596,105 @@ export default function App() {
                       </td>
                     </tr>
                   ) : (
-                    analysisResults.map((move, idx) => (
-                      <tr 
-                        key={move.pit}
-                        data-testid={idx === 0 ? "eval-row-0" : idx === analysisResults.length - 1 ? "eval-row-worst" : undefined}
-                        className={`hover:bg-white/5 transition ${move.rank === 1 ? 'bg-amber-500/10' : ''}`}
-                      >
-                        <td className="py-2.5 px-2 font-bold opacity-80">
-                          #{move.rank}
-                        </td>
-                        <td className="py-2.5 px-2 font-bold">
-                          <div>{move.label}</div>
-                          <div className={`sm:hidden text-[9px] font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
-                            {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
-                            {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
-                            <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join('→')}</span>
-                          </div>
-                        </td>
-                        <td className="py-2.5 px-2 font-semibold">
-                          {(move.winProb * 100).toFixed(1)}%
-                        </td>
-                        <td className="py-2.5 px-2">
-                          <span className={move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}>
-                            {move.equityLoss === 0 ? '0.000' : `-${(move.equityLoss * 100).toFixed(1)}%`}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-2">
-                          {renderGradeBadge(move.classification, move.badgeColor)}
-                        </td>
-                        <td className={`py-2.5 px-2 hidden sm:table-cell text-[10px] ${theme.cardTextMuted}`}>
-                          {move.freeTurn && <span className="text-emerald-500 font-bold mr-1.5">[Free Turn]</span>}
-                          {move.captures > 0 && <span className="text-amber-500 font-bold mr-1.5">[+{move.captures} Cap]</span>}
-                          <span className="opacity-60">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>
-                        </td>
-                        <td className="py-2.5 px-2 text-right">
-                          <button
-                            data-testid={`eval-play-pit-${move.pit}`}
-                            onClick={() => executeMove(move.pit, true)}
-                            disabled={gameState.isGameOver}
-                            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition ${
-                              currentSkin === 'porcelain'
-                                ? 'bg-white hover:bg-[#ded5c6] text-[#2c2723] border-[#cdc3b2]'
-                                : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
-                            }`}
+                    analysisResults.map((move, idx) => {
+                      const isExpanded = expandedAnalysisPit === move.pit;
+                      const explanation = isExpanded && analysisResults[0]
+                        ? generateTacticalExplanation(gameState.board, gameState.currentPlayer, move, analysisResults[0], rules)
+                        : null;
+
+                      return (
+                        <React.Fragment key={move.pit}>
+                          <tr 
+                            data-testid={idx === 0 ? "eval-row-0" : idx === analysisResults.length - 1 ? "eval-row-worst" : undefined}
+                            onClick={() => setExpandedAnalysisPit(prev => prev === move.pit ? null : move.pit)}
+                            className={`hover:bg-white/5 transition cursor-pointer select-none ${
+                              move.rank === 1 ? 'bg-amber-500/10' : ''
+                            } ${isExpanded ? 'bg-white/10' : ''}`}
+                            title="Click to view tactical breakdown"
                           >
-                            Play
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                            <td className="py-2.5 px-2 font-bold opacity-80">
+                              #{move.rank}
+                            </td>
+                            <td className="py-2.5 px-2 font-bold">
+                              <div className="flex items-center gap-1.5">
+                                <span>{move.label}</span>
+                                <span className="text-[10px] opacity-70">
+                                  {isExpanded ? <ChevronUp className="w-3 h-3 inline text-amber-400" /> : <ChevronDown className="w-3 h-3 inline text-slate-400" />}
+                                </span>
+                              </div>
+                              <div className={`sm:hidden text-[9px] font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
+                                {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
+                                {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
+                                <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join('→')}</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-2 font-semibold">
+                              {(move.winProb * 100).toFixed(1)}%
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <span className={move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}>
+                                {move.equityLoss === 0 ? '0.000' : `-${(move.equityLoss * 100).toFixed(1)}%`}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-2">
+                              {renderGradeBadge(move.classification, move.badgeColor)}
+                            </td>
+                            <td className={`py-2.5 px-2 hidden sm:table-cell text-[10px] ${theme.cardTextMuted}`}>
+                              {move.freeTurn && <span className="text-emerald-500 font-bold mr-1.5">[Free Turn]</span>}
+                              {move.captures > 0 && <span className="text-amber-500 font-bold mr-1.5">[+{move.captures} Cap]</span>}
+                              <span className="opacity-60">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>
+                            </td>
+                            <td className="py-2.5 px-2 text-right" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                data-testid={`eval-play-pit-${move.pit}`}
+                                onClick={() => executeMove(move.pit, true)}
+                                disabled={gameState.isGameOver}
+                                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition ${
+                                  currentSkin === 'porcelain'
+                                    ? 'bg-white hover:bg-[#ded5c6] text-[#2c2723] border-[#cdc3b2]'
+                                    : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
+                                }`}
+                              >
+                                Play
+                              </button>
+                            </td>
+                          </tr>
+
+                          {/* Tactical Explanation Accordion Row */}
+                          {isExpanded && explanation && (
+                            <tr className={currentSkin === 'porcelain' ? 'bg-[#faf2e6]/90' : 'bg-black/30'}>
+                              <td colSpan={7} className="p-3 sm:p-4">
+                                <div className="flex flex-col gap-2.5 text-xs">
+                                  <div className="flex items-center gap-2 font-bold text-amber-400">
+                                    <Bot className="w-4 h-4" />
+                                    <span>Tactical Breakdown for {move.label} ({move.classification}):</span>
+                                  </div>
+                                  <p className="leading-relaxed font-sans text-xs sm:text-[13px] opacity-95">
+                                    {explanation.summary}
+                                  </p>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1 font-sans">
+                                    <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                                      <div className="text-[10px] font-bold text-rose-400 uppercase">Immediate Effect</div>
+                                      <div className="text-xs opacity-90 mt-0.5">{explanation.consequence}</div>
+                                    </div>
+                                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                      <div className="text-[10px] font-bold text-amber-400 uppercase">Opponent Response</div>
+                                      <div className="text-xs opacity-90 mt-0.5">{explanation.threat || "No immediate opponent threat; general positional shift."}</div>
+                                    </div>
+                                  </div>
+                                  {move.rank > 1 && (
+                                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 font-sans">
+                                      <div className="text-[10px] font-bold text-emerald-400 uppercase">Why {analysisResults[0]?.label || "Best Move"} is better</div>
+                                      <div className="text-xs opacity-90 mt-0.5">{explanation.recommendationComparison}</div>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
