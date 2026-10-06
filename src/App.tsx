@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   Play, Pause, RotateCcw, Award, Settings, BarChart3, 
-  Sparkles, Volume2, VolumeX, Cpu, Eye, 
+  Sparkles, Volume2, VolumeX, Eye, 
   ArrowRight, AlertTriangle, Zap, CheckCircle2, ShieldCheck, X,
-  ShieldAlert, HelpCircle, EyeOff, LayoutGrid, Smartphone
+  ShieldAlert, HelpCircle, EyeOff, LayoutGrid, Palette, Bot, User
 } from 'lucide-react';
 import {
   createInitialState,
@@ -20,6 +20,8 @@ import {
 } from './engine';
 import { runGNUPreflightSuite, DiagnosticResult } from './preflight-diagnostics';
 import { sounds } from './sound';
+import { SkinTheme, THEMES } from './theme';
+import { PebbleCluster } from './Pebble';
 
 export default function App() {
   const [stonesConfig, setStonesConfig] = useState(4);
@@ -27,6 +29,10 @@ export default function App() {
   const [gameState, setGameState] = useState<GameState>(() => createInitialState(4));
   const [searchDepth, setSearchDepth] = useState(5);
   
+  // Theme / Skin State
+  const [currentSkin, setCurrentSkin] = useState<SkinTheme>('walnut');
+  const theme = THEMES[currentSkin];
+
   // Game modes: 'pve', 'pvp', 'ai_vs_ai', 'sandbox'
   const [gameMode, setGameMode] = useState<string>('pve');
   const [humanPlayer, setHumanPlayer] = useState<number>(0); // 0 = P1 (South), 1 = P2 (North)
@@ -270,7 +276,7 @@ export default function App() {
     return pr.toFixed(2);
   };
 
-  // Helper for colorblind-accessible badges & icons
+  // Helper for accessible badges & icons
   const renderGradeBadge = (classification: string, badgeColor: string) => {
     let icon = <CheckCircle2 className="w-3 h-3 mr-1 inline" />;
     let customColor = badgeColor;
@@ -282,17 +288,17 @@ export default function App() {
     } else if (classification === 'Mistake') {
       icon = <AlertTriangle className="w-3 h-3 mr-1 inline" />;
       if (colorblindSafe) {
-        customColor = 'bg-orange-500/20 text-orange-300 border-orange-500/40';
+        customColor = 'bg-orange-500/20 text-orange-400 border-orange-500/40';
       }
     } else if (classification === 'Blunder') {
       icon = <ShieldAlert className="w-3 h-3 mr-1 inline" />;
       if (colorblindSafe) {
-        customColor = 'bg-fuchsia-600/25 text-fuchsia-300 border-fuchsia-600/40';
+        customColor = 'bg-fuchsia-600/25 text-fuchsia-400 border-fuchsia-600/40';
       }
     }
 
     return (
-      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border flex items-center shrink-0 ${customColor}`}>
+      <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border flex items-center shrink-0 ${customColor}`}>
         {icon}
         <span>{classification}</span>
       </span>
@@ -300,83 +306,133 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#080b12] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 pb-16 sm:pb-0">
+    <div className={`flex flex-col min-h-screen ${theme.appBg} ${theme.appText} transition-colors duration-300`}>
       
-      {/* Top Header & Brand Bar */}
-      <header className="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-2.5 sm:px-4 py-2">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      {/* Refined Modern Header */}
+      <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2.5 transition-colors`}>
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-fuchsia-600 p-[2px] shadow-md shadow-cyan-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-              </div>
+          {/* Brand Mark */}
+          <div className="flex items-center space-x-3">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-sm border ${
+              currentSkin === 'porcelain' 
+                ? 'bg-[#eae3d5] border-[#d8cfbe] text-[#342e29]' 
+                : currentSkin === 'walnut'
+                ? 'bg-[#2b1b12] border-[#4a2e1d] text-amber-300'
+                : 'bg-[#181a24] border-[#292d3b] text-sky-300'
+            }`}>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="8" cy="12" r="3.5" />
+                <circle cx="16" cy="12" r="3.5" />
+              </svg>
             </div>
             <div>
-              <div className="flex items-center space-x-1.5">
-                <h1 className="font-extrabold text-sm sm:text-base tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300">
-                  GNU MANCALA
+              <div className="flex items-center space-x-2">
+                <h1 className="font-extrabold text-base sm:text-lg tracking-tight">
+                  Mancala
                 </h1>
-                <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.2 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 hidden md:inline">
-                  2030s Neural Engine
+                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${
+                  currentSkin === 'porcelain'
+                    ? 'bg-[#eee7dc] text-[#5e5346] border-[#d8cfbe]'
+                    : currentSkin === 'walnut'
+                    ? 'bg-[#2a1a12] text-amber-300/90 border-[#4a2e1d]'
+                    : 'bg-[#151722] text-sky-300 border-[#2b3042]'
+                }`}>
+                  Tournament AI
                 </span>
               </div>
-              <p className="text-[10px] sm:text-xs text-slate-400 hidden xs:block">GNUbg & XG Tournament Mathematics for Kalah</p>
+              <p className={`text-[11px] ${theme.cardTextMuted} hidden xs:block`}>
+                {theme.tagline}
+              </p>
             </div>
           </div>
 
-          {/* Quick Engine Actions & Controls */}
-          <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
-            <button
-              onClick={() => setDiagnosticsOpen(true)}
-              data-testid="open-diagnostics-btn"
-              className="flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-indigo-950/80 border border-indigo-700/60 text-[11px] sm:text-xs font-semibold text-indigo-300 hover:bg-indigo-900/60 transition shadow-sm"
-              title="Open Pre-Flight Diagnostic Suite"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Pre-Flight [{diagResults.filter(r => r.status === 'PASS').length}/{diagResults.length || 11}]</span>
-            </button>
+          {/* Clean Segmented Controls & Theme Switcher */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+            
+            {/* Skin Selector Pill */}
+            <div className={`flex items-center rounded-xl p-0.5 border ${
+              currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/10'
+            }`}>
+              <button
+                onClick={() => setCurrentSkin('walnut')}
+                title="Warm Walnut (Artisanal Wood)"
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                  currentSkin === 'walnut' 
+                    ? 'bg-[#3b2316] text-amber-200 shadow-sm' 
+                    : `${theme.cardTextMuted} hover:opacity-100`
+                }`}
+              >
+                <span>Walnut</span>
+              </button>
 
-            <button
-              onClick={() => setColorblindSafe(!colorblindSafe)}
-              title={colorblindSafe ? "Colorblind Safe Palette Active" : "Enable Colorblind Safe Palette"}
-              className={`p-1.5 sm:p-2 rounded-lg border text-xs transition ${
-                colorblindSafe 
-                  ? 'bg-fuchsia-950/80 border-fuchsia-500/60 text-fuchsia-300' 
-                  : 'bg-slate-800/70 border-slate-700 text-slate-400'
-              }`}
-            >
-              <EyeOff className="w-3.5 h-3.5" />
-            </button>
+              <button
+                onClick={() => setCurrentSkin('porcelain')}
+                title="Nordic Clay (Minimal Ceramic)"
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                  currentSkin === 'porcelain' 
+                    ? 'bg-white text-[#2c2723] shadow-sm' 
+                    : `${theme.cardTextMuted} hover:opacity-100`
+                }`}
+              >
+                <span>Clay</span>
+              </button>
 
+              <button
+                onClick={() => setCurrentSkin('obsidian')}
+                title="Midnight Slate (Dark Obsidian)"
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1 transition ${
+                  currentSkin === 'obsidian' 
+                    ? 'bg-[#202330] text-sky-200 shadow-sm' 
+                    : `${theme.cardTextMuted} hover:opacity-100`
+                }`}
+              >
+                <span>Slate</span>
+              </button>
+            </div>
+
+            {/* Audio Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              title={soundEnabled ? "Mute sounds" : "Enable audio"}
-              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/70 border border-slate-700 hover:bg-slate-700/60 transition text-slate-300"
+              title={soundEnabled ? "Mute sound" : "Enable sound"}
+              className={`p-2 rounded-xl border transition ${
+                currentSkin === 'porcelain'
+                  ? 'bg-white/80 border-[#ded5c6] text-[#4a3e35] hover:bg-white'
+                  : 'bg-black/30 border-white/10 text-slate-300 hover:bg-white/5'
+              }`}
             >
-              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-cyan-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-50" />}
             </button>
 
+            {/* Tutor Mode Pill */}
             <button
               onClick={() => setTutorMode(!tutorMode)}
               data-testid="tutor-toggle"
-              className={`flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border text-[11px] sm:text-xs font-semibold transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition ${
                 tutorMode 
-                  ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm shadow-amber-500/20' 
-                  : 'bg-slate-800/60 border-slate-700 text-slate-400'
+                  ? currentSkin === 'porcelain'
+                    ? 'bg-[#faebd7] border-[#e2be9b] text-[#9c5a23]'
+                    : 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-sm'
+                  : currentSkin === 'porcelain'
+                    ? 'bg-white/80 border-[#ded5c6] text-[#7d7368]'
+                    : 'bg-black/30 border-white/10 text-slate-400'
               }`}
             >
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span className="hidden xs:inline">Tutor</span>
-              <span>{tutorMode ? 'Active' : 'Off'}</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">Coach</span>
             </button>
 
+            {/* New Game Button */}
             <button
               onClick={handleResetGame}
               data-testid="reset-game-btn"
-              className="flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-[11px] sm:text-xs font-medium text-slate-200 transition"
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-sm ${
+                currentSkin === 'porcelain'
+                  ? 'bg-[#2c2723] hover:bg-[#1a1714] text-white border-transparent'
+                  : 'bg-white/10 hover:bg-white/15 text-white border-white/15'
+              }`}
             >
-              <RotateCcw className="w-3 h-3 text-slate-400" />
+              <RotateCcw className="w-3.5 h-3.5" />
               <span>New</span>
             </button>
           </div>
@@ -384,220 +440,238 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto w-full p-2 sm:p-4 pb-16 lg:pb-4 flex-1 flex flex-col gap-3 sm:gap-5 overflow-x-hidden">
+      <main className="max-w-5xl mx-auto w-full p-2.5 sm:p-5 pb-20 lg:pb-8 flex-1 flex flex-col gap-3.5 sm:gap-5 overflow-x-hidden">
         
-        {/* Top Evaluation & Equity Gauge (GNU/XG Style) */}
+        {/* Modern Live Win Probability & Evaluation Card */}
         <section 
           data-testid="eval-gauge"
-          className="bg-slate-900/60 border border-slate-800 rounded-2xl p-2.5 sm:p-4 backdrop-blur-md shadow-lg relative overflow-hidden"
+          className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
         >
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
             
-            {/* Player 2 (North) Meta */}
-            <div className="flex items-center justify-between sm:justify-start space-x-2.5 w-full sm:w-auto">
-              <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${gameState.currentPlayer === 1 && !gameState.isGameOver ? 'bg-amber-400 ring-4 ring-amber-400/20 animate-pulse' : 'bg-slate-600'}`} />
+            {/* Player 2 (North / Top) */}
+            <div className="flex items-center justify-between sm:justify-start space-x-3 w-full sm:w-auto">
+              <div className="flex items-center space-x-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${
+                  gameState.currentPlayer === 1 && !gameState.isGameOver
+                    ? 'ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                    : 'bg-black/10 border-white/10 opacity-70'
+                }`}>
+                  <Bot className="w-4 h-4" />
+                </div>
                 <div>
-                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold flex items-center gap-1">
-                    Player 2 (North)
-                    {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] text-indigo-400 px-1 py-0.1 rounded bg-indigo-950/70 border border-indigo-700/30">GNU Engine</span>}
-                    {gameMode === 'pve' && humanPlayer === 1 && <span className="text-[9px] text-emerald-400 px-1 py-0.1 rounded bg-emerald-950/70 border border-emerald-700/30">You</span>}
+                  <div className={`text-[11px] font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
+                    <span>Player 2 (North)</span>
+                    {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-black/20 font-bold">Engine</span>}
                   </div>
-                  <div className="text-sm sm:text-base font-bold text-slate-200">
-                    {((1 - p1CurrentWinProb) * 100).toFixed(1)}% <span className="text-[10px] text-slate-400 font-normal">Win Equity</span>
+                  <div className="text-sm sm:text-base font-extrabold tracking-tight">
+                    {((1 - p1CurrentWinProb) * 100).toFixed(1)}% <span className={`text-[10px] font-normal ${theme.cardTextMuted}`}>chance</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* GNU Visual Win Bar */}
-            <div className="w-full flex-1 max-w-xl mx-auto flex flex-col gap-1">
-              <div className="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-mono">
-                <span className="text-cyan-400 font-semibold">P1 (South): {(p1CurrentWinProb * 100).toFixed(1)}%</span>
-                <span className="text-amber-400 font-semibold">P2 (North): {((1 - p1CurrentWinProb) * 100).toFixed(1)}%</span>
+            {/* Broadcast-Style Smooth Balance Bar */}
+            <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1.5">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span className={currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400'}>
+                  South: {(p1CurrentWinProb * 100).toFixed(1)}%
+                </span>
+                <span className={currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400'}>
+                  North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                </span>
               </div>
-              <div className="h-3.5 sm:h-4 bg-slate-950 rounded-full border border-slate-700/80 overflow-hidden flex shadow-inner relative">
+
+              {/* Silky Capsule Equity Meter */}
+              <div className={`h-3 sm:h-3.5 rounded-full border ${theme.barBg} overflow-hidden flex shadow-inner relative`}>
                 <div 
-                  className={`h-full transition-all duration-300 ease-out ${
+                  className={`h-full transition-all duration-500 ease-out ${
                     colorblindSafe 
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600' 
-                      : 'bg-gradient-to-r from-cyan-500 to-blue-600'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
+                      : theme.barP1
                   }`}
                   style={{ width: `${p1CurrentWinProb * 100}%` }}
                 />
                 <div 
-                  className={`h-full transition-all duration-300 ease-out ${
+                  className={`h-full transition-all duration-500 ease-out ${
                     colorblindSafe 
                       ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
-                      : 'bg-gradient-to-l from-amber-500 to-orange-600'
+                      : theme.barP2
                   }`}
                   style={{ width: `${(1 - p1CurrentWinProb) * 100}%` }}
                 />
-                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-white/50 shadow-sm" />
+                <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider} shadow-xs`} />
               </div>
-              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} (Blunders: {matchStats.p1Blunders})</span>
-                <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} (Blunders: {matchStats.p2Blunders})</span>
+
+              {/* Quality & PR Ratings */}
+              <div className={`flex justify-between text-[10px] font-mono ${theme.cardTextMuted}`}>
+                <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
+                <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
               </div>
             </div>
 
-            {/* Player 1 (South) Meta */}
-            <div className="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
+            {/* Player 1 (South / Bottom) */}
+            <div className="flex items-center justify-between sm:justify-end space-x-3 w-full sm:w-auto">
               <div className="text-left sm:text-right">
-                <div className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold flex items-center justify-start sm:justify-end gap-1">
-                  {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] text-emerald-400 px-1 py-0.1 rounded bg-emerald-950/70 border border-emerald-700/30">You</span>}
-                  {gameMode === 'pve' && humanPlayer === 1 && <span className="text-[9px] text-indigo-400 px-1 py-0.1 rounded bg-indigo-950/70 border border-indigo-700/30">GNU Engine</span>}
-                  Player 1 (South)
+                <div className={`text-[11px] font-semibold flex items-center justify-start sm:justify-end gap-1 ${theme.cardTextMuted}`}>
+                  {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-black/20 font-bold">You</span>}
+                  <span>Player 1 (South)</span>
                 </div>
-                <div className="text-sm sm:text-base font-bold text-slate-200">
-                  {(p1CurrentWinProb * 100).toFixed(1)}% <span className="text-[10px] text-slate-400 font-normal">Win Equity</span>
+                <div className="text-sm sm:text-base font-extrabold tracking-tight">
+                  {(p1CurrentWinProb * 100).toFixed(1)}% <span className={`text-[10px] font-normal ${theme.cardTextMuted}`}>chance</span>
                 </div>
               </div>
-              <div className={`w-3 h-3 rounded-full ${gameState.currentPlayer === 0 && !gameState.isGameOver ? 'bg-cyan-400 ring-4 ring-cyan-400/20 animate-pulse' : 'bg-slate-600'}`} />
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center border ${
+                gameState.currentPlayer === 0 && !gameState.isGameOver
+                  ? 'ring-2 ring-amber-500/60 bg-amber-500/20 border-amber-500 text-amber-300'
+                  : 'bg-black/10 border-white/10 opacity-70'
+              }`}>
+                <User className="w-4 h-4" />
+              </div>
             </div>
 
           </div>
         </section>
 
-        {/* Mobile Tab Switcher (Thumb Zone Friendly) */}
-        <div className="flex lg:hidden bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+        {/* Mobile Segmented Navigation Tabs */}
+        <div className={`flex lg:hidden rounded-2xl p-1 gap-1 border ${
+          currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/40 border-white/10'
+        }`}>
           <button
             onClick={() => setMobileTab('board')}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'board' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
+              mobileTab === 'board' ? theme.tabActiveBg : theme.tabInactiveText
             }`}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Board View</span>
+            <span>Board</span>
           </button>
           <button
             onClick={() => setMobileTab('analysis')}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'analysis' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
+              mobileTab === 'analysis' ? theme.tabActiveBg : theme.tabInactiveText
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            <span>Analysis Table</span>
+            <span>Analysis</span>
           </button>
           <button
             onClick={() => setMobileTab('settings')}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition ${
-              mobileTab === 'settings' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+            className={`flex-1 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition ${
+              mobileTab === 'settings' ? theme.tabActiveBg : theme.tabInactiveText
             }`}
           >
             <Settings className="w-3.5 h-3.5" />
-            <span>Controls</span>
+            <span>Settings</span>
           </button>
         </div>
 
-        {/* Interactive Mancala Board */}
-        <section className={`bg-gradient-to-b from-[#121724] to-[#0a0d16] border border-slate-800 rounded-2xl sm:rounded-3xl p-1.5 sm:p-5 shadow-2xl relative ${mobileTab !== 'board' ? 'hidden lg:block' : ''}`}>
+        {/* Tactile Mancala Board Section */}
+        <section className={`${mobileTab !== 'board' ? 'hidden lg:block' : ''}`}>
           
-          {/* Status Alert Banner, Conservation Badge, Free Turn Indicator */}
-          <div className="mb-2 sm:mb-3 flex flex-wrap items-center justify-between gap-1.5 min-h-[30px] px-1">
-            <div className="flex items-center flex-wrap gap-1.5">
+          {/* Status Ribbon & Indicators */}
+          <div className="mb-2 sm:mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
+            <div className="flex items-center flex-wrap gap-2">
               <span 
                 data-testid="turn-indicator"
-                className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-semibold border ${
-                  gameState.currentPlayer === 0 
-                    ? 'bg-cyan-950/90 text-cyan-300 border-cyan-600/40' 
-                    : 'bg-amber-950/90 text-amber-300 border-amber-600/40'
+                className={`px-3 py-1 rounded-full text-xs font-bold border shadow-xs transition-colors ${
+                  gameState.currentPlayer === 0 ? theme.turnP1Bg : theme.turnP2Bg
                 }`}
               >
-                Turn: {gameState.currentPlayer === 0 ? "Player 1 (South)" : "Player 2 (North)"}
+                {gameState.currentPlayer === 0 ? "Player 1's Turn" : "Player 2's Turn"}
               </span>
 
-              {/* Stone Conservation Invariant HUD */}
+              {/* Strict Conservation Invariant */}
               <span 
                 data-testid="total-stones"
-                className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-mono font-semibold bg-slate-900 border border-slate-700 text-slate-300"
+                className={`px-2.5 py-1 rounded-full text-xs font-mono font-semibold border ${
+                  currentSkin === 'porcelain' 
+                    ? 'bg-[#ded5c6] text-[#342e29] border-[#cfc4b4]' 
+                    : 'bg-black/30 border-white/10 text-slate-300'
+                }`}
                 title="Strict zero-leak stone conservation invariant"
               >
                 Stones: {totalBoardStones}
               </span>
 
               {gameState.moveHistory.length > 0 && gameState.moveHistory[gameState.moveHistory.length - 1].freeTurn && (
-                <span className="flex items-center space-x-1 text-[11px] sm:text-xs font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-700/40 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md animate-bounce">
+                <span className="flex items-center space-x-1 text-xs font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-600/50 px-2.5 py-1 rounded-full animate-bounce">
                   <Zap className="w-3 h-3 text-emerald-300" />
                   <span>Free Turn!</span>
                 </span>
               )}
 
               {hoverPreview && (
-                <span className="text-[10px] sm:text-[11px] text-slate-400 flex items-center space-x-1.5">
-                  <Eye className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span className={`text-[11px] flex items-center space-x-1.5 ${theme.cardTextMuted}`}>
+                  <Eye className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span className="truncate">
-                    Landing: {hoverPreview.lastLanding === P1_STORE ? 'P1 Store (Bonus Turn!)' : hoverPreview.lastLanding === P2_STORE ? 'P2 Store' : `Pit ${hoverPreview.lastLanding + 1}`}
+                    Landing: {hoverPreview.lastLanding === P1_STORE ? 'Your Store (Bonus Turn!)' : hoverPreview.lastLanding === P2_STORE ? 'Opponent Store' : `Pit ${hoverPreview.lastLanding + 1}`}
                     {hoverPreview.capturedStones > 0 && ` • Captures +${hoverPreview.capturedStones}!`}
                   </span>
                 </span>
               )}
             </div>
 
-            {/* Game Over Modal / Ribbon */}
+            {/* Game Over Banner */}
             {gameState.isGameOver && (
               <div 
                 data-testid="game-over-banner"
-                className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-lg bg-indigo-900/70 border border-indigo-500/50 text-indigo-200 text-xs font-bold animate-pulse"
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold shadow-md animate-pulse"
               >
-                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <Award className="w-3.5 h-3.5" />
                 <span>
                   {gameState.winner === -1 
-                    ? "Draw!" 
+                    ? "Game Ended in a Draw!" 
                     : `Player ${gameState.winner! + 1} Wins (${gameState.board[P1_STORE]} - ${gameState.board[P2_STORE]})!`}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Obsidian & Wood Kalah Board */}
-          <div className="relative bg-[#0b101c] border-2 border-slate-700/60 rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
+          {/* Carved Physical Board Frame */}
+          <div className={`relative ${theme.boardBg} border-2 ${theme.boardBorder} rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 shadow-2xl transition-colors duration-300`}>
+            
+            {/* Subtle Carved Wood Inlay Trim */}
+            <div className={`absolute inset-1 sm:inset-2 border ${theme.boardTrim} rounded-xl sm:rounded-2xl pointer-events-none`} />
 
-            <div className="relative flex items-center justify-between gap-1 sm:gap-3">
+            <div className="relative flex items-center justify-between gap-1.5 sm:gap-3">
               
-              {/* Left Kalah Store: Player 2 (North) */}
+              {/* Left Store: Player 2 (North) */}
               <div 
                 data-testid="store-13"
-                title="Player 2 Kalah Store (Non-playable scoring bin)"
-                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-xl sm:rounded-3xl border-2 flex flex-col items-center justify-between p-1 sm:p-3 shadow-inner relative select-none cursor-default shrink-0 transition-all duration-200 ${
+                title="Player 2 Kalah Store"
+                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1.5 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
                   hoverPreview?.lastLanding === P2_STORE 
-                    ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                    ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P2_STORE)
-                      ? 'bg-slate-800/80 border-amber-500/60'
-                      : 'bg-slate-900/80 border-amber-600/30'
+                      ? theme.pathGlow
+                      : ''
                 }`}
               >
-                <div className="text-[8px] sm:text-xs font-mono font-bold uppercase text-amber-400/80 tracking-wider text-center">
+                <div className={`text-[9px] sm:text-xs font-bold uppercase tracking-wider ${theme.storeP2Text}`}>
                   P2
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-0.5 max-h-36 sm:max-h-48 overflow-hidden p-0.5">
-                  {Array.from({ length: Math.min(18, gameState.board[P2_STORE]) }).map((_, i) => (
-                    <span 
-                      key={i} 
-                      className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-gradient-to-tr from-amber-600 to-amber-200 shadow-sm shadow-amber-400/30"
-                    />
-                  ))}
-                  {gameState.board[P2_STORE] > 18 && (
-                    <span className="text-[8px] text-amber-400/70 font-mono font-bold">
-                      +{gameState.board[P2_STORE] - 18}
-                    </span>
-                  )}
+
+                {/* Natural Store Pebble Mound */}
+                <div className="flex-1 flex items-center justify-center w-full px-0.5">
+                  <PebbleCluster count={gameState.board[P2_STORE]} theme={currentSkin} player="p2" maxVisible={14} />
                 </div>
-                <div className="text-base sm:text-2xl font-extrabold font-mono text-amber-300">
+
+                <div className={`text-base sm:text-2xl font-black font-mono ${theme.storeP2Text}`}>
                   {gameState.board[P2_STORE]}
                 </div>
+
                 {gameMode === 'sandbox' && (
                   <div className="flex gap-1 mt-1">
                     <button 
                       onClick={() => handleSandboxPitAdjust(P2_STORE, -1)}
-                      className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white"
+                      className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white font-bold"
                     >
                       -
                     </button>
                     <button 
                       onClick={() => handleSandboxPitAdjust(P2_STORE, 1)}
-                      className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white"
+                      className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white font-bold"
                     >
                       +
                     </button>
@@ -605,10 +679,10 @@ export default function App() {
                 )}
               </div>
 
-              {/* Center Pits (6 Pits on North, 6 Pits on South) */}
-              <div className="flex-1 flex flex-col gap-1.5 sm:gap-4 min-w-0">
+              {/* Center Playable Pits */}
+              <div className="flex-1 flex flex-col gap-2 sm:gap-3.5 min-w-0">
                 
-                {/* North Player Pits (Indices 12 down to 7) */}
+                {/* North Row (Indices 12 down to 7) */}
                 <div className="grid grid-cols-6 gap-1 sm:gap-2.5">
                   {[12, 11, 10, 9, 8, 7].map((pitIndex) => {
                     const stones = gameState.board[pitIndex];
@@ -627,17 +701,18 @@ export default function App() {
                         }}
                         onMouseEnter={() => setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
-                        className={`relative flex flex-col items-center justify-between p-1 sm:p-2.5 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation ${
-                          isLegal ? 'cursor-pointer hover:border-amber-400 hover:scale-[1.03] active:scale-95' : 'cursor-default opacity-85'
+                        className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
+                          isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
                           isLanding 
-                            ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                            ? theme.landingGlow 
                             : isHighlightedPath 
-                              ? 'bg-slate-800/80 border-cyan-500/60' 
-                              : 'bg-slate-900/90 border border-slate-800'
+                              ? theme.pathGlow 
+                              : ''
                         } h-24 sm:h-36`}
                       >
-                        <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
+                        {/* Pit Label & Subtle Rank */}
+                        <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
                           <span>P{13 - pitIndex}</span>
                           {evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
@@ -647,25 +722,13 @@ export default function App() {
                           )}
                         </div>
 
-                        {/* High-Stone Density Overflow Safe Graphics */}
-                        <div className="flex flex-wrap items-center justify-center gap-0.5 my-auto max-h-12 overflow-hidden">
-                          {Array.from({ length: Math.min(8, stones) }).map((_, i) => (
-                            <div 
-                              key={i} 
-                              className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 shadow-xs shadow-amber-300/40"
-                            />
-                          ))}
-                          {stones > 8 && (
-                            <span className="text-[8px] text-amber-300/80 font-mono font-bold leading-none">
-                              +{stones - 8}
-                            </span>
-                          )}
-                        </div>
+                        {/* Tactile Pebble Mound */}
+                        <PebbleCluster count={stones} theme={currentSkin} player="p2" />
 
-                        {/* Numeric Count Chip */}
+                        {/* Etched Count Numerals */}
                         <div 
                           data-testid={`pit-count-${pitIndex}`}
-                          className="text-xs sm:text-lg font-mono font-extrabold text-amber-200 bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800/80"
+                          className={`text-xs sm:text-base font-mono font-extrabold px-1.5 py-0.5 rounded-lg border ${theme.pitCountBg} ${theme.pitCountText}`}
                         >
                           {stones}
                         </div>
@@ -693,7 +756,7 @@ export default function App() {
                   })}
                 </div>
 
-                {/* South Player Pits (Indices 0 to 5) */}
+                {/* South Row (Indices 0 to 5) */}
                 <div className="grid grid-cols-6 gap-1 sm:gap-2.5">
                   {[0, 1, 2, 3, 4, 5].map((pitIndex) => {
                     const stones = gameState.board[pitIndex];
@@ -712,17 +775,17 @@ export default function App() {
                         }}
                         onMouseEnter={() => setHoveredPit(pitIndex)}
                         onMouseLeave={() => setHoveredPit(null)}
-                        className={`relative flex flex-col items-center justify-between p-1 sm:p-2.5 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation ${
-                          isLegal ? 'cursor-pointer hover:border-cyan-400 hover:scale-[1.03] active:scale-95' : 'cursor-default opacity-85'
+                        className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none min-h-[50px] min-w-[44px] touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
+                          isLegal ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95` : 'cursor-default opacity-85'
                         } ${
                           isLanding 
-                            ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                            ? theme.landingGlow 
                             : isHighlightedPath 
-                              ? 'bg-slate-800/80 border-cyan-500/60' 
-                              : 'bg-slate-900/90 border border-slate-800'
+                              ? theme.pathGlow 
+                              : ''
                         } h-24 sm:h-36`}
                       >
-                        <div className="flex items-center justify-between w-full text-[8px] sm:text-[10px] text-slate-500 font-mono">
+                        <div className={`flex items-center justify-between w-full text-[8px] sm:text-[10px] font-mono ${theme.cardTextMuted}`}>
                           <span>P{pitIndex + 1}</span>
                           {evalData && (
                             <span className={`px-1 py-0.2 rounded text-[7px] sm:text-[9px] font-bold border ${evalData.badgeColor}`}>
@@ -732,25 +795,13 @@ export default function App() {
                           )}
                         </div>
 
-                        {/* High-Stone Density Overflow Safe Graphics */}
-                        <div className="flex flex-wrap items-center justify-center gap-0.5 my-auto max-h-12 overflow-hidden">
-                          {Array.from({ length: Math.min(8, stones) }).map((_, i) => (
-                            <div 
-                              key={i} 
-                              className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-gradient-to-tr from-cyan-400 to-sky-200 shadow-xs shadow-cyan-300/40"
-                            />
-                          ))}
-                          {stones > 8 && (
-                            <span className="text-[8px] text-cyan-300/80 font-mono font-bold leading-none">
-                              +{stones - 8}
-                            </span>
-                          )}
-                        </div>
+                        {/* Tactile Pebble Mound */}
+                        <PebbleCluster count={stones} theme={currentSkin} player="p1" />
 
-                        {/* Numeric Count Chip */}
+                        {/* Etched Count Numerals */}
                         <div 
                           data-testid={`pit-count-${pitIndex}`}
-                          className="text-xs sm:text-lg font-mono font-extrabold text-cyan-200 bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800/80"
+                          className={`text-xs sm:text-base font-mono font-extrabold px-1.5 py-0.5 rounded-lg border ${theme.pitCountBg} ${theme.pitCountText}`}
                         >
                           {stones}
                         </div>
@@ -780,48 +831,42 @@ export default function App() {
 
               </div>
 
-              {/* Right Kalah Store: Player 1 (South) */}
+              {/* Right Store: Player 1 (South) */}
               <div 
                 data-testid="store-6"
-                title="Player 1 Kalah Store (Non-playable scoring bin)"
-                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-xl sm:rounded-3xl border-2 flex flex-col items-center justify-between p-1 sm:p-3 shadow-inner relative select-none cursor-default shrink-0 transition-all duration-200 ${
+                title="Player 1 Kalah Store"
+                className={`w-11 sm:w-24 h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1.5 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
                   hoverPreview?.lastLanding === P1_STORE 
-                    ? 'ring-2 ring-emerald-400 bg-emerald-950/40 border-emerald-500' 
+                    ? theme.landingGlow 
                     : hoverPreview?.path?.includes(P1_STORE)
-                      ? 'bg-slate-800/80 border-cyan-500/60'
-                      : 'bg-slate-900/80 border-cyan-600/30'
+                      ? theme.pathGlow
+                      : ''
                 }`}
               >
-                <div className="text-[8px] sm:text-xs font-mono font-bold uppercase text-cyan-400/80 tracking-wider text-center">
+                <div className={`text-[9px] sm:text-xs font-bold uppercase tracking-wider ${theme.storeP1Text}`}>
                   P1
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-0.5 max-h-36 sm:max-h-48 overflow-hidden p-0.5">
-                  {Array.from({ length: Math.min(18, gameState.board[P1_STORE]) }).map((_, i) => (
-                    <span 
-                      key={i} 
-                      className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-200 shadow-sm shadow-cyan-400/30"
-                    />
-                  ))}
-                  {gameState.board[P1_STORE] > 18 && (
-                    <span className="text-[8px] text-cyan-400/70 font-mono font-bold">
-                      +{gameState.board[P1_STORE] - 18}
-                    </span>
-                  )}
+
+                {/* Natural Store Pebble Mound */}
+                <div className="flex-1 flex items-center justify-center w-full px-0.5">
+                  <PebbleCluster count={gameState.board[P1_STORE]} theme={currentSkin} player="p1" maxVisible={14} />
                 </div>
-                <div className="text-base sm:text-2xl font-extrabold font-mono text-cyan-300">
+
+                <div className={`text-base sm:text-2xl font-black font-mono ${theme.storeP1Text}`}>
                   {gameState.board[P1_STORE]}
                 </div>
+
                 {gameMode === 'sandbox' && (
                   <div className="flex gap-1 mt-1">
                     <button 
                       onClick={() => handleSandboxPitAdjust(P1_STORE, -1)}
-                      className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white"
+                      className="w-4 h-4 bg-rose-600 rounded text-xs flex items-center justify-center text-white font-bold"
                     >
                       -
                     </button>
                     <button 
                       onClick={() => handleSandboxPitAdjust(P1_STORE, 1)}
-                      className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white"
+                      className="w-4 h-4 bg-emerald-600 rounded text-xs flex items-center justify-center text-white font-bold"
                     >
                       +
                     </button>
@@ -831,30 +876,37 @@ export default function App() {
 
             </div>
 
-            {/* Sowing direction indicator watermark */}
-            <div className="mt-1.5 sm:mt-2.5 flex items-center justify-center gap-1.5 text-[8px] sm:text-[10px] uppercase font-mono tracking-widest text-slate-500">
+            {/* Sowing Flow Direction */}
+            <div className={`mt-2 flex items-center justify-center gap-1.5 text-[9px] sm:text-[10px] uppercase font-mono tracking-widest ${theme.cardTextMuted}`}>
               <span>Counter-Clockwise Flow</span>
-              <ArrowRight className="w-3 h-3 text-cyan-500" />
+              <ArrowRight className="w-3 h-3 opacity-60" />
             </div>
           </div>
         </section>
 
-        {/* Tutor Warning Dialog / Modal Overlay */}
+        {/* Coach Suggestion Card (Tutor Mode) */}
         {tutorWarning && (
           <div 
             data-testid="tutor-modal"
-            className="p-3.5 bg-amber-950/85 border-2 border-amber-500/70 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xl backdrop-blur-md animate-in fade-in"
+            className={`p-3.5 sm:p-4 rounded-2xl border-2 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl backdrop-blur-md animate-in fade-in ${
+              currentSkin === 'porcelain'
+                ? 'bg-[#fff5ea] border-[#f0c08a] text-[#5c3a1a]'
+                : 'bg-amber-950/80 border-amber-500/70 text-amber-200'
+            }`}
           >
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-amber-500/20 rounded-xl text-amber-400">
-                <AlertTriangle className="w-5 h-5" />
+                <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-amber-200">
-                  GNU Tutor Alert: {tutorWarning.eval.classification}!
+                <h4 className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                  <span>Coach Recommendation</span>
+                  <span className="text-[10px] px-2 py-0.2 rounded-full bg-amber-500/20 border border-amber-500/40">
+                    {tutorWarning.eval.classification}
+                  </span>
                 </h4>
-                <p className="text-[11px] sm:text-xs text-amber-300/80">
-                  Playing Pit {tutorWarning.pit + 1} sacrifices <span className="font-bold underline">{(tutorWarning.eval.equityLoss * 100).toFixed(1)}%</span> win probability compared to optimal ({tutorWarning.bestMove.label}).
+                <p className="text-xs opacity-90 mt-0.5">
+                  Pit {tutorWarning.pit + 1} sacrifices <strong className="underline">{(tutorWarning.eval.equityLoss * 100).toFixed(1)}%</strong> win chance compared to recommended <strong>{tutorWarning.bestMove.label}</strong>.
                 </p>
               </div>
             </div>
@@ -862,14 +914,18 @@ export default function App() {
               <button
                 data-testid="tutor-reconsider"
                 onClick={() => setTutorWarning(null)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition"
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  currentSkin === 'porcelain'
+                    ? 'bg-[#ded5c6] text-[#342e29] hover:bg-[#cfc4b4]'
+                    : 'bg-white/10 text-slate-200 hover:bg-white/20'
+                }`}
               >
                 Reconsider
               </button>
               <button
                 data-testid="tutor-confirm"
                 onClick={() => executeMove(tutorWarning.pit, true)}
-                className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-md transition"
+                className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md transition"
               >
                 Confirm Move
               </button>
@@ -877,56 +933,59 @@ export default function App() {
           </div>
         )}
 
-        {/* Bottom Section: GNU Analysis Engine Table & Configuration Cockpit */}
-        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5 ${mobileTab === 'board' ? 'hidden lg:grid' : ''}`}>
+        {/* Bottom Section: Analysis Table & Settings */}
+        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-5 ${mobileTab === 'board' ? 'hidden lg:grid' : ''}`}>
           
-          {/* Engine Move Rankings Table (GNU/XG Style) */}
-          <div className={`lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col shadow-xl overflow-x-auto ${mobileTab === 'settings' ? 'hidden lg:flex' : ''}`}>
-            <div className="flex items-center justify-between pb-2.5 border-b border-slate-800">
+          {/* Candidate Analysis Table */}
+          <div className={`lg:col-span-2 ${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col shadow-lg overflow-x-auto ${mobileTab === 'settings' ? 'hidden lg:flex' : ''}`}>
+            
+            <div className={`flex items-center justify-between pb-3 border-b ${theme.cardBorder}`}>
               <div className="flex items-center space-x-2">
-                <BarChart3 className="w-4 h-4 text-cyan-400" />
-                <h3 className="font-bold text-xs sm:text-sm tracking-wide text-slate-200">
-                  GNU Real-Time Candidate Evaluations
+                <BarChart3 className="w-4 h-4 opacity-70" />
+                <h3 className="font-bold text-xs sm:text-sm tracking-wide">
+                  Candidate Move Evaluations
                 </h3>
               </div>
-              <span className="text-[10px] sm:text-[11px] font-mono text-slate-400">
-                Lookahead: {searchDepth} plies {isAnalyzing ? '(Calculating...)' : ''}
+              <span className={`text-[11px] font-mono ${theme.cardTextMuted}`}>
+                Lookahead: {searchDepth} plies {isAnalyzing ? '(Thinking...)' : ''}
               </span>
             </div>
 
-            {/* Session Performance Rating & Blunders Banner */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-slate-950/70 rounded-xl border border-slate-800 text-[11px] font-mono mt-2">
+            {/* Session PR Banner */}
+            <div className={`flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl border text-[11px] font-mono mt-3 mb-1 ${
+              currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
+            }`}>
               <div className="flex items-center space-x-2">
-                <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="text-slate-300 font-semibold">Session PR:</span>
-                <span className="text-cyan-300 font-bold">P1: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-amber-300 font-bold">P2: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span>
+                <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="font-semibold">Session Rating:</span>
+                <span className="font-bold text-amber-500">P1: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}</span>
+                <span className="opacity-40">•</span>
+                <span className="font-bold text-emerald-500">P2: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span>
               </div>
-              <div className="text-[10px] text-slate-400">
-                Blunders: <span className="text-rose-400 font-bold">P1({matchStats.p1Blunders})</span> / <span className="text-amber-400 font-bold">P2({matchStats.p2Blunders})</span> • Moves: {matchStats.p1Moves + matchStats.p2Moves}
+              <div className={`text-[10px] ${theme.cardTextMuted}`}>
+                Blunders: P1({matchStats.p1Blunders}) / P2({matchStats.p2Blunders})
               </div>
             </div>
 
-            {/* Candidate Moves Table */}
+            {/* Candidates Table */}
             <div className="overflow-x-auto mt-2">
-              <table className="w-full text-left text-xs min-w-[480px]">
+              <table className="w-full text-left text-xs min-w-[460px]">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-mono uppercase text-[9px] sm:text-[10px]">
-                    <th className="py-2 px-1.5">Rank</th>
-                    <th className="py-2 px-1.5">Pit Action</th>
-                    <th className="py-2 px-1.5">Win %</th>
-                    <th className="py-2 px-1.5">Equity Diff</th>
-                    <th className="py-2 px-1.5">Error Grade</th>
-                    <th className="py-2 px-1.5 hidden sm:table-cell">Bonus / PV Lookahead</th>
-                    <th className="py-2 px-1.5 text-right">Action</th>
+                  <tr className={`border-b ${theme.cardBorder} ${theme.cardTextMuted} font-mono uppercase text-[10px]`}>
+                    <th className="py-2.5 px-2">Rank</th>
+                    <th className="py-2.5 px-2">Pit Action</th>
+                    <th className="py-2.5 px-2">Win %</th>
+                    <th className="py-2.5 px-2">Equity Diff</th>
+                    <th className="py-2.5 px-2">Grade</th>
+                    <th className="py-2.5 px-2 hidden sm:table-cell">Bonus / PV Lookahead</th>
+                    <th className="py-2.5 px-2 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-white/5 font-mono">
                   {analysisResults.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-6 text-center text-slate-500">
-                        {gameState.isGameOver ? "Match completed. No moves available." : "Calculating optimal branches..."}
+                      <td colSpan={7} className={`py-6 text-center ${theme.cardTextMuted}`}>
+                        {gameState.isGameOver ? "Match completed. No moves available." : "Calculating optimal lines..."}
                       </td>
                     </tr>
                   ) : (
@@ -934,43 +993,45 @@ export default function App() {
                       <tr 
                         key={move.pit}
                         data-testid={idx === 0 ? "eval-row-0" : idx === analysisResults.length - 1 ? "eval-row-worst" : undefined}
-                        className={`hover:bg-slate-800/40 transition ${move.rank === 1 ? 'bg-cyan-950/20' : ''}`}
+                        className={`hover:bg-white/5 transition ${move.rank === 1 ? 'bg-amber-500/10' : ''}`}
                       >
-                        <td className="py-2 px-1.5 font-bold text-slate-300">
+                        <td className="py-2.5 px-2 font-bold opacity-80">
                           #{move.rank}
                         </td>
-                        <td className="py-2 px-1.5 font-bold text-cyan-300">
+                        <td className="py-2.5 px-2 font-bold">
                           <div>{move.label}</div>
-                          <div className="sm:hidden text-[9px] font-normal text-slate-400 mt-0.5 flex flex-wrap gap-1 items-center">
-                            {move.freeTurn && <span className="text-emerald-400 font-bold">[Free Turn]</span>}
-                            {move.captures > 0 && <span className="text-amber-400 font-bold">[+{move.captures} Cap]</span>}
-                            <span className="text-slate-500">{move.pv.map(p => `P${p+1}`).join('→')}</span>
+                          <div className={`sm:hidden text-[9px] font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
+                            {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
+                            {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
+                            <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join('→')}</span>
                           </div>
                         </td>
-                        <td className="py-2 px-1.5">
-                          <span className="font-semibold text-slate-100">
-                            {(move.winProb * 100).toFixed(1)}%
-                          </span>
+                        <td className="py-2.5 px-2 font-semibold">
+                          {(move.winProb * 100).toFixed(1)}%
                         </td>
-                        <td className="py-2 px-1.5">
-                          <span className={move.equityLoss === 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                        <td className="py-2.5 px-2">
+                          <span className={move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}>
                             {move.equityLoss === 0 ? '0.000' : `-${(move.equityLoss * 100).toFixed(1)}%`}
                           </span>
                         </td>
-                        <td className="py-2 px-1.5">
+                        <td className="py-2.5 px-2">
                           {renderGradeBadge(move.classification, move.badgeColor)}
                         </td>
-                        <td className="py-2 px-1.5 text-slate-400 hidden sm:table-cell text-[10px]">
-                          {move.freeTurn && <span className="text-emerald-400 font-bold mr-1">[Free Turn]</span>}
-                          {move.captures > 0 && <span className="text-amber-400 font-bold mr-1">[+{move.captures} Cap]</span>}
-                          <span className="text-slate-500">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>
+                        <td className={`py-2.5 px-2 hidden sm:table-cell text-[10px] ${theme.cardTextMuted}`}>
+                          {move.freeTurn && <span className="text-emerald-500 font-bold mr-1.5">[Free Turn]</span>}
+                          {move.captures > 0 && <span className="text-amber-500 font-bold mr-1.5">[+{move.captures} Cap]</span>}
+                          <span className="opacity-60">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>
                         </td>
-                        <td className="py-2 px-1.5 text-right">
+                        <td className="py-2.5 px-2 text-right">
                           <button
                             data-testid={`eval-play-pit-${move.pit}`}
                             onClick={() => executeMove(move.pit, true)}
                             disabled={gameState.isGameOver}
-                            className="px-2 py-1 bg-slate-800 hover:bg-cyan-600 hover:text-white rounded border border-slate-700 text-[10px] text-slate-300 transition"
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition ${
+                              currentSkin === 'porcelain'
+                                ? 'bg-white hover:bg-[#ded5c6] text-[#2c2723] border-[#cdc3b2]'
+                                : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
+                            }`}
                           >
                             Play
                           </button>
@@ -983,22 +1044,23 @@ export default function App() {
             </div>
           </div>
 
-          {/* Configuration and Mode Control Drawer */}
-          <div className={`bg-slate-900/60 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col gap-3.5 shadow-xl ${mobileTab === 'analysis' ? 'hidden lg:flex' : ''}`}>
-            <div className="flex items-center space-x-2 pb-2 border-b border-slate-800">
-              <Settings className="w-4 h-4 text-cyan-400" />
-              <h3 className="font-bold text-xs sm:text-sm text-slate-200">Tournament Controls & AI Settings</h3>
+          {/* Tournament Controls & Settings Drawer */}
+          <div className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col gap-4 shadow-lg ${mobileTab === 'analysis' ? 'hidden lg:flex' : ''}`}>
+            
+            <div className={`flex items-center space-x-2 pb-3 border-b ${theme.cardBorder}`}>
+              <Settings className="w-4 h-4 opacity-70" />
+              <h3 className="font-bold text-xs sm:text-sm">Game Settings & Controls</h3>
             </div>
 
-            {/* Game Mode Selector */}
-            <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-slate-400">Game Mode</label>
+            {/* Game Mode */}
+            <div className="flex flex-col gap-1.5">
+              <label className={`text-[11px] font-semibold ${theme.cardTextMuted}`}>Game Mode</label>
               <div className="grid grid-cols-2 gap-1.5 text-xs">
                 {[
-                  { id: 'pve', label: 'vs GNU Engine' },
-                  { id: 'ai_vs_ai', label: 'AI vs AI Duel' },
+                  { id: 'pve', label: 'vs Engine' },
+                  { id: 'ai_vs_ai', label: 'AI Duel' },
                   { id: 'pvp', label: 'Pass & Play' },
-                  { id: 'sandbox', label: 'Position Sandbox' }
+                  { id: 'sandbox', label: 'Sandbox' }
                 ].map(m => (
                   <button
                     key={m.id}
@@ -1007,10 +1069,12 @@ export default function App() {
                       setGameMode(m.id);
                       setIsAiRunning(false);
                     }}
-                    className={`p-2 rounded-lg border font-medium text-left transition text-[11px] ${
+                    className={`p-2 rounded-xl border font-semibold text-left transition text-[11px] ${
                       gameMode === m.id
-                        ? 'bg-cyan-600/20 border-cyan-500 text-cyan-300'
-                        : 'bg-slate-800/40 border-slate-700/80 text-slate-400 hover:bg-slate-800'
+                        ? currentSkin === 'porcelain'
+                          ? 'bg-[#2c2723] text-white border-transparent'
+                          : 'bg-white/20 border-white/30 text-white'
+                        : `${theme.cardTextMuted} hover:bg-white/5 border-transparent`
                     }`}
                   >
                     {m.label}
@@ -1019,27 +1083,29 @@ export default function App() {
               </div>
             </div>
 
-            {/* PvE Player Selection */}
+            {/* PvE Player Side */}
             {gameMode === 'pve' && (
-              <div className="flex items-center justify-between p-2 bg-slate-950/60 rounded-xl border border-slate-800 text-[11px]">
-                <span className="text-slate-300">Play As:</span>
+              <div className={`flex items-center justify-between p-2.5 rounded-xl border text-[11px] ${
+                currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
+              }`}>
+                <span className="font-semibold">Your Side:</span>
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => setHumanPlayer(0)}
-                    className={`px-2 py-0.5 rounded border text-[11px] font-semibold transition ${
+                    className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition ${
                       humanPlayer === 0
-                        ? 'bg-cyan-600/30 border-cyan-500 text-cyan-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-400'
+                        ? 'bg-amber-600 text-white border-transparent'
+                        : `${theme.cardTextMuted} hover:opacity-100 border-transparent`
                     }`}
                   >
                     South (P1)
                   </button>
                   <button
                     onClick={() => setHumanPlayer(1)}
-                    className={`px-2 py-0.5 rounded border text-[11px] font-semibold transition ${
+                    className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition ${
                       humanPlayer === 1
-                        ? 'bg-amber-600/30 border-amber-500 text-amber-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-400'
+                        ? 'bg-emerald-600 text-white border-transparent'
+                        : `${theme.cardTextMuted} hover:opacity-100 border-transparent`
                     }`}
                   >
                     North (P2)
@@ -1048,30 +1114,30 @@ export default function App() {
               </div>
             )}
 
-            {/* AI vs AI Controls */}
+            {/* AI vs AI Automation */}
             {gameMode === 'ai_vs_ai' && (
-              <div className="p-2.5 bg-slate-950/60 rounded-xl border border-slate-800 flex items-center justify-between">
-                <span className="text-[11px] font-medium text-slate-300">Self-Play Automation:</span>
+              <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
+                currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
+              }`}>
+                <span className="text-[11px] font-semibold">Self-Play:</span>
                 <button
                   data-testid="ai-duel-toggle"
                   onClick={() => setIsAiRunning(!isAiRunning)}
-                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                    isAiRunning 
-                      ? 'bg-rose-600 hover:bg-rose-500 text-white' 
-                      : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl text-xs font-bold transition shadow-sm ${
+                    isAiRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
                   }`}
                 >
                   {isAiRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                  <span>{isAiRunning ? 'Pause Match' : 'Run Duel'}</span>
+                  <span>{isAiRunning ? 'Pause' : 'Start Duel'}</span>
                 </button>
               </div>
             )}
 
-            {/* Minimax Search Depth Slider */}
-            <div className="flex flex-col gap-1">
+            {/* Engine Search Depth Slider */}
+            <div className="flex flex-col gap-1.5">
               <div className="flex justify-between text-[11px]">
-                <span className="text-slate-400 font-semibold">Engine Search Depth</span>
-                <span className="text-cyan-400 font-mono font-bold">{searchDepth} Plies</span>
+                <span className={`font-semibold ${theme.cardTextMuted}`}>Search Lookahead</span>
+                <span className="font-mono font-bold">{searchDepth} Plies</span>
               </div>
               <input 
                 type="range" 
@@ -1079,84 +1145,61 @@ export default function App() {
                 max="8" 
                 value={searchDepth} 
                 onChange={(e) => setSearchDepth(Number(e.target.value))}
-                className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="w-full accent-amber-500 cursor-pointer h-1.5 bg-black/20 rounded-lg"
               />
-              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                <span>Fast (1)</span>
-                <span>Grandmaster (8)</span>
+              <div className={`flex justify-between text-[9px] font-mono ${theme.cardTextMuted}`}>
+                <span>Rapid (1)</span>
+                <span>Deep (8)</span>
               </div>
             </div>
 
-            {/* Speed Player / Concurrency Controls */}
-            <div className="flex items-center justify-between text-[11px] text-slate-300 pt-1 border-t border-slate-800/80">
-              <span>Instant / Tournament Speed</span>
-              <input 
-                type="checkbox" 
-                checked={instantSpeed}
-                onChange={(e) => setInstantSpeed(e.target.checked)}
-                className="rounded accent-cyan-500"
-              />
-            </div>
+            {/* Instant Speed & Rules Modifiers */}
+            <div className={`flex flex-col gap-2 pt-2 border-t ${theme.cardBorder}`}>
+              <label className="flex items-center justify-between text-[11px] font-semibold cursor-pointer">
+                <span>Instant Sowing Animations</span>
+                <input 
+                  type="checkbox" 
+                  checked={instantSpeed}
+                  onChange={(e) => setInstantSpeed(e.target.checked)}
+                  className="rounded accent-amber-500"
+                />
+              </label>
 
-            {/* Rules Configuration */}
-            <div className="flex flex-col gap-1.5 pt-1.5 border-t border-slate-800/80">
-              <span className="text-[11px] font-semibold text-slate-400">Ruleset</span>
-              
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-slate-300">Stones / Pit:</span>
-                <div className="flex space-x-1">
-                  {[3, 4, 5, 6].map(num => (
-                    <button
-                      key={num}
-                      onClick={() => {
-                        setStonesConfig(num);
-                        setGameState(createInitialState(num));
-                      }}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold border ${
-                        stonesConfig === num 
-                          ? 'bg-cyan-500 text-slate-950 border-cyan-400' 
-                          : 'bg-slate-800 text-slate-400 border-slate-700'
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <label className="flex items-center justify-between text-[11px] text-slate-300 cursor-pointer">
+              <label className="flex items-center justify-between text-[11px] font-semibold cursor-pointer">
                 <span>Store Finish = Bonus Turn</span>
                 <input 
                   type="checkbox" 
                   checked={rules.freeTurn}
                   onChange={(e) => setRules({ ...rules, freeTurn: e.target.checked })}
-                  className="rounded accent-cyan-500"
+                  className="rounded accent-amber-500"
                 />
               </label>
 
-              <label className="flex items-center justify-between text-[11px] text-slate-300 cursor-pointer">
+              <label className="flex items-center justify-between text-[11px] font-semibold cursor-pointer">
                 <span>Opposite Pit Capture</span>
                 <input 
                   type="checkbox" 
                   checked={rules.captureOpposite}
                   onChange={(e) => setRules({ ...rules, captureOpposite: e.target.checked })}
-                  className="rounded accent-cyan-500"
+                  className="rounded accent-amber-500"
                 />
               </label>
             </div>
 
-            {/* Performance / Tournament Metric Card */}
-            <div className="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/80 text-[11px]">
-              <div className="font-semibold text-slate-300 mb-1 flex items-center justify-between">
-                <span>Session Performance Rating</span>
-                <Award className="w-3.5 h-3.5 text-amber-400" />
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono text-slate-400">
-                <div>P1 PR: <span className="text-cyan-300 font-bold">{calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}</span></div>
-                <div>P2 PR: <span className="text-amber-300 font-bold">{calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span></div>
-                <div>P1 Moves: {matchStats.p1Moves}</div>
-                <div>P2 Moves: {matchStats.p2Moves}</div>
-              </div>
+            {/* Pre-Flight Test Launcher Button */}
+            <div className={`pt-2 border-t ${theme.cardBorder}`}>
+              <button
+                onClick={() => setDiagnosticsOpen(true)}
+                data-testid="open-diagnostics-btn"
+                className={`w-full flex items-center justify-center space-x-2 py-2 rounded-xl border text-xs font-semibold transition ${
+                  currentSkin === 'porcelain'
+                    ? 'bg-[#ede5d8] border-[#dbd0c0] text-[#4a3e35] hover:bg-[#e2d9cb]'
+                    : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <span>Run Invariant Pre-Flight Tests</span>
+              </button>
             </div>
 
           </div>
@@ -1165,54 +1208,54 @@ export default function App() {
 
       </main>
 
-      {/* Docked Mobile Thumb Bar (Thumb-Zone Ergonomics on Mobile) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/90 backdrop-blur-md border-t border-slate-800/80 py-1.5 px-3 flex lg:hidden items-center justify-around gap-2 text-xs">
+      {/* Docked Mobile Thumb Bar */}
+      <div className={`fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md border-t py-1 px-4 flex lg:hidden items-center justify-around gap-2 text-xs transition-colors ${theme.thumbBarBg} ${theme.thumbBarBorder}`}>
         <button
           onClick={() => setMobileTab('board')}
-          className={`flex flex-col items-center py-1 px-3 rounded-lg transition ${
-            mobileTab === 'board' ? 'text-cyan-400 font-bold' : 'text-slate-500'
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+            mobileTab === 'board' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
           <LayoutGrid className="w-4 h-4" />
-          <span className="text-[10px]">Board</span>
+          <span className="text-[10px] font-semibold">Board</span>
         </button>
 
         <button
           onClick={() => setMobileTab('analysis')}
-          className={`flex flex-col items-center py-1 px-3 rounded-lg transition ${
-            mobileTab === 'analysis' ? 'text-cyan-400 font-bold' : 'text-slate-500'
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+            mobileTab === 'analysis' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
           <BarChart3 className="w-4 h-4" />
-          <span className="text-[10px]">Analysis</span>
+          <span className="text-[10px] font-semibold">Analysis</span>
         </button>
 
         <button
           onClick={() => setTutorMode(!tutorMode)}
-          className={`flex flex-col items-center py-1 px-3 rounded-lg transition ${
-            tutorMode ? 'text-amber-400 font-bold' : 'text-slate-500'
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+            tutorMode ? 'text-amber-500 font-bold' : theme.cardTextMuted
           }`}
         >
           <Sparkles className="w-4 h-4" />
-          <span className="text-[10px]">Tutor</span>
+          <span className="text-[10px] font-semibold">Coach</span>
         </button>
 
         <button
           onClick={handleResetGame}
-          className="flex flex-col items-center py-1 px-3 rounded-lg text-slate-500 hover:text-slate-300 transition"
+          className={`flex flex-col items-center py-1 px-3 rounded-xl ${theme.cardTextMuted} hover:opacity-100 transition`}
         >
           <RotateCcw className="w-4 h-4" />
-          <span className="text-[10px]">Reset</span>
+          <span className="text-[10px] font-semibold">Reset</span>
         </button>
 
         <button
           onClick={() => setMobileTab('settings')}
-          className={`flex flex-col items-center py-1 px-3 rounded-lg transition ${
-            mobileTab === 'settings' ? 'text-cyan-400 font-bold' : 'text-slate-500'
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${
+            mobileTab === 'settings' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
           <Settings className="w-4 h-4" />
-          <span className="text-[10px]">Settings</span>
+          <span className="text-[10px] font-semibold">Settings</span>
         </button>
       </div>
 
@@ -1222,33 +1265,33 @@ export default function App() {
           data-testid="diagnostics-modal"
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm"
         >
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-800">
-              <div className="flex items-center space-x-2">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden text-slate-100">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+              <div className="flex items-center space-x-2.5">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <h3 className="font-bold text-sm sm:text-base text-slate-100">
-                  GNU Automated Pre-Flight Test Suite
+                <h3 className="font-bold text-sm sm:text-base">
+                  Pre-Flight Diagnostic Suite
                 </h3>
               </div>
               <button 
                 onClick={() => setDiagnosticsOpen(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-3.5 sm:p-5 overflow-y-auto flex flex-col gap-2.5 font-mono text-xs">
+            <div className="p-4 sm:p-5 overflow-y-auto flex flex-col gap-2.5 font-mono text-xs">
               <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400">
                 <span>Total Tests: {diagResults.length}</span>
                 <span className="text-emerald-400 font-bold">
-                  All Invariants Intact ({diagResults.filter(r => r.status === 'PASS').length}/{diagResults.length})
+                  Passed: {diagResults.filter(r => r.status === 'PASS').length} / {diagResults.length}
                 </span>
               </div>
 
               <div className="divide-y divide-slate-800/80">
                 {diagResults.map((item, i) => (
-                  <div key={i} className="py-2 flex items-center justify-between gap-2">
+                  <div key={i} className="py-2.5 flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2 min-w-0">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                       <div className="truncate">
@@ -1256,23 +1299,23 @@ export default function App() {
                         <div className="text-[10px] text-slate-500">{item.category}</div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-1.5 shrink-0">
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <div className="flex items-center space-x-2 shrink-0">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                         {item.status}
                       </span>
-                      <span className="text-[9px] text-slate-400">{item.duration}</span>
+                      <span className="text-[10px] text-slate-400">{item.duration}</span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
-              <span className="text-[10px] sm:text-[11px] text-slate-400">Zero-Leak Conservation & Solver Invariants</span>
+            <div className="px-5 py-3.5 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+              <span className="text-[11px] text-slate-400">Zero-Leak Conservation & Solver Invariants</span>
               <button
                 onClick={handleRunDiagnostics}
                 disabled={isDiagRunning}
-                className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold shadow-md transition disabled:opacity-50"
+                className="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold shadow-md transition disabled:opacity-50"
               >
                 {isDiagRunning ? "Running..." : "Re-run"}
               </button>
@@ -1281,9 +1324,9 @@ export default function App() {
         </div>
       )}
 
-      {/* Footer (Desktop Only) */}
-      <footer className="hidden sm:block border-t border-slate-800/70 py-3 px-4 text-center text-[11px] text-slate-500">
-        GNU Mancala 2030s Edition • Exact Alpha-Beta Minimax & Multi-ply PV Rollouts • Kalah Tournament Engine
+      {/* Clean Footer (Desktop Only) */}
+      <footer className={`hidden sm:block border-t ${theme.headerBorder} py-3 px-4 text-center text-xs ${theme.cardTextMuted} transition-colors`}>
+        Mancala Analytical Engine • Handcrafted Artisanal Themes & Minimax PV Rollouts
       </footer>
 
     </div>
