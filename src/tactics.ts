@@ -9,6 +9,8 @@ import {
   EvaluatedMove
 } from './engine';
 
+import { formatDescriptiveLabel } from './rules/kalah';
+
 export interface TacticalExplanation {
   summary: string;
   consequence: string;
@@ -20,11 +22,7 @@ export interface TacticalExplanation {
 }
 
 export function getPitLabel(pitIndex: number): string {
-  if (pitIndex === P1_STORE) return 'South Store (P1)';
-  if (pitIndex === P2_STORE) return 'North Store (P2)';
-  if (pitIndex >= 0 && pitIndex <= 5) return `South Pit ${pitIndex + 1}`;
-  if (pitIndex >= 7 && pitIndex <= 12) return `North Pit ${13 - pitIndex}`;
-  return `Pit ${pitIndex}`;
+  return formatDescriptiveLabel(pitIndex);
 }
 
 export function generateTacticalExplanation(

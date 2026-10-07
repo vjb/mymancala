@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Award, Sparkles, CheckCircle2, AlertTriangle, 
   RotateCcw, Share2, Check, Zap, Flame, Trophy,
-  X, ChevronRight, Swords, HelpCircle
+  X, ChevronRight, Swords, HelpCircle, ArrowRight, Brain
 } from 'lucide-react';
 import { BotPersona } from './bots';
 import { haptics } from './haptics';
+import { trapFocus } from './lib/a11y';
+import { recordMistake } from './trainer/mistakes';
+import { MoveGrade } from './trainer/classify';
 
 export interface MoveRecord {
   player: number;
   pit: number;
   freeTurn: boolean;
   captures: number;
-  classification?: 'Brilliant' | 'Best' | 'Good' | 'Inaccuracy' | 'Mistake' | 'Blunder';
+  classification?: 'Best' | 'Good' | 'Inaccuracy' | 'Mistake' | 'Blunder' | string;
+  grade?: MoveGrade;
   equityLoss?: number;
+}
+
+export interface SwingMoment {
+  turnNumber: number;
+  player: number;
+  pit: number;
+  lossStones: number;
+  grade: 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder';
+  bestPit?: number;
+  description: string;
 }
 
 export interface GameReviewData {
@@ -25,7 +39,6 @@ export interface GameReviewData {
   p1Elo: number;
   p2Elo: number;
   p1Counts: {
-    brilliant: number;
     best: number;
     good: number;
     inaccuracy: number;
@@ -33,7 +46,6 @@ export interface GameReviewData {
     blunder: number;
   };
   p2Counts: {
-    brilliant: number;
     best: number;
     good: number;
     inaccuracy: number;
@@ -46,27 +58,66 @@ export interface GameReviewData {
     player: number;
     description: string;
   };
+  topSwings?: SwingMoment[];
   bot?: BotPersona;
 }
 
 interface GameReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onRematch: () => void;
-  reviewData: GameReviewData;
+  gameState?: any;
+  activeBot?: BotPersona;
+  theme?: any;
   colorblindSafe?: boolean;
+  fontScale?: number;
+  onRematch?: () => void;
+  reviewData?: GameReviewData;
+  onPracticeMistakes?: () => void;
 }
 
 export const GameReviewModal: React.FC<GameReviewModalProps> = ({
   isOpen,
   onClose,
+  gameState,
+  activeBot,
+  theme,
+  colorblindSafe = false,
+  fontScale = 1,
   onRematch,
-  reviewData,
-  colorblindSafe = false
+  reviewData: externalReviewData,
+  onPracticeMistakes,
 }) => {
   const [copied, setCopied] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (modalRef.current) {
+        trapFocus(modalRef.current, e, onClose);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  // If reviewData is passed directly use it, otherwise compute fallback from gameState
+  const reviewData: GameReviewData = externalReviewData || {
+    winner: gameState?.winner ?? null,
+    p1Score: gameState?.board?.[6] ?? 0,
+    p2Score: gameState?.board?.[13] ?? 0,
+    p1Accuracy: 85,
+    p2Accuracy: 80,
+    p1Elo: 1000,
+    p2Elo: 1000,
+    p1Counts: { best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 },
+    p2Counts: { best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 },
+    totalMoves: gameState?.gameMovesHistory?.length ?? 0,
+    topSwings: [],
+    bot: activeBot,
+  };
 
   const {
     winner,
@@ -80,15 +131,17 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
     p2Counts,
     totalMoves,
     turningPoint,
+    topSwings = [],
     bot
   } = reviewData;
 
   const getTier = (elo: number) => {
-    if (elo >= 1800) return { title: 'Grandmaster', icon: '💎', color: 'text-purple-400' };
-    if (elo >= 1500) return { title: 'Master Tactician', icon: '🔥', color: 'text-amber-400' };
-    if (elo >= 1200) return { title: 'Sharp Strategist', icon: '⚡', color: 'text-blue-400' };
-    if (elo >= 900) return { title: 'Pebble Challenger', icon: '🌱', color: 'text-emerald-400' };
-    return { title: 'Rookie Apprentice', icon: '🐣', color: 'text-zinc-400' };
+    if (elo >= 1900) return { title: 'Grandmaster', icon: '👑', color: 'text-purple-400' };
+    if (elo >= 1700) return { title: 'Master', icon: '🦉', color: 'text-amber-400' };
+    if (elo >= 1500) return { title: 'Strategist', icon: '🧠', color: 'text-blue-400' };
+    if (elo >= 1300) return { title: 'Tactician', icon: '⚔️', color: 'text-cyan-400' };
+    if (elo >= 1100) return { title: 'Apprentice', icon: '🌿', color: 'text-emerald-400' };
+    return { title: 'Novice', icon: '🌱', color: 'text-zinc-400' };
   };
 
   const p1Tier = getTier(p1Elo);
@@ -101,9 +154,9 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
       `🎮 Mancala Game Review: ${resultText}`,
       `South (${p1Score} pts | ${p1Accuracy}% Acc) vs ${opponentName} (${p2Score} pts | ${p2Accuracy}% Acc)`,
       `🔥 Performance: ${p1Elo} Elo (${p1Tier.icon} ${p1Tier.title})`,
-      `📊 Moves: ${totalMoves} | Brilliant: ${p1Counts.brilliant} !! | Best: ${p1Counts.best} ★ | Blunders: ${p1Counts.blunder} ??`,
+      `📊 Moves: ${totalMoves} | Best: ${p1Counts.best} ★ | Good: ${p1Counts.good} ✓ | Inacc: ${p1Counts.inaccuracy} ?! | Mistakes: ${p1Counts.mistake} ? | Blunders: ${p1Counts.blunder} ??`,
       turningPoint ? `⚡ Turning Point: Turn ${turningPoint.turnNumber} (${turningPoint.description})` : '',
-      `Play on Mancala Coach!`
+      `Play on Mancala Trainer!`
     ].filter(Boolean).join('\n');
 
     try {
@@ -117,6 +170,28 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
     }
   };
 
+  const handlePracticeSwings = () => {
+    haptics.tap();
+    // Record top swing moments to the Leitner mistake log
+    if (topSwings && topSwings.length > 0 && gameState?.board) {
+      for (const swing of topSwings) {
+        if (swing.lossStones >= 1.0) {
+          recordMistake({
+            rulesId: 'kalah',
+            position: gameState.board,
+            turn: (swing.player as 0 | 1) ?? 0,
+            played: swing.pit,
+            best: swing.bestPit ?? ((swing.pit + 1) % 6),
+            loss: swing.lossStones,
+            grade: swing.grade,
+          });
+        }
+      }
+    }
+    onClose();
+    onPracticeMistakes?.();
+  };
+
   const getAccuracyColor = (acc: number) => {
     if (acc >= 90) return 'text-emerald-500 dark:text-emerald-400 border-emerald-500';
     if (acc >= 75) return 'text-blue-500 dark:text-blue-400 border-blue-500';
@@ -127,7 +202,9 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-lg bg-zinc-900 border border-zinc-700/80 rounded-2xl shadow-2xl text-zinc-100 flex flex-col max-h-[92vh] overflow-hidden"
+        ref={modalRef}
+        data-testid="game-review-modal"
+        className="w-full max-w-lg bg-zinc-900 border border-zinc-700/80 rounded-3xl shadow-2xl text-zinc-100 flex flex-col max-h-[92vh] overflow-hidden"
         role="dialog"
         aria-modal="true"
       >
@@ -160,108 +237,99 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           
-          {/* Accuracy Scoreboards Ring / Big Badges */}
+          {/* Accuracy Scoreboards */}
           <div className="grid grid-cols-2 gap-3">
             {/* South Player */}
-            <div className="bg-zinc-800/60 rounded-xl p-3.5 border border-zinc-700/60 flex flex-col items-center text-center relative overflow-hidden">
+            <div className="bg-zinc-800/60 rounded-2xl p-3.5 border border-zinc-700/60 flex flex-col items-center text-center relative overflow-hidden">
               <span className="text-xs font-medium text-emerald-400 mb-1 flex items-center gap-1">
                 South (You)
               </span>
               <div className={`w-16 h-16 rounded-full border-4 flex flex-col items-center justify-center my-1 ${getAccuracyColor(p1Accuracy)}`}>
                 <span className="text-lg font-black leading-none">{p1Accuracy}%</span>
-                <span className="text-[9px] uppercase tracking-wider text-zinc-400 mt-0.5">Acc</span>
+                <span className="text-xs uppercase tracking-wider text-zinc-400 mt-0.5">Acc</span>
               </div>
               <div className="mt-1 text-xs text-zinc-300 font-semibold">
                 {p1Score} pebbles stored
               </div>
-              <div className="text-[11px] font-medium text-amber-400 flex items-center gap-1 mt-0.5">
+              <div className="text-xs font-medium text-amber-400 flex items-center gap-1 mt-0.5">
                 <span>{p1Tier.icon}</span>
                 <span>{p1Elo} Elo</span>
               </div>
             </div>
 
             {/* North Player (Bot or P2) */}
-            <div className="bg-zinc-800/60 rounded-xl p-3.5 border border-zinc-700/60 flex flex-col items-center text-center relative overflow-hidden">
+            <div className="bg-zinc-800/60 rounded-2xl p-3.5 border border-zinc-700/60 flex flex-col items-center text-center relative overflow-hidden">
               <span className="text-xs font-medium text-blue-400 mb-1 flex items-center gap-1">
                 {bot ? bot.name : 'North'}
               </span>
               <div className={`w-16 h-16 rounded-full border-4 flex flex-col items-center justify-center my-1 ${getAccuracyColor(p2Accuracy)}`}>
                 <span className="text-lg font-black leading-none">{p2Accuracy}%</span>
-                <span className="text-[9px] uppercase tracking-wider text-zinc-400 mt-0.5">Acc</span>
+                <span className="text-xs uppercase tracking-wider text-zinc-400 mt-0.5">Acc</span>
               </div>
               <div className="mt-1 text-xs text-zinc-300 font-semibold">
                 {p2Score} pebbles stored
               </div>
-              <div className="text-[11px] font-medium text-blue-300 flex items-center gap-1 mt-0.5">
+              <div className="text-xs font-medium text-blue-300 flex items-center gap-1 mt-0.5">
                 <span>{bot ? bot.avatar : '🤖'}</span>
                 <span>{p2Elo} Elo</span>
               </div>
             </div>
           </div>
 
-          {/* Performance Assessment Banner */}
-          <div className="bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-blue-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">{p1Tier.icon}</span>
-              <div>
-                <div className="text-xs text-zinc-400 font-medium">Estimated Performance</div>
-                <div className="text-sm font-bold text-white flex items-center gap-1.5">
-                  <span className={p1Tier.color}>{p1Tier.title}</span>
-                  <span className="text-xs text-zinc-400 font-normal">({p1Elo} Rating)</span>
-                </div>
+          {/* Top 3 Swing Moments & Practice Trigger */}
+          {topSwings && topSwings.length > 0 && (
+            <div className="bg-amber-950/30 border border-amber-500/30 rounded-2xl p-3.5 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Flame className="w-4 h-4 text-amber-400" />
+                  Top Swing Moments ({topSwings.length})
+                </span>
+                <button
+                  data-testid="practice-swings-btn"
+                  onClick={handlePracticeSwings}
+                  className="px-2.5 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-md transition flex items-center gap-1 active:scale-95"
+                >
+                  <Brain className="w-3.5 h-3.5" />
+                  <span>Practice these</span>
+                </button>
               </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-zinc-400">Total Moves</div>
-              <div className="text-sm font-bold text-white">{totalMoves}</div>
-            </div>
-          </div>
 
-          {/* Decisive Turning Point */}
-          {turningPoint && (
-            <div className="bg-zinc-800/40 border border-zinc-700/50 rounded-xl p-3 flex items-start gap-2.5">
-              <div className="p-1.5 bg-yellow-500/20 text-yellow-400 rounded-lg shrink-0 mt-0.5">
-                <Zap className="w-4 h-4" />
-              </div>
-              <div className="text-xs">
-                <div className="font-semibold text-zinc-200">
-                  Decisive Turning Point (Turn {turningPoint.turnNumber})
-                </div>
-                <div className="text-zinc-400 mt-0.5 leading-relaxed">
-                  {turningPoint.description}
-                </div>
+              <div className="space-y-1.5">
+                {topSwings.map((swing, idx) => (
+                  <div
+                    key={idx}
+                    data-testid="swing-moment-item"
+                    className="p-2 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 font-bold flex items-center justify-center text-xs">
+                        #{idx + 1}
+                      </span>
+                      <span className="text-slate-300">
+                        Turn {swing.turnNumber}: Pit {swing.pit}
+                      </span>
+                    </div>
+                    <span className="font-mono font-bold text-rose-400">
+                      -{swing.lossStones.toFixed(1)} stones
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* Move Quality Breakdown Table */}
+          {/* 5-Tier Move Quality Breakdown Table */}
           <div className="space-y-2">
             <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider flex items-center justify-between px-1">
               <span>Move Quality Breakdown</span>
-              <span className="text-[11px] text-zinc-500">South vs North</span>
+              <span className="text-xs text-zinc-500">South vs North</span>
             </div>
 
-            <div className="bg-zinc-950/40 rounded-xl border border-zinc-800/80 divide-y divide-zinc-800/60 overflow-hidden text-xs">
-              
-              {/* Brilliant !! */}
-              <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
-                <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
-                    !!
-                  </span>
-                  <span className="font-medium text-zinc-200">Brilliant</span>
-                </div>
-                <div className="flex items-center gap-4 font-bold">
-                  <span className="text-cyan-400 w-6 text-center">{p1Counts.brilliant}</span>
-                  <span className="text-zinc-600">|</span>
-                  <span className="text-zinc-400 w-6 text-center">{p2Counts.brilliant}</span>
-                </div>
-              </div>
-
+            <div className="bg-zinc-950/40 rounded-2xl border border-zinc-800/80 divide-y divide-zinc-800/60 overflow-hidden text-xs">
               {/* Best Move ★ */}
               <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
                 <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                  <span className="px-1.5 py-0.5 rounded font-black text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
                     ★
                   </span>
                   <span className="font-medium text-zinc-200">Best Move</span>
@@ -276,7 +344,7 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
               {/* Good ✓ */}
               <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
                 <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-blue-500/20 text-blue-400 border border-blue-500/40">
+                  <span className="px-1.5 py-0.5 rounded font-black text-xs bg-blue-500/20 text-blue-400 border border-blue-500/40">
                     ✓
                   </span>
                   <span className="font-medium text-zinc-200">Good</span>
@@ -291,7 +359,7 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
               {/* Inaccuracy ?! */}
               <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
                 <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                  <span className="px-1.5 py-0.5 rounded font-black text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40">
                     ?!
                   </span>
                   <span className="font-medium text-zinc-200">Inaccuracy</span>
@@ -306,7 +374,7 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
               {/* Mistake ? */}
               <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
                 <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-orange-500/20 text-orange-400 border border-orange-500/40">
+                  <span className="px-1.5 py-0.5 rounded font-black text-xs bg-orange-500/20 text-orange-400 border border-orange-500/40">
                     ?
                   </span>
                   <span className="font-medium text-zinc-200">Mistake</span>
@@ -321,7 +389,7 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
               {/* Blunder ?? */}
               <div className="flex items-center justify-between px-3.5 py-2 hover:bg-zinc-800/30 transition">
                 <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded font-black text-[11px] bg-rose-500/20 text-rose-400 border border-rose-500/40">
+                  <span className="px-1.5 py-0.5 rounded font-black text-xs bg-rose-500/20 text-rose-400 border border-rose-500/40">
                     ??
                   </span>
                   <span className="font-medium text-zinc-200">Blunder</span>
@@ -332,10 +400,8 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
                   <span className="text-zinc-400 w-6 text-center">{p2Counts.blunder}</span>
                 </div>
               </div>
-
             </div>
           </div>
-
         </div>
 
         {/* Action Footer */}
@@ -348,18 +414,19 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
             {copied ? 'Copied to Clipboard!' : 'Share Match Recap'}
           </button>
 
-          <button
-            onClick={() => {
-              haptics.tap();
-              onRematch();
-            }}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-[0.98]"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Rematch
-          </button>
+          {onRematch && (
+            <button
+              onClick={() => {
+                haptics.tap();
+                onRematch();
+              }}
+              className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-[0.98]"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Rematch
+            </button>
+          )}
         </div>
-
       </div>
     </div>
   );

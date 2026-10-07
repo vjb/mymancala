@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "mancala_onboarding_v1",
+          "value": "{\"completed\":true,\"audience\":\"casual\",\"timestamp\":1728271200000}"
+        }
+      ]
+    }
+  ]
+}

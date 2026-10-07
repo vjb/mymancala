@@ -1,0 +1,15 @@
+--- a/src/game/useGame.ts
++++ b/src/game/useGame.ts
+@@ -608,8 +608,8 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
+   const displayBoard = visualBoard ?? state.board;
+
+   const hoverPreview: MoveSimulationResult | null = useMemo(() => {
+-    if (animatingState || hoveredPit === null || displayBoard[hoveredPit] === 0) return null;
++    if (!lenses.landingPreview || animatingState || hoveredPit === null || displayBoard[hoveredPit] === 0) return null;
+     const isP1 = state.currentPlayer === 0;
+     const legalPits = isP1 ? P1_PITS : P2_PITS;
+     if (!(legalPits as readonly number[]).includes(hoveredPit)) return null;
+
+     return simulateMove(state.board, state.currentPlayer, hoveredPit, state.rules);
+-  }, [animatingState, hoveredPit, displayBoard, state.board, state.currentPlayer, state.rules]);
++  }, [lenses.landingPreview, animatingState, hoveredPit, displayBoard, state.board, state.currentPlayer, state.rules]);

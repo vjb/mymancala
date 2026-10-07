@@ -1,0 +1,19 @@
+{
+  "name": "Mancala Coach",
+  "short_name": "Mancala",
+  "description": "2030s GNU Backgammon for Mancala — offline analytical trainer and game",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#14100d",
+  "background_color": "#14100d",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

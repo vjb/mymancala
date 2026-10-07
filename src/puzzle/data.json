@@ -1,0 +1,12038 @@
+[
+  {
+    "id": "daily-puzzle-1",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      2,
+      0,
+      18,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-2",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      18,
+      2,
+      0,
+      1,
+      0,
+      0,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-3",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      2,
+      0,
+      2,
+      0,
+      16,
+      1,
+      3,
+      0,
+      0,
+      0,
+      2,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-4",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      21,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-5",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      3,
+      0,
+      2,
+      0,
+      0,
+      20,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-6",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      3,
+      4,
+      0,
+      20,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      5,
+      4
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-7",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      2,
+      0,
+      1,
+      0,
+      2,
+      17,
+      1,
+      1,
+      0,
+      2,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-8",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      0,
+      2,
+      0,
+      22,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-9",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20,
+      0,
+      0,
+      1,
+      1,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-10",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      20,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-11",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      19,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-12",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      20,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-13",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      1,
+      22,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-14",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      3,
+      16,
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-15",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      19,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-16",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      1,
+      0,
+      19,
+      0,
+      0,
+      1,
+      0,
+      2,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-17",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      2,
+      20,
+      2,
+      2,
+      1,
+      2,
+      1,
+      0,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-18",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      2,
+      1,
+      2,
+      17,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-19",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      3,
+      0,
+      20,
+      2,
+      3,
+      0,
+      0,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-20",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      2,
+      2,
+      15,
+      0,
+      1,
+      0,
+      2,
+      3,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-21",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      2,
+      1,
+      20,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      2
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-22",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      0,
+      1,
+      0,
+      22,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-23",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      1,
+      2,
+      0,
+      17,
+      1,
+      0,
+      1,
+      0,
+      1,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      0,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-24",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      3,
+      2,
+      3,
+      0,
+      16,
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-25",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      2,
+      1,
+      0,
+      16,
+      1,
+      2,
+      0,
+      3,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-26",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      1,
+      0,
+      18,
+      1,
+      1,
+      1,
+      2,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-27",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      1,
+      1,
+      1,
+      17,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-28",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      21,
+      2,
+      2,
+      1,
+      1,
+      1,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      10,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-29",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      21,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      5
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-30",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      1,
+      1,
+      1,
+      2,
+      0,
+      18,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-31",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      2,
+      0,
+      22,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      0,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-32",
+    "rulesId": "kalah",
+    "board": [
+      4,
+      0,
+      1,
+      2,
+      1,
+      0,
+      15,
+      2,
+      1,
+      0,
+      0,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-33",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      22,
+      3,
+      0,
+      0,
+      0,
+      1,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-34",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      19,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-35",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      1,
+      0,
+      0,
+      20,
+      0,
+      1,
+      0,
+      3,
+      2,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      11,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-36",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      0,
+      2,
+      18,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-37",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      19,
+      1,
+      1,
+      0,
+      1,
+      0,
+      4,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-38",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      22,
+      0,
+      2,
+      0,
+      1,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-39",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      22,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-40",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      3,
+      2,
+      1,
+      0,
+      17,
+      0,
+      0,
+      0,
+      4,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      12,
+      10
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-41",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      23,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-42",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      1,
+      0,
+      1,
+      1,
+      0,
+      17,
+      1,
+      0,
+      0,
+      2,
+      2,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-43",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      3,
+      1,
+      1,
+      0,
+      17,
+      1,
+      2,
+      1,
+      0,
+      3,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-44",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      3,
+      0,
+      0,
+      2,
+      18,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-45",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      1,
+      1,
+      0,
+      16,
+      1,
+      2,
+      1,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-46",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      20,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-47",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      0,
+      0,
+      0,
+      19,
+      0,
+      0,
+      3,
+      0,
+      0,
+      2,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "medium",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-48",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      19,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12
+    ],
+    "theme": "starve",
+    "difficulty": "medium",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-49",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      2,
+      1,
+      22,
+      2,
+      0,
+      1,
+      0,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      5,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-50",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      3,
+      1,
+      0,
+      19,
+      1,
+      2,
+      0,
+      0,
+      2,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      4,
+      2
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-51",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      20,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-52",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      20,
+      1,
+      3,
+      0,
+      1,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-53",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      0,
+      2,
+      21,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      5
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-54",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      2,
+      16,
+      0,
+      0,
+      1,
+      1,
+      0,
+      2,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-55",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      2,
+      0,
+      1,
+      21,
+      2,
+      1,
+      1,
+      1,
+      0,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-56",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      2,
+      0,
+      2,
+      18,
+      1,
+      0,
+      1,
+      1,
+      0,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-57",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      3,
+      0,
+      1,
+      0,
+      20,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-58",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      2,
+      22,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-59",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      3,
+      0,
+      3,
+      19,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      2,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-60",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      20,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-61",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      1,
+      0,
+      20,
+      1,
+      1,
+      0,
+      2,
+      2,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-62",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      18,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-63",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      2,
+      0,
+      0,
+      0,
+      21,
+      0,
+      0,
+      1,
+      0,
+      1,
+      3,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-64",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      2,
+      0,
+      0,
+      16,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-65",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      0,
+      1,
+      2,
+      15,
+      2,
+      1,
+      2,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      5
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-66",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      1,
+      0,
+      21,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-67",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      2,
+      19,
+      0,
+      2,
+      0,
+      1,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-68",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      18,
+      2,
+      1,
+      0,
+      0,
+      3,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-69",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      1,
+      0,
+      1,
+      1,
+      0,
+      19,
+      2,
+      0,
+      0,
+      0,
+      2,
+      2,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-70",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21,
+      1,
+      0,
+      0,
+      1,
+      1,
+      2,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-71",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      1,
+      0,
+      16,
+      1,
+      1,
+      1,
+      1,
+      2,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-72",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      2,
+      0,
+      1,
+      0,
+      18,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "medium",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-73",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      2,
+      22,
+      0,
+      0,
+      2,
+      0,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-74",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      1,
+      0,
+      0,
+      20,
+      0,
+      1,
+      0,
+      2,
+      0,
+      3,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-75",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      23,
+      1,
+      0,
+      0,
+      0,
+      2,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-76",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      0,
+      1,
+      2,
+      19,
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-77",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      1,
+      0,
+      16,
+      2,
+      0,
+      1,
+      2,
+      2,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-78",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      3,
+      0,
+      0,
+      0,
+      19,
+      1,
+      0,
+      1,
+      2,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-79",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      3,
+      1,
+      0,
+      17,
+      2,
+      0,
+      0,
+      1,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-80",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      0,
+      0,
+      21,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-81",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-82",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      23,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-83",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-84",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      2,
+      1,
+      0,
+      1,
+      2,
+      19,
+      0,
+      1,
+      0,
+      2,
+      1,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-85",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      19,
+      1,
+      3,
+      1,
+      0,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-86",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      17,
+      2,
+      0,
+      2,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-87",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      4,
+      0,
+      18,
+      0,
+      2,
+      0,
+      1,
+      2,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      8
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-88",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      1,
+      1,
+      18,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-89",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      4,
+      20,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-90",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      23,
+      1,
+      0,
+      0,
+      0,
+      2,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-91",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      1,
+      0,
+      15,
+      1,
+      0,
+      1,
+      2,
+      2,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-92",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      3,
+      2,
+      1,
+      1,
+      0,
+      16,
+      0,
+      2,
+      0,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-93",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      20,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      12,
+      11
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-94",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      3,
+      1,
+      2,
+      1,
+      1,
+      16,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-95",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      21,
+      0,
+      0,
+      1,
+      2,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-96",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      3,
+      0,
+      0,
+      0,
+      20,
+      0,
+      2,
+      1,
+      0,
+      3,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12,
+      11
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-97",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      23,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      11,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-98",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      19,
+      1,
+      1,
+      0,
+      4,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8
+    ],
+    "theme": "capture",
+    "difficulty": "medium",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-99",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      21,
+      1,
+      0,
+      0,
+      1,
+      2,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      11,
+      10
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-100",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      2,
+      0,
+      2,
+      0,
+      19,
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-101",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      3,
+      17,
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-102",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      0,
+      0,
+      2,
+      22,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-103",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      2,
+      19,
+      1,
+      0,
+      1,
+      1,
+      1,
+      3,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-104",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      1,
+      0,
+      18,
+      1,
+      1,
+      1,
+      1,
+      2,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-105",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      18,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-106",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      3,
+      1,
+      15,
+      0,
+      0,
+      1,
+      1,
+      1,
+      3,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-107",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      17,
+      1,
+      0,
+      2,
+      0,
+      0,
+      2,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-108",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      19,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-109",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      0,
+      1,
+      1,
+      0,
+      21,
+      1,
+      0,
+      0,
+      0,
+      1,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-110",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      1,
+      3,
+      0,
+      15,
+      2,
+      1,
+      0,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-111",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      19,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-112",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      2,
+      19,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-113",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      1,
+      0,
+      0,
+      0,
+      0,
+      17,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-114",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      22,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-115",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      3,
+      0,
+      1,
+      0,
+      0,
+      20,
+      2,
+      2,
+      2,
+      1,
+      0,
+      0,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-116",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      21,
+      2,
+      0,
+      3,
+      0,
+      2,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-117",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      18,
+      0,
+      2,
+      2,
+      1,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-118",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      2,
+      0,
+      0,
+      17,
+      1,
+      1,
+      1,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-119",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      21,
+      2,
+      0,
+      0,
+      0,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-120",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-121",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      22,
+      0,
+      0,
+      0,
+      2,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-122",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      2,
+      1,
+      2,
+      20,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-123",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      0,
+      1,
+      0,
+      19,
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-124",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      19,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-125",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      21,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-126",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      2,
+      0,
+      0,
+      20,
+      2,
+      2,
+      2,
+      0,
+      1,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-127",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21,
+      0,
+      1,
+      2,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-128",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      19,
+      3,
+      0,
+      0,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-129",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      1,
+      2,
+      0,
+      21,
+      0,
+      3,
+      0,
+      0,
+      0,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-130",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      17,
+      0,
+      1,
+      2,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-131",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      17,
+      1,
+      1,
+      0,
+      0,
+      2,
+      3,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-132",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      21,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-133",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      2,
+      0,
+      1,
+      18,
+      4,
+      2,
+      1,
+      0,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-134",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      20,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-135",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      18,
+      4,
+      0,
+      0,
+      1,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-136",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      1,
+      1,
+      0,
+      17,
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-137",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      3,
+      0,
+      1,
+      1,
+      18,
+      2,
+      1,
+      0,
+      0,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-138",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      2,
+      3,
+      16,
+      0,
+      2,
+      0,
+      2,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-139",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      5,
+      0,
+      19,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      7,
+      5
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-140",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      2,
+      1,
+      0,
+      15,
+      0,
+      0,
+      1,
+      0,
+      2,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-141",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      21,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-142",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      23,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-143",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      3,
+      20,
+      0,
+      2,
+      0,
+      1,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      5
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-144",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      18,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-145",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      1,
+      0,
+      20,
+      2,
+      1,
+      1,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-146",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      1,
+      1,
+      0,
+      19,
+      2,
+      0,
+      0,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-147",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      1,
+      2,
+      0,
+      0,
+      17,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-148",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      15,
+      1,
+      1,
+      2,
+      2,
+      2,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      8
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-149",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      1,
+      0,
+      0,
+      22,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-150",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      2,
+      2,
+      1,
+      0,
+      17,
+      0,
+      0,
+      3,
+      1,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-151",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      3,
+      0,
+      2,
+      2,
+      0,
+      19,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      1,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-152",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      17,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-153",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      20,
+      0,
+      1,
+      1,
+      0,
+      1,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-154",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-155",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      1,
+      1,
+      1,
+      19,
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-156",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      4,
+      0,
+      1,
+      17,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-157",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      4,
+      2,
+      1,
+      0,
+      0,
+      17,
+      1,
+      1,
+      0,
+      1,
+      2,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-158",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      18,
+      0,
+      1,
+      0,
+      2,
+      1,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-159",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      2,
+      20,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-160",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      2,
+      19,
+      2,
+      2,
+      1,
+      0,
+      0,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      5
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-161",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      16,
+      2,
+      0,
+      1,
+      0,
+      0,
+      2,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-162",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      3,
+      0,
+      20,
+      1,
+      2,
+      1,
+      1,
+      1,
+      0,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-163",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      21,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-164",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      0,
+      1,
+      0,
+      19,
+      0,
+      2,
+      0,
+      0,
+      1,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-165",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      1,
+      0,
+      21,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-166",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      3,
+      1,
+      17,
+      0,
+      1,
+      1,
+      2,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-167",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      2,
+      0,
+      0,
+      0,
+      2,
+      17,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-168",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      2,
+      0,
+      20,
+      1,
+      0,
+      1,
+      2,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-169",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      20,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-170",
+    "rulesId": "kalah",
+    "board": [
+      4,
+      0,
+      0,
+      0,
+      1,
+      2,
+      18,
+      0,
+      1,
+      0,
+      1,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-171",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      22,
+      2,
+      1,
+      1,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-172",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      0,
+      2,
+      1,
+      0,
+      15,
+      2,
+      0,
+      1,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-173",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      2,
+      18,
+      1,
+      1,
+      3,
+      0,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-174",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      2,
+      16,
+      0,
+      2,
+      1,
+      2,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-175",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      1,
+      0,
+      0,
+      16,
+      0,
+      2,
+      3,
+      0,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      12,
+      9
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-176",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      23,
+      1,
+      0,
+      0,
+      0,
+      2,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-177",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      2,
+      20,
+      1,
+      0,
+      1,
+      1,
+      1,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-178",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      3,
+      0,
+      3,
+      20,
+      0,
+      0,
+      1,
+      2,
+      2,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-179",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      3,
+      0,
+      0,
+      20,
+      1,
+      0,
+      1,
+      2,
+      1,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      2,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-180",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      20,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-181",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      2,
+      0,
+      17,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      5,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-182",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      19,
+      2,
+      1,
+      1,
+      0,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-183",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      1,
+      1,
+      1,
+      18,
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-184",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      17,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      4
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-185",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      1,
+      1,
+      0,
+      19,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-186",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      23,
+      1,
+      1,
+      0,
+      0,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-187",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      15,
+      2,
+      2,
+      0,
+      1,
+      0,
+      3,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      5
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-188",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      19,
+      0,
+      0,
+      2,
+      2,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-189",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      2,
+      18,
+      0,
+      0,
+      2,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-190",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      2,
+      1,
+      0,
+      23,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-191",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      18,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-192",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      4,
+      2,
+      1,
+      18,
+      2,
+      1,
+      0,
+      0,
+      1,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      5
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-193",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      2,
+      0,
+      3,
+      17,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-194",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      19,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-195",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      24,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-196",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      3,
+      0,
+      19,
+      0,
+      1,
+      1,
+      3,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-197",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      2,
+      1,
+      0,
+      16,
+      2,
+      0,
+      1,
+      0,
+      2,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-198",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      18,
+      2,
+      0,
+      1,
+      1,
+      0,
+      3,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-199",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      20,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-200",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      20,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-201",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      3,
+      0,
+      18,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-202",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      19,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-203",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      20,
+      0,
+      2,
+      0,
+      0,
+      2,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-204",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      2,
+      18,
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-205",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      4,
+      0,
+      1,
+      0,
+      19,
+      0,
+      2,
+      0,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      5,
+      4
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-206",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      0,
+      1,
+      2,
+      18,
+      3,
+      0,
+      0,
+      1,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      5
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-207",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      3,
+      1,
+      1,
+      0,
+      21,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-208",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      4,
+      0,
+      0,
+      18,
+      0,
+      0,
+      2,
+      1,
+      2,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-209",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      1,
+      1,
+      0,
+      0,
+      19,
+      0,
+      2,
+      2,
+      1,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-210",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      2,
+      20,
+      0,
+      1,
+      0,
+      0,
+      2,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-211",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      18,
+      0,
+      2,
+      0,
+      2,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-212",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      4,
+      0,
+      0,
+      18,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-213",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      19,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-214",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      2,
+      21,
+      2,
+      1,
+      1,
+      0,
+      0,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-215",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      19,
+      2,
+      1,
+      2,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-216",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      2,
+      18,
+      0,
+      0,
+      1,
+      0,
+      2,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-217",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      20,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-218",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      0,
+      1,
+      0,
+      20,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-219",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      2,
+      0,
+      16,
+      1,
+      1,
+      0,
+      0,
+      1,
+      2,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-220",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      2,
+      2,
+      17,
+      0,
+      1,
+      0,
+      2,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-221",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      1,
+      1,
+      0,
+      2,
+      18,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-222",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      2,
+      19,
+      1,
+      1,
+      0,
+      0,
+      1,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-223",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      21,
+      0,
+      0,
+      2,
+      0,
+      2,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-224",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      19,
+      2,
+      1,
+      0,
+      1,
+      2,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-225",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      4,
+      16,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-226",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      18,
+      1,
+      0,
+      2,
+      0,
+      1,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-227",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      1,
+      1,
+      17,
+      2,
+      1,
+      2,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-228",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      0,
+      3,
+      15,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-229",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      2,
+      18,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-230",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      19,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-231",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      2,
+      1,
+      1,
+      15,
+      3,
+      1,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-232",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      1,
+      0,
+      20,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-233",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      20,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-234",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      2,
+      0,
+      0,
+      18,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-235",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      1,
+      0,
+      0,
+      18,
+      0,
+      0,
+      1,
+      1,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-236",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      4,
+      16,
+      2,
+      0,
+      0,
+      1,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-237",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      18,
+      1,
+      3,
+      0,
+      1,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-238",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      21,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-239",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      0,
+      0,
+      1,
+      0,
+      20,
+      0,
+      1,
+      0,
+      2,
+      1,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-240",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      1,
+      1,
+      0,
+      19,
+      2,
+      0,
+      3,
+      2,
+      0,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      9
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-241",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      3,
+      2,
+      0,
+      15,
+      1,
+      0,
+      2,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      5
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-242",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      19,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-243",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      20,
+      1,
+      0,
+      2,
+      1,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-244",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      1,
+      2,
+      1,
+      19,
+      0,
+      1,
+      0,
+      1,
+      2,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-245",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      2,
+      2,
+      0,
+      22,
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      5,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-246",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      22,
+      1,
+      1,
+      0,
+      0,
+      2,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-247",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      21,
+      1,
+      0,
+      1,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-248",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      2,
+      19,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-249",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      2,
+      1,
+      0,
+      21,
+      1,
+      1,
+      0,
+      0,
+      0,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-250",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      3,
+      1,
+      0,
+      19,
+      1,
+      0,
+      1,
+      2,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-251",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      20,
+      0,
+      2,
+      2,
+      0,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-252",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      0,
+      1,
+      1,
+      21,
+      3,
+      0,
+      0,
+      1,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-253",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      1,
+      1,
+      3,
+      15,
+      3,
+      0,
+      0,
+      0,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-254",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      20,
+      1,
+      0,
+      1,
+      2,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-255",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      19,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-256",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      2,
+      18,
+      1,
+      2,
+      0,
+      0,
+      0,
+      2,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-257",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      23,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-258",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      0,
+      0,
+      2,
+      22,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-259",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      3,
+      0,
+      0,
+      1,
+      0,
+      17,
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      12,
+      10
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-260",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      2,
+      1,
+      2,
+      20,
+      2,
+      1,
+      0,
+      1,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-261",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      20,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-262",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      22,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-263",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      22,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-264",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      1,
+      1,
+      1,
+      2,
+      16,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      11,
+      10
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-265",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      0,
+      0,
+      2,
+      0,
+      17,
+      1,
+      0,
+      0,
+      0,
+      1,
+      4,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      1,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-266",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      1,
+      1,
+      1,
+      1,
+      20,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-267",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      1,
+      0,
+      22,
+      0,
+      0,
+      2,
+      1,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-268",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      19,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-269",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      20,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      11,
+      10
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-270",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      19,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-271",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      1,
+      0,
+      2,
+      20,
+      0,
+      0,
+      1,
+      2,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-272",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      2,
+      0,
+      2,
+      21,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-273",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      1,
+      1,
+      19,
+      2,
+      0,
+      1,
+      0,
+      1,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-274",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      4,
+      19,
+      1,
+      0,
+      0,
+      4,
+      0,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-275",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      2,
+      1,
+      15,
+      4,
+      1,
+      1,
+      0,
+      0,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      5
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-276",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      21,
+      0,
+      0,
+      1,
+      0,
+      2,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-277",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      1,
+      0,
+      0,
+      2,
+      20,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      11,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-278",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      15,
+      1,
+      0,
+      1,
+      2,
+      0,
+      3,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-279",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      1,
+      2,
+      19,
+      0,
+      0,
+      2,
+      1,
+      0,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-280",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      1,
+      0,
+      20,
+      0,
+      1,
+      1,
+      2,
+      3,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-281",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      22,
+      0,
+      1,
+      2,
+      1,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-282",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      21,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-283",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      3,
+      16,
+      1,
+      1,
+      2,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-284",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      23,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-285",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      1,
+      18,
+      1,
+      1,
+      2,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-286",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      0,
+      2,
+      0,
+      22,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      1,
+      11
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-287",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      0,
+      1,
+      0,
+      0,
+      19,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-288",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      24,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      12
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-289",
+    "rulesId": "kalah",
+    "board": [
+      4,
+      2,
+      1,
+      1,
+      0,
+      0,
+      16,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-290",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      1,
+      1,
+      1,
+      0,
+      18,
+      1,
+      0,
+      0,
+      1,
+      1,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-291",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      0,
+      2,
+      17,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-292",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      21,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      12,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-293",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      20,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-294",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      2,
+      19,
+      2,
+      1,
+      1,
+      0,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-295",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      2,
+      0,
+      1,
+      1,
+      17,
+      1,
+      0,
+      1,
+      2,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-296",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      2,
+      0,
+      0,
+      0,
+      19,
+      0,
+      2,
+      0,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      11,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-297",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      18,
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      11
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-298",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      18,
+      2,
+      1,
+      0,
+      1,
+      2,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-299",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      2,
+      17,
+      1,
+      1,
+      1,
+      0,
+      0,
+      2,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      3,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-300",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      23,
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-301",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      1,
+      2,
+      0,
+      21,
+      0,
+      2,
+      0,
+      0,
+      1,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-302",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      19,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-303",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      20,
+      0,
+      0,
+      1,
+      2,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      11,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-304",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      18,
+      2,
+      0,
+      0,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-305",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      19,
+      0,
+      1,
+      0,
+      0,
+      2,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      8,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-306",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      2,
+      1,
+      0,
+      19,
+      0,
+      2,
+      1,
+      2,
+      1,
+      1,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-307",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      2,
+      1,
+      0,
+      0,
+      18,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-308",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      2,
+      1,
+      0,
+      0,
+      17,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-309",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      3,
+      3,
+      1,
+      0,
+      0,
+      20,
+      0,
+      0,
+      0,
+      2,
+      1,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      12,
+      10
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-310",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      1,
+      18,
+      3,
+      0,
+      1,
+      1,
+      1,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-311",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      19,
+      0,
+      2,
+      0,
+      2,
+      3,
+      2,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-312",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      2,
+      3,
+      0,
+      0,
+      20,
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-313",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      2,
+      1,
+      0,
+      18,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      10,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-314",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      18,
+      2,
+      0,
+      3,
+      1,
+      1,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-315",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      2,
+      1,
+      22,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      2
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-316",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      18,
+      0,
+      0,
+      1,
+      0,
+      3,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      9,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-317",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      0,
+      20,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      10,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-318",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      3,
+      0,
+      0,
+      1,
+      2,
+      20,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-319",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      20,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-320",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      2,
+      19,
+      0,
+      0,
+      1,
+      2,
+      2,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      11,
+      10
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-321",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      19,
+      3,
+      1,
+      2,
+      0,
+      2,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      8,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-322",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      21,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-323",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      21,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-324",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      23,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      8,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-325",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      23,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-326",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      3,
+      0,
+      2,
+      3,
+      0,
+      20,
+      1,
+      2,
+      0,
+      0,
+      0,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-327",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      2,
+      1,
+      0,
+      0,
+      16,
+      2,
+      1,
+      0,
+      1,
+      1,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      11,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-328",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      0,
+      1,
+      0,
+      21,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-329",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      19,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-330",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      21,
+      0,
+      1,
+      0,
+      3,
+      1,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-331",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      18,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-332",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      16,
+      1,
+      0,
+      1,
+      0,
+      2,
+      2,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-333",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      3,
+      0,
+      0,
+      0,
+      17,
+      1,
+      3,
+      0,
+      1,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      10,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-334",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      20,
+      3,
+      1,
+      0,
+      0,
+      1,
+      2,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-335",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      1,
+      0,
+      2,
+      20,
+      0,
+      2,
+      1,
+      0,
+      0,
+      1,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-336",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      3,
+      18,
+      2,
+      0,
+      0,
+      0,
+      2,
+      1,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-337",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      1,
+      0,
+      0,
+      18,
+      2,
+      0,
+      0,
+      2,
+      2,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-338",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      2,
+      18,
+      0,
+      1,
+      2,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-339",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      20,
+      1,
+      0,
+      1,
+      0,
+      0,
+      2,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      9,
+      4
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-340",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      17,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      2
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-341",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      23,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      7,
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-342",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      1,
+      18,
+      1,
+      2,
+      0,
+      0,
+      0,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      3
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-343",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      2,
+      0,
+      1,
+      0,
+      0,
+      17,
+      4,
+      1,
+      1,
+      0,
+      1,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      7,
+      1
+    ],
+    "theme": "capture",
+    "difficulty": "hard",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-344",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      17,
+      2,
+      2,
+      0,
+      1,
+      0,
+      0,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      8
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-345",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      3,
+      0,
+      0,
+      20,
+      5,
+      0,
+      1,
+      0,
+      1,
+      1,
+      16
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      5,
+      4
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-346",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      2,
+      22,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      3
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-347",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      18,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      0
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-348",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      0,
+      1,
+      19,
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-349",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      2,
+      1,
+      0,
+      0,
+      0,
+      22,
+      0,
+      0,
+      0,
+      2,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-350",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      2,
+      0,
+      1,
+      17,
+      2,
+      0,
+      0,
+      0,
+      0,
+      1,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      12
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-351",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      2,
+      2,
+      2,
+      0,
+      20,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      2,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-352",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      1,
+      2,
+      1,
+      21,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      18
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      2
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-353",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      2,
+      1,
+      2,
+      16,
+      2,
+      0,
+      0,
+      0,
+      0,
+      2,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      7,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-354",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      1,
+      2,
+      0,
+      1,
+      20,
+      1,
+      0,
+      3,
+      0,
+      1,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      3,
+      9
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-355",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      19,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      25
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-356",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      22,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      22
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      4,
+      11
+    ],
+    "theme": "go-again chain",
+    "difficulty": "easy",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-357",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      17,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      12,
+      11
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-358",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      22,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      20
+    ],
+    "turn": 0,
+    "solution": [
+      1,
+      9,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 1
+    }
+  },
+  {
+    "id": "daily-puzzle-359",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      1,
+      0,
+      0,
+      3,
+      19,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      23
+    ],
+    "turn": 0,
+    "solution": [
+      2
+    ],
+    "theme": "capture",
+    "difficulty": "easy",
+    "title": "Decisive Ambush",
+    "hint": {
+      "theme": "Find an empty pit on your side you can land in.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-360",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      0,
+      1,
+      2,
+      0,
+      18,
+      3,
+      0,
+      1,
+      1,
+      2,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      4,
+      3,
+      7
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 4
+    }
+  },
+  {
+    "id": "daily-puzzle-361",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      23,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-362",
+    "rulesId": "kalah",
+    "board": [
+      1,
+      1,
+      3,
+      1,
+      0,
+      1,
+      17,
+      1,
+      0,
+      0,
+      2,
+      0,
+      2,
+      19
+    ],
+    "turn": 0,
+    "solution": [
+      5,
+      2,
+      10
+    ],
+    "theme": "go-again chain",
+    "difficulty": "hard",
+    "title": "Chaining Free Turns",
+    "hint": {
+      "theme": "Look for a move that lands directly in your store.",
+      "pit": 5
+    }
+  },
+  {
+    "id": "daily-puzzle-363",
+    "rulesId": "kalah",
+    "board": [
+      3,
+      0,
+      1,
+      1,
+      0,
+      0,
+      20,
+      2,
+      1,
+      1,
+      1,
+      1,
+      0,
+      17
+    ],
+    "turn": 0,
+    "solution": [
+      0,
+      10,
+      3
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 0
+    }
+  },
+  {
+    "id": "daily-puzzle-364",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      1,
+      1,
+      0,
+      18,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      12,
+      11
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  },
+  {
+    "id": "daily-puzzle-365",
+    "rulesId": "kalah",
+    "board": [
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      20,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      24
+    ],
+    "turn": 0,
+    "solution": [
+      2,
+      9,
+      1
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 2
+    }
+  },
+  {
+    "id": "daily-puzzle-366",
+    "rulesId": "kalah",
+    "board": [
+      2,
+      1,
+      1,
+      2,
+      0,
+      0,
+      17,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      21
+    ],
+    "turn": 0,
+    "solution": [
+      3,
+      8,
+      0
+    ],
+    "theme": "starve",
+    "difficulty": "hard",
+    "title": "Strategic Squeeze",
+    "hint": {
+      "theme": "Deprive your opponent of constructive moves.",
+      "pit": 3
+    }
+  }
+]
