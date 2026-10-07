@@ -201,10 +201,32 @@ export function perft(
   return nodes;
 }
 
-export const transpositionTable = new Map<string, { score: number; bestMove: number; pv: number[] }>();
+export type TTFlag = 'EXACT' | 'LOWER' | 'UPPER';
 
-export function getPositionKey(board: number[], player: number, depth: number): string {
-  return `${board.join(',')}_p${player}_d${depth}`;
+export interface TTEntry {
+  score: number;
+  bestMove: number;
+  pv: number[];
+  /** EXACT: score is the true value. LOWER: true value >= score (beta cutoff). UPPER: true value <= score (failed low). */
+  flag: TTFlag;
+}
+
+/** Hard cap so long sessions can't grow memory without bound. */
+export const TT_MAX_ENTRIES = 250_000;
+
+export const transpositionTable = new Map<string, TTEntry>();
+
+function rulesKey(rules: RulesConfig): string {
+  return `${rules.freeTurn ? 1 : 0}${rules.captureOpposite ? 1 : 0}`;
+}
+
+export function getPositionKey(
+  board: number[],
+  player: number,
+  depth: number,
+  rules: RulesConfig = { freeTurn: true, captureOpposite: true }
+): string {
+  return `${board.join(',')}_p${player}_d${depth}_r${rulesKey(rules)}`;
 }
 
 export function evaluatePosition(board: number[]): number {
@@ -240,75 +262,63 @@ export function minimax(
   rules: RulesConfig,
   maxDepth: number
 ): { score: number; bestMove: number; pv: number[] } {
-  const hash = getPositionKey(board, player, depth);
-  if (transpositionTable.has(hash)) {
-    return transpositionTable.get(hash)!;
-  }
-
   const legalMoves = getLegalMoves(board, player);
   if (depth === 0 || legalMoves.length === 0) {
-    const evalScore = evaluatePosition(board);
-    return { score: evalScore, bestMove: -1, pv: [] };
+    return { score: evaluatePosition(board), bestMove: -1, pv: [] };
   }
 
+  const hash = getPositionKey(board, player, depth, rules);
+  const alphaOrig = alpha;
+  const betaOrig = beta;
+
+  // A cached value is only reusable if its bound type is compatible with the current window.
+  const cached = transpositionTable.get(hash);
+  if (cached) {
+    if (cached.flag === 'EXACT') {
+      return { score: cached.score, bestMove: cached.bestMove, pv: cached.pv };
+    }
+    if (cached.flag === 'LOWER') alpha = Math.max(alpha, cached.score);
+    else beta = Math.min(beta, cached.score);
+    if (alpha >= beta) {
+      return { score: cached.score, bestMove: cached.bestMove, pv: cached.pv };
+    }
+  }
+
+  const isMax = player === 0; // Player 1 maximizes, Player 2 minimizes
+  let best = isMax ? -Infinity : Infinity;
   let bestMove = legalMoves[0];
-  let bestPV: number[] = [];
+  let bestPV: number[] = [legalMoves[0]];
 
-  if (player === 0) { // Maximizing Player (Player 1)
-    let maxEval = -Infinity;
-    for (const move of legalMoves) {
-      const res = simulateMove(board, player, move, rules);
-      let evaluation: number;
-      if (res.isGameOver) {
-        evaluation = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
-        if (evaluation > maxEval) {
-          maxEval = evaluation;
-          bestMove = move;
-          bestPV = [move];
-        }
-      } else {
-        const nextDepth = res.nextPlayer === player ? depth : depth - 1;
-        const result = minimax(res.newBoard, res.nextPlayer, nextDepth, alpha, beta, rules, maxDepth);
-        if (result.score > maxEval) {
-          maxEval = result.score;
-          bestMove = move;
-          bestPV = [move, ...result.pv.slice(0, 3)];
-        }
-      }
-      alpha = Math.max(alpha, maxEval);
-      if (beta <= alpha) break;
+  for (const move of legalMoves) {
+    const res = simulateMove(board, player, move, rules);
+    let value: number;
+    let childPV: number[] = [];
+
+    if (res.isGameOver) {
+      value = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
+    } else {
+      const nextDepth = res.nextPlayer === player ? depth : depth - 1;
+      const result = minimax(res.newBoard, res.nextPlayer, nextDepth, alpha, beta, rules, maxDepth);
+      value = result.score;
+      childPV = result.pv.slice(0, 3);
     }
-    const res = { score: maxEval, bestMove, pv: bestPV };
-    transpositionTable.set(hash, res);
-    return res;
-  } else { // Minimizing Player (Player 2)
-    let minEval = Infinity;
-    for (const move of legalMoves) {
-      const res = simulateMove(board, player, move, rules);
-      let evaluation: number;
-      if (res.isGameOver) {
-        evaluation = (res.newBoard[P1_STORE] - res.newBoard[P2_STORE]) * 100;
-        if (evaluation < minEval) {
-          minEval = evaluation;
-          bestMove = move;
-          bestPV = [move];
-        }
-      } else {
-        const nextDepth = res.nextPlayer === player ? depth : depth - 1;
-        const result = minimax(res.newBoard, res.nextPlayer, nextDepth, alpha, beta, rules, maxDepth);
-        if (result.score < minEval) {
-          minEval = result.score;
-          bestMove = move;
-          bestPV = [move, ...result.pv.slice(0, 3)];
-        }
-      }
-      beta = Math.min(beta, minEval);
-      if (beta <= alpha) break;
+
+    if (isMax ? value > best : value < best) {
+      best = value;
+      bestMove = move;
+      bestPV = [move, ...childPV];
     }
-    const res = { score: minEval, bestMove, pv: bestPV };
-    transpositionTable.set(hash, res);
-    return res;
+
+    if (isMax) alpha = Math.max(alpha, best);
+    else beta = Math.min(beta, best);
+    if (beta <= alpha) break;
   }
+
+  const flag: TTFlag = best <= alphaOrig ? 'UPPER' : best >= betaOrig ? 'LOWER' : 'EXACT';
+  if (transpositionTable.size >= TT_MAX_ENTRIES) transpositionTable.clear();
+  transpositionTable.set(hash, { score: best, bestMove, pv: bestPV, flag });
+
+  return { score: best, bestMove, pv: bestPV };
 }
 
 export function classifyEquityLoss(equityLoss: number, rank: number): {
