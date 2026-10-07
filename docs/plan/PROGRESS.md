@@ -361,3 +361,37 @@ Phase 2 empowers players to improve genuinely through truthful analysis, exact e
   - RTL physical board orientation invariant: Strictly preserved.
   - Preserved data-testid attributes: 34 / 34 functional.
   - Mobile bottom tray: Strictly 5 buttons (`Board`, `Analysis`, `Coach`, `Rules`, `Settings`), zero 6th button.
+
+---
+
+## Post-M4 UI/UX Polish: Responsive 2-Column Desktop Dashboard & Accessible Action Controls
+
+### 1. Objectives & Scope
+Addressed UX feedback regarding desktop layout, visual pit/store hierarchy, accessibility contrast, and settings decluttering:
+- **Uncapped Center Squeeze**: Replaced narrow central container with a responsive CSS grid (`max-w-7xl mx-auto px-4`, 12-column layout).
+  - Left column (Cols 1–7): EvalGauge, TurnBanner, Board, ActionBar, CoachPanel.
+  - Right column (Cols 8–12): Candidate Moves Evaluation table right adjacent to the board (eye-level, no scrolling down past the board to see engine recommendations), plus SettingsPanel.
+- **Board & Store Visual Hierarchy**:
+  - Store pits elongated into vertical troughs (`h-60 sm:h-84 lg:h-96 w-12 sm:w-24 lg:w-28`) capable of naturally holding 30+ stones.
+  - Enlarged pit stone count badges (`text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-xl border shadow-sm`).
+  - Removed static center graffiti text (`← Counter-Clockwise...`) from playfield; replaced with subtle dynamic move previews.
+- **Dedicated ActionBar**:
+  - Placed directly beneath the board with `Undo` button (sound & haptic supported, PvE multi-turn rollback), `Hints` toggle, Bot persona status chip, and `New Game` button with confirmation.
+- **Slide-Over SettingsDrawer**:
+  - Header settings cog button (`header-settings-btn`) triggers a slide-out drawer with backdrop blur and Escape key handler.
+- **Evaluation Meter Contrast & Embedding**:
+  - Numerical readouts embedded directly inside the split bar with WCAG AA/AAA compliant text colors across all skins (high-contrast, porcelain, walnut, obsidian, emerald, amethyst).
+- **Architecture Invariant Preservation**:
+  - Extracted `src/game/settingsPropsHelper.ts`; `src/App.tsx` strictly maintained at **287 lines** (< 300 lines limit).
+  - Fully translated new action keys (`action.undo`, `action.hint`) across English, Arabic, and Spanish catalogs with 1:1 parity.
+
+### 2. Verification Evidence
+- **TypeScript Typecheck (`npx tsc --noEmit`)**: Clean (0 errors).
+- **Vitest Unit & Fuzz Suite (`npm test`)**: **33 test files, 261 / 261 tests passed** (100%).
+- **Production Build (`npm run build`)**: Clean build in 17.38s (0 errors).
+- **Playwright Full Multi-Viewport E2E (`npx playwright test`)**: **212 / 212 tests passed** (100%).
+- **Chrome DevTools MCP Inspection**:
+  - Desktop $1440 \times 900$: 2-column layout verified; Candidate moves table adjacent to board at eye-level; SettingsDrawer slide-over functional.
+  - Mobile $393 \times 852$ & $360 \times 740$: 0 horizontal overflow (`scrollWidth === innerWidth === 360px`), 5-item bottom tray strictly maintained.
+- **Commit**: `c67a57e` ("feat(ui): responsive 2-column desktop dashboard, vertical store troughs, and settings drawer").
+
