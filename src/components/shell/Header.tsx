@@ -68,6 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
             ].map((s) => (
               <button
                 key={s.id}
+                data-testid={`skin-select-${s.id}`}
                 onClick={() => onSelectSkin(s.id as SkinTheme)}
                 title={s.label}
                 className={`px-1.5 sm:px-2 py-1 rounded-lg font-semibold transition text-xs ${
