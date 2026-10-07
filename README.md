@@ -1,75 +1,85 @@
-# GNU Mancala (2030s Edition)
+# Mancala Coach
 
-> A state-of-the-art Mancala (Kalah) tournament board and real-time analytical evaluation engine inspired by **GNU Backgammon** and **eXtreme Gammon (XG)**.
-
----
-
-## 🌟 Key Features
-
-- **Minimax & Alpha-Beta Transposition Search Engine**: Real-time evaluation calculating multi-ply lookahead (PV sequences), exact win probability %, stone equity margins, and PR (Performance Rating blunder classifications: *Best*, *Inaccuracy*, *Mistake*, *Blunder*).
-- **GNU-style Evaluation Meter & Candidate Move Table**: Live win probability gauge with center-divider visual equity bar, ranking every legal pit move with equity differentials, PV traces, and error classifications.
-- **Dynamic Board with Holographic Hover Previews**: Visualizes the path trajectory, free turn indicators (landing in store), and opposite pit captures in real-time before clicking.
-- **Interactive Tutor Mode**: Flags suboptimal moves in real time before execution, offering pedagogical advice and confirmation if a move sacrifices critical equity.
-- **Multiple Game Modes**:
-  - **vs GNU Engine (PvE)**: Play as South (P1) or North (P2) against an engine with search depth from 1 to 8 plies.
-  - **AI vs AI Duel**: Automated self-play spectator mode with real-time duel speed controls.
-  - **Pass & Play (PvP)**: Local 2-player mode.
-  - **Position Sandbox**: Custom board editor allowing incremental stone adjustments on any pit or store.
-- **Synthesized Web Audio Engine**: Procedural stone sowing clicks (with dynamic pitch offset based on pit stone count), capture chords, bonus turn chimes, and victory arpeggios via the Web Audio API without external media files.
-- **Flexible Ruleset & Customization**: Configure starting stones (3, 4, 5, or 6 per pit), toggle bonus free turn on store finish, and toggle opposite pit captures.
-- **GNU Backgammon Performance Rating (PR)**: Tracks total equity loss across turns and calculates cumulative session PR and blunder counts.
+> A Mancala (Kalah) game with a built-in trainer, inspired by **GNU Backgammon**: play for fun, and switch on the analysis when you want to get better. Mobile-first, runs entirely in the browser, and needs no account.
 
 ---
 
-## 🚀 Getting Started
+## Features
 
-### Prerequisites
+- **Play first, learn if you want**: a clean board, with the coach and hints on toggles.
+- **Search engine**: minimax with alpha-beta pruning and a transposition table. It ranks every legal move, grades each as *Excellent (Best)*, *Good*, *Inaccuracy*, *Mistake* or *Blunder*, and shows the main line.
+- **Live Stone Advantage**: the position is shown as a stone lead (for example `South +2.0 stones`, or `Even`) instead of intimidating win percentages.
+- **Coach mode**: warns before a mistake or blunder, with plain-language explanations (immediate effect, the opponent's reply, why another move is better). You can take back, play the best move, or confirm anyway.
+- **Move hints and hover/touch previews**: toggleable best-move marks, and a preview of where a move will land, including free turns and captures.
+- **Post-game review**: accuracy, an estimated rating, and move badges.
+- **Opponents**: bot personas with different search depths and banter. The computer plays at a calm pace, adjustable in settings.
+- **Game modes**: vs Engine, AI Duel, Pass & Play, and a Position Sandbox.
+- **How to Play guide**: a quick visual rules guide from the bottom tray.
+- **Mobile-first layout**: no horizontal scrolling, a fixed five-item bottom tray (Board, Analysis, Coach, Rules, Settings), and haptic feedback.
+- **Themes**: Walnut, Clay and Slate. Your choice and settings are saved in the browser.
+- **Synthesized audio** via the Web Audio API, with no media files.
 
-- [Node.js](https://nodejs.org/) (v18+)
-- `npm`
+---
 
-### Installation
+## Getting Started
+
+Prerequisites: [Node.js](https://nodejs.org/) v18+ and `npm`.
 
 ```bash
-# Clone the repository
 git clone https://github.com/vjb/mymancala.git
 cd mymancala
-
-# Install dependencies
 npm install
+npm run dev      # http://localhost:5173
 ```
 
-### Running Locally
+Other commands:
 
 ```bash
-# Start Vite development server
-npm run dev
+npm test         # run the vitest suite
+npm run build    # type-check and build to dist/
 ```
 
-Visit `http://localhost:5173` in your browser.
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-The production bundle will be generated in `dist/`.
+To try it on a phone on the same network, run the dev server and open `http://<your-computer-ip>:5173`.
 
 ---
 
-## 📜 Mancala / Kalah Rules Implemented
+## Project Layout
 
-1. **Board Layout**: Two rows of 6 pits each, plus a store (Kalah) on each end.
-   - **Player 1 (South)**: Pits 1–6 (indices 0–5) and Right Store (index 6).
-   - **Player 2 (North)**: Pits 1–6 (indices 12 down to 7) and Left Store (index 13).
-2. **Sowing**: Stones are picked up from a pit and dropped one-by-one counter-clockwise into subsequent pits and the player's own store (skipping the opponent's store).
-3. **Free Turn**: If the last stone lands in the current player's store, that player gets an immediate bonus turn.
-4. **Capture**: If the last stone lands in an empty pit belonging to the player and the directly opposite pit has stones, both the landing stone and the opponent's stones are captured and placed in the player's store.
-5. **Game End**: When all pits on either side are empty, all remaining stones on the board are swept into their respective player's store. The player with the most stones wins!
+| Path | Purpose |
+|---|---|
+| `src/engine.ts` | Rules (`simulateMove`), search, move analysis and grading |
+| `src/tactics.ts` | Plain-language tactical explanations |
+| `src/bots.ts` | Bot personas and banter |
+| `src/App.tsx` | Main UI and game state |
+| `src/RulesModal.tsx`, `src/GameReviewModal.tsx` | Rules guide and post-game review |
+| `src/theme.ts`, `src/Pebble.tsx` | Skins and pebble rendering |
+| `src/sound.ts`, `src/haptics.ts` | Audio and vibration |
+| `src/preflight-diagnostics.ts` | In-app invariant self-tests |
 
 ---
 
-## 📄 License
+## Kalah Rules Implemented
+
+1. **Board**: two rows of 6 pits plus a store (Kalah) at each end.
+2. **Sowing**: pick up all stones from a pit and drop one into each following pit counter-clockwise, including your own store but skipping your opponent's.
+3. **Free turn**: if your last stone lands in your store, you move again.
+4. **Capture**: if your last stone lands in an empty pit on your side and the opposite pit has stones, you capture them plus your landing stone.
+5. **Game end**: when one side is empty, the remaining stones go to their owner's store. Most stones wins.
+
+---
+
+## Roadmap
+
+The next major phase aims to make this a full trainer for all ages:
+
+- A toggleable "lens" system with presets (Just Play / Hints / Coach / Full Analysis).
+- Engine correctness work and exact evaluation where feasible.
+- A mistake log, drills from your own errors, and a local rating ladder.
+- A daily puzzle, streaks and badges.
+- More variants (Oware, Ayo, Bao, Congkak/Dakon), an installable offline app, translations, and accessibility features.
+
+---
+
+## License
 
 MIT

@@ -3,7 +3,8 @@ import {
   Play, Pause, RotateCcw, Award, Settings, BarChart3, 
   Sparkles, Volume2, VolumeX, Eye, EyeOff,
   ArrowRight, AlertTriangle, Zap, CheckCircle2, ShieldCheck, X,
-  ShieldAlert, HelpCircle, LayoutGrid, Bot, User, ChevronDown, ChevronUp
+  ShieldAlert, HelpCircle, LayoutGrid, Bot, User, ChevronDown, ChevronUp,
+  Trophy, Smartphone, MessageSquare, BookOpen
 } from 'lucide-react';
 import {
   createInitialState,
@@ -23,6 +24,10 @@ import { runGNUPreflightSuite, DiagnosticResult } from './preflight-diagnostics'
 import { sounds } from './sound';
 import { SkinTheme, THEMES } from './theme';
 import { PebbleCluster } from './Pebble';
+import { haptics } from './haptics';
+import { BOT_PERSONAS, DEFAULT_BOT_ID, getBotReaction, BotReactionEvent } from './bots';
+import { GameReviewModal, GameReviewData, MoveRecord } from './GameReviewModal';
+import { RulesModal } from './RulesModal';
 
 export default function App() {
   const [stonesConfig, setStonesConfig] = useState(4);
@@ -59,6 +64,64 @@ export default function App() {
   // Game modes: 'pve', 'pvp', 'ai_vs_ai', 'sandbox'
   const [gameMode, setGameMode] = useState<string>('pve');
   const [humanPlayer, setHumanPlayer] = useState<number>(0); // 0 = P1 (South), 1 = P2 (North)
+
+  // Bot Personas State with localStorage persistence
+  const [selectedBotId, setSelectedBotId] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('mancala_bot_id');
+      return saved && saved in BOT_PERSONAS ? saved : DEFAULT_BOT_ID;
+    } catch {
+      return DEFAULT_BOT_ID;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('mancala_bot_id', selectedBotId); } catch {}
+  }, [selectedBotId]);
+
+  const activeBot = BOT_PERSONAS[selectedBotId] || BOT_PERSONAS[DEFAULT_BOT_ID];
+
+  // Bot Speech Bubble State
+  const [botDialogue, setBotDialogue] = useState<{ text: string; id: number } | null>(null);
+
+  // Haptics State
+  const [hapticsEnabled, setHapticsEnabled] = useState(() => haptics.enabled);
+  const handleToggleHaptics = (enabled: boolean) => {
+    haptics.setEnabled(enabled);
+    setHapticsEnabled(enabled);
+    if (enabled) haptics.tap();
+  };
+
+  // Game Review Modal State & Move Tracking
+  const [gameReviewOpen, setGameReviewOpen] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [gameMovesHistory, setGameMovesHistory] = useState<MoveRecord[]>([]);
+  const [lastDecisiveTurn, setLastDecisiveTurn] = useState<{
+    turnNumber: number;
+    player: number;
+    description: string;
+  } | null>(null);
+
+  const triggerBotDialogue = useCallback((event: BotReactionEvent, customText?: string) => {
+    if (gameMode !== 'pve') return;
+    const text = customText || getBotReaction(selectedBotId, event);
+    const id = Date.now();
+    setBotDialogue({ text, id });
+    const timer = setTimeout(() => {
+      setBotDialogue(prev => (prev?.id === id ? null : prev));
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [selectedBotId, gameMode]);
+
+  const handleSelectBot = (botId: string) => {
+    haptics.tap();
+    setSelectedBotId(botId);
+    const bot = BOT_PERSONAS[botId];
+    if (bot) {
+      setSearchDepth(bot.depth);
+      const startQuote = getBotReaction(botId, 'start');
+      triggerBotDialogue('start', startQuote);
+    }
+  };
   
   // Coach & Evaluation Visibility Controls (Decoupled & Persisted!)
   const [tutorMode, setTutorMode] = useState(() => {
@@ -157,18 +220,20 @@ export default function App() {
   // Input debouncing & concurrency mutex lock
   const isMoveLocked = useRef(false);
 
-  // Animation timing profiles
+  // Animation timing profiles - tuned for relaxed, comprehensible pacing
   const getSpeedDelays = (speed: 'slow' | 'normal' | 'fast' | 'instant') => {
     switch (speed) {
       case 'slow':
-        return { lift: 450, step: 280, capture: 550, freeTurn: 450, thinking: 900 };
+        // Extra gentle pacing for older players and complete beginners
+        return { lift: 550, step: 340, capture: 650, freeTurn: 550, thinking: 1600 };
       case 'fast':
-        return { lift: 160, step: 85, capture: 260, freeTurn: 220, thinking: 350 };
+        return { lift: 180, step: 100, capture: 280, freeTurn: 220, thinking: 400 };
       case 'instant':
         return { lift: 0, step: 0, capture: 0, freeTurn: 0, thinking: 20 };
       case 'normal':
       default:
-        return { lift: 320, step: 175, capture: 450, freeTurn: 350, thinking: 650 };
+        // Relaxed, easy-to-follow default (1.2s thinking pause + deliberate 240ms drops)
+        return { lift: 400, step: 240, capture: 500, freeTurn: 400, thinking: 1200 };
     }
   };
 
@@ -290,6 +355,8 @@ export default function App() {
             explanation
           });
           setShowCoachDetails(false);
+          haptics.blunder();
+          triggerBotDialogue('player_blunder');
           isMoveLocked.current = false;
           return;
         }
@@ -317,13 +384,70 @@ export default function App() {
       const initialStones = currentBoard[pitIndex];
       const result = simulateMove(currentBoard, player, pitIndex, rules);
 
+      // Track move for Chess.com-style Game Review
+      if (chosenEval) {
+        const isBrilliant = chosenEval.equityLoss <= 0.02 && (chosenEval.captures >= 6 || (chosenEval.freeTurn && chosenEval.winProb >= 0.70));
+        const classification: 'Brilliant' | 'Best' | 'Good' | 'Inaccuracy' | 'Mistake' | 'Blunder' = 
+          isBrilliant ? 'Brilliant' : (chosenEval.classification === 'Excellent (Best)' ? 'Best' : chosenEval.classification);
+        setGameMovesHistory(prev => [
+          ...prev,
+          {
+            player,
+            pit: pitIndex,
+            freeTurn: result.earnedFreeTurn,
+            captures: result.capturedStones,
+            classification,
+            equityLoss: chosenEval.equityLoss
+          }
+        ]);
+
+        if (result.capturedStones >= 6) {
+          setLastDecisiveTurn({
+            turnNumber: gameState.moveHistory.length + 1,
+            player,
+            description: `${player === 0 ? 'South' : (gameMode === 'pve' ? activeBot.name : 'North')} executed a massive ${result.capturedStones}-pebble capture!`
+          });
+        } else if (chosenEval.classification === 'Blunder' && !lastDecisiveTurn) {
+          setLastDecisiveTurn({
+            turnNumber: gameState.moveHistory.length + 1,
+            player,
+            description: `Critical blunder by ${player === 0 ? 'South' : 'North'} conceded major win equity.`
+          });
+        }
+      }
+
       const isInstant = sowSpeed === 'instant';
 
       if (isInstant) {
         sounds.playSow(initialStones);
-        if (result.capturedStones > 0) sounds.playCapture();
-        if (result.earnedFreeTurn && !result.isGameOver) sounds.playFreeTurn();
-        if (result.isGameOver) sounds.playGameOver();
+        haptics.sowStep();
+
+        if (result.capturedStones > 0) {
+          sounds.playCapture();
+          haptics.capture();
+          if (player === 0) triggerBotDialogue('player_capture');
+          else triggerBotDialogue('bot_capture');
+        }
+
+        if (result.earnedFreeTurn && !result.isGameOver) {
+          sounds.playFreeTurn();
+          haptics.freeTurn();
+          if (player === 0) triggerBotDialogue('player_free_turn');
+          else triggerBotDialogue('bot_free_turn');
+        }
+
+        if (result.isGameOver) {
+          sounds.playGameOver();
+          if (result.winner === 0) {
+            haptics.victory();
+            triggerBotDialogue('bot_loss');
+          } else if (result.winner === 1) {
+            triggerBotDialogue('bot_win');
+          }
+          setTimeout(() => setGameReviewOpen(true), 800);
+        } else if (player === 1 && result.capturedStones === 0 && !result.earnedFreeTurn) {
+          triggerBotDialogue('bot_move');
+        }
 
         setGameState(prev => ({
           board: result.newBoard,
@@ -364,6 +488,7 @@ export default function App() {
       const delays = getSpeedDelays(sowSpeed);
 
       // Phase 1: Lift stones into hand
+      haptics.tap();
       const intermediate = [...currentBoard];
       intermediate[pitIndex] = 0;
       setVisualBoard([...intermediate]);
@@ -400,6 +525,7 @@ export default function App() {
           earnedFreeTurn: result.earnedFreeTurn
         });
         sounds.playSow(i + 1);
+        haptics.sowStep();
 
         await new Promise(r => setTimeout(r, delays.step));
         if (activeAnimationId.current !== animId) return;
@@ -409,6 +535,10 @@ export default function App() {
       if (result.capturedStones > 0) {
         setAnimatingState(prev => prev ? { ...prev, phase: 'capture', currentPit: result.lastLanding } : null);
         sounds.playCapture();
+        haptics.capture();
+        if (player === 0) triggerBotDialogue('player_capture');
+        else triggerBotDialogue('bot_capture');
+
         await new Promise(r => setTimeout(r, delays.capture));
         if (activeAnimationId.current !== animId) return;
 
@@ -421,12 +551,25 @@ export default function App() {
       } else if (result.earnedFreeTurn && !result.isGameOver) {
         setAnimatingState(prev => prev ? { ...prev, phase: 'free_turn', currentPit: player === 0 ? P1_STORE : P2_STORE } : null);
         sounds.playFreeTurn();
+        haptics.freeTurn();
+        if (player === 0) triggerBotDialogue('player_free_turn');
+        else triggerBotDialogue('bot_free_turn');
+
         await new Promise(r => setTimeout(r, delays.freeTurn));
         if (activeAnimationId.current !== animId) return;
       }
 
       if (result.isGameOver) {
         sounds.playGameOver();
+        if (result.winner === 0) {
+          haptics.victory();
+          triggerBotDialogue('bot_loss');
+        } else if (result.winner === 1) {
+          triggerBotDialogue('bot_win');
+        }
+        setTimeout(() => setGameReviewOpen(true), 800);
+      } else if (player === 1 && result.capturedStones === 0 && !result.earnedFreeTurn) {
+        triggerBotDialogue('bot_move');
       }
 
       if (result.earnedFreeTurn) {
@@ -552,7 +695,54 @@ export default function App() {
       p1Blunders: 0,
       p2Blunders: 0
     });
+    setGameMovesHistory([]);
+    setLastDecisiveTurn(null);
+    setGameReviewOpen(false);
+    triggerBotDialogue('start');
   };
+
+  const gameReviewData: GameReviewData = useMemo(() => {
+    const p1Moves = gameMovesHistory.filter(m => m.player === 0);
+    const p2Moves = gameMovesHistory.filter(m => m.player === 1);
+
+    const calcAcc = (moves: MoveRecord[]) => {
+      if (moves.length === 0) return 100;
+      const totalLoss = moves.reduce((sum, m) => sum + (m.equityLoss || 0), 0);
+      const avgLoss = totalLoss / moves.length;
+      return Math.max(20, Math.min(100, Math.round(100 - avgLoss * 160)));
+    };
+
+    const p1Acc = calcAcc(p1Moves);
+    const p2Acc = calcAcc(p2Moves);
+
+    const bot = BOT_PERSONAS[selectedBotId] || BOT_PERSONAS[DEFAULT_BOT_ID];
+    const p1Elo = Math.round(800 + (p1Acc / 100) * 850 + (bot.depth * 40));
+    const p2Elo = Math.round(800 + (p2Acc / 100) * 850 + (bot.depth * 40));
+
+    const countGrades = (moves: MoveRecord[]) => ({
+      brilliant: moves.filter(m => m.classification === 'Brilliant').length,
+      best: moves.filter(m => m.classification === 'Best').length,
+      good: moves.filter(m => m.classification === 'Good').length,
+      inaccuracy: moves.filter(m => m.classification === 'Inaccuracy').length,
+      mistake: moves.filter(m => m.classification === 'Mistake').length,
+      blunder: moves.filter(m => m.classification === 'Blunder').length,
+    });
+
+    return {
+      winner: gameState.winner,
+      p1Score: gameState.board[P1_STORE],
+      p2Score: gameState.board[P2_STORE],
+      p1Accuracy: p1Acc,
+      p2Accuracy: p2Acc,
+      p1Elo,
+      p2Elo,
+      p1Counts: countGrades(p1Moves),
+      p2Counts: countGrades(p2Moves),
+      totalMoves: gameMovesHistory.length,
+      turningPoint: lastDecisiveTurn || undefined,
+      bot: gameMode === 'pve' ? bot : undefined
+    };
+  }, [gameMovesHistory, gameState.winner, gameState.board, selectedBotId, gameMode, lastDecisiveTurn]);
 
   const handleSandboxPitAdjust = (pitIndex: number, delta: number) => {
     if (animatingState) return;
@@ -595,6 +785,25 @@ export default function App() {
     const top = analysisResults[0];
     return gameState.currentPlayer === 0 ? top.winProb : 1 - top.winProb;
   }, [gameState.isGameOver, gameState.winner, gameState.currentPlayer, analysisResults]);
+
+  // Grounded Stone Advantage calculation (Player 1 / South perspective)
+  // Positive = South advantage (+X.X stones), Negative = North advantage (+X.X stones)
+  const currentStoneAdvantage = useMemo(() => {
+    if (gameState.isGameOver) {
+      return gameState.board[P1_STORE] - gameState.board[P2_STORE];
+    }
+    if (!analysisResults || analysisResults.length === 0) return 0;
+    const top = analysisResults[0];
+    const rawP1Score = gameState.currentPlayer === 0 ? top.score : -top.score;
+    const stones = rawP1Score / 3.5;
+    return Math.round(stones * 10) / 10;
+  }, [gameState.isGameOver, gameState.board, gameState.currentPlayer, analysisResults]);
+
+  // Balance bar fill percentage based on stone advantage (clamped between -10 and +10 stones)
+  const p1BarRatio = useMemo(() => {
+    const clamped = Math.max(-10, Math.min(10, currentStoneAdvantage));
+    return 0.5 + (clamped / 20);
+  }, [currentStoneAdvantage]);
 
   const calcPR = (loss: number, moves: number) => {
     if (moves === 0) return '0.00';
@@ -664,13 +873,13 @@ export default function App() {
                     ? 'bg-[#2a1a12] text-amber-300/90 border-[#4a2e1d]'
                     : 'bg-[#151722] text-sky-300 border-[#2b3042]'
                 }`}>
-                  AI
+                  Coach
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Theme Switcher & Fast Reset */}
+          {/* Theme Switcher, Rules & Fast Reset */}
           <div className="flex items-center space-x-1.5 shrink-0">
             
             {/* Skin Selector Pill */}
@@ -735,7 +944,7 @@ export default function App() {
       {/* Main Content Area - pb-20 guarantees clearance above sticky bottom bar */}
       <main className="max-w-5xl mx-auto w-full p-2.5 sm:p-5 pb-24 lg:pb-8 flex-1 flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
         
-        {/* Live Win Probability & Focus / Zen Mode Card */}
+        {/* Live Stone Advantage & Focus / Zen Mode Card */}
         <section 
           data-testid="eval-gauge"
           className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
@@ -744,7 +953,7 @@ export default function App() {
           <div className="flex items-center justify-between pb-1.5 mb-1 border-b border-white/5">
             <div className="flex items-center space-x-2">
               <span className="text-[11px] font-bold tracking-tight opacity-75">
-                Live Win Probability
+                Live Advantage (Stones)
               </span>
               {showMoveHints && (
                 <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
@@ -756,7 +965,7 @@ export default function App() {
             <button
               onClick={() => setEvalBarCollapsed(!evalBarCollapsed)}
               className={`flex items-center space-x-1 text-[11px] font-semibold px-2 py-0.5 rounded-lg transition ${theme.cardTextMuted} hover:opacity-100`}
-              title={evalBarCollapsed ? "Expand win gauge" : "Collapse win gauge (Focus mode)"}
+              title={evalBarCollapsed ? "Expand advantage gauge" : "Collapse advantage gauge (Focus mode)"}
             >
               <span>{evalBarCollapsed ? "Show Bar" : "Focus"}</span>
               {evalBarCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
@@ -769,20 +978,30 @@ export default function App() {
               {/* Player 2 (North / Top) */}
               <div className="flex items-center justify-between sm:justify-start space-x-2.5 w-full sm:w-auto">
                 <div className="flex items-center space-x-2">
-                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center border ${
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center border text-base ${
                     gameState.currentPlayer === 1 && !gameState.isGameOver
                       ? 'ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 text-emerald-300'
                       : 'bg-black/10 border-white/10 opacity-70'
                   }`}>
-                    <Bot className="w-3.5 h-3.5" />
+                    <Bot className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div>
                     <div className={`text-[10px] font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
-                      <span>North (P2)</span>
-                      {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[8px] px-1 py-0.1 rounded-full bg-black/20 font-bold">Engine</span>}
+                      <span>{gameMode === 'pve' ? 'Computer (Engine)' : 'North (P2)'}</span>
+                      {gameMode === 'pve' && (
+                        <span className="text-[8px] px-1.5 py-0.2 rounded-full bg-black/20 font-bold">
+                          Depth {searchDepth}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-xs sm:text-sm font-extrabold tracking-tight">
-                      {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                    <div className={`text-xs sm:text-sm font-extrabold tracking-tight ${
+                      currentStoneAdvantage < -0.2 ? 'text-emerald-400' : currentStoneAdvantage > 0.2 ? theme.cardTextMuted : ''
+                    }`}>
+                      {currentStoneAdvantage < -0.2 
+                        ? `+${Math.abs(currentStoneAdvantage).toFixed(1)} stones` 
+                        : currentStoneAdvantage > 0.2 
+                        ? `-${currentStoneAdvantage.toFixed(1)}` 
+                        : 'Even (±0.0)'}
                     </div>
                   </div>
                 </div>
@@ -792,10 +1011,13 @@ export default function App() {
               <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1">
                 <div className="flex justify-between text-[10px] font-semibold">
                   <span className={currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400'}>
-                    South: {(p1CurrentWinProb * 100).toFixed(1)}%
+                    South: {Math.abs(currentStoneAdvantage) < 0.25 ? '±0.0' : currentStoneAdvantage > 0 ? `+${currentStoneAdvantage.toFixed(1)}` : currentStoneAdvantage.toFixed(1)}
+                  </span>
+                  <span className={`text-[9px] font-mono ${theme.cardTextMuted}`}>
+                    {Math.abs(currentStoneAdvantage) < 0.25 ? 'Even Match' : currentStoneAdvantage > 0 ? 'South Ahead' : 'Computer Ahead'}
                   </span>
                   <span className={currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400'}>
-                    North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                    North: {Math.abs(currentStoneAdvantage) < 0.25 ? '±0.0' : currentStoneAdvantage < 0 ? `+${Math.abs(currentStoneAdvantage).toFixed(1)}` : `-${currentStoneAdvantage.toFixed(1)}`}
                   </span>
                 </div>
 
@@ -806,7 +1028,7 @@ export default function App() {
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
                         : theme.barP1
                     }`}
-                    style={{ width: `${p1CurrentWinProb * 100}%` }}
+                    style={{ width: `${p1BarRatio * 100}%` }}
                   />
                   <div 
                     className={`h-full transition-all duration-500 ease-out ${
@@ -814,7 +1036,7 @@ export default function App() {
                         ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
                         : theme.barP2
                     }`}
-                    style={{ width: `${(1 - p1CurrentWinProb) * 100}%` }}
+                    style={{ width: `${(1 - p1BarRatio) * 100}%` }}
                   />
                   <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider}`} />
                 </div>
@@ -832,8 +1054,14 @@ export default function App() {
                     {gameMode === 'pve' && humanPlayer === 0 && <span className="text-[8px] px-1 py-0.1 rounded-full bg-black/20 font-bold">You</span>}
                     <span>South (P1)</span>
                   </div>
-                  <div className="text-xs sm:text-sm font-extrabold tracking-tight">
-                    {(p1CurrentWinProb * 100).toFixed(1)}%
+                  <div className={`text-xs sm:text-sm font-extrabold tracking-tight ${
+                    currentStoneAdvantage > 0.25 ? 'text-amber-400' : currentStoneAdvantage < -0.25 ? theme.cardTextMuted : ''
+                  }`}>
+                    {currentStoneAdvantage > 0.25 
+                      ? `+${currentStoneAdvantage.toFixed(1)} stones` 
+                      : currentStoneAdvantage < -0.25 
+                      ? `${currentStoneAdvantage.toFixed(1)}` 
+                      : 'Even (±0.0)'}
                   </div>
                 </div>
                 <div className={`w-7 h-7 rounded-xl flex items-center justify-center border ${
@@ -850,13 +1078,13 @@ export default function App() {
             /* Collapsed Zen Mode Ribbon */
             <div className="flex items-center justify-between text-xs py-0.5">
               <span className={currentSkin === 'porcelain' ? 'text-[#b85038] font-bold' : 'text-amber-400 font-bold'}>
-                South: {(p1CurrentWinProb * 100).toFixed(1)}%
+                South: {Math.abs(currentStoneAdvantage) < 0.25 ? 'Even (±0.0)' : currentStoneAdvantage > 0 ? `+${currentStoneAdvantage.toFixed(1)}` : currentStoneAdvantage.toFixed(1)}
               </span>
               <span className={`text-[10px] font-mono ${theme.cardTextMuted}`}>
                 PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}
               </span>
               <span className={currentSkin === 'porcelain' ? 'text-[#3b6654] font-bold' : 'text-emerald-400 font-bold'}>
-                North: {((1 - p1CurrentWinProb) * 100).toFixed(1)}%
+                North: {Math.abs(currentStoneAdvantage) < 0.25 ? 'Even (±0.0)' : currentStoneAdvantage < 0 ? `+${Math.abs(currentStoneAdvantage).toFixed(1)}` : `-${currentStoneAdvantage.toFixed(1)}`}
               </span>
             </div>
           )}
@@ -864,7 +1092,7 @@ export default function App() {
 
         {/* Board View Tab */}
         <section className={`${mobileTab !== 'board' ? 'hidden lg:block' : ''}`}>
-          
+
           {/* Status Ribbon: Turn, Conservation Invariant, Trajectory Preview */}
           <div className="mb-2 sm:mb-2.5 flex flex-wrap items-center justify-between gap-1.5 px-1">
             <div className="flex items-center flex-wrap gap-1.5">
@@ -890,6 +1118,24 @@ export default function App() {
                 Stones: {totalBoardStones}
               </span>
 
+              {/* Quick 1-Tap Move Hints Toggle */}
+              <button
+                onClick={() => {
+                  haptics.tap();
+                  setShowMoveHints(!showMoveHints);
+                }}
+                data-testid="ribbon-hints-btn"
+                title={showMoveHints ? "Move hints are visible on board pits" : "Move hints hidden"}
+                className={`px-2.5 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 transition ${
+                  showMoveHints 
+                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-bold' 
+                    : `${theme.cardTextMuted} border-white/10 hover:border-white/20`
+                }`}
+              >
+                {showMoveHints ? <Eye className="w-3.5 h-3.5 text-amber-400" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>{showMoveHints ? "Hints On" : "Hints"}</span>
+              </button>
+
               {gameState.moveHistory.length > 0 && gameState.moveHistory[gameState.moveHistory.length - 1].freeTurn && (
                 <span className="flex items-center space-x-1 text-xs font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-600/50 px-2.5 py-1 rounded-full animate-bounce">
                   <Zap className="w-3 h-3 text-emerald-300" />
@@ -910,16 +1156,29 @@ export default function App() {
 
             {/* Game Over Banner */}
             {gameState.isGameOver && (
-              <div 
-                data-testid="game-over-banner"
-                className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold shadow-md animate-pulse"
-              >
-                <Award className="w-3.5 h-3.5" />
-                <span>
-                  {gameState.winner === -1 
-                    ? "Game Ended in a Draw!" 
-                    : `Player ${gameState.winner! + 1} Wins (${gameState.board[P1_STORE]} - ${gameState.board[P2_STORE]})!`}
-                </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <div 
+                  data-testid="game-over-banner"
+                  className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold shadow-md animate-pulse"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>
+                    {gameState.winner === -1 
+                      ? "Game Ended in a Draw!" 
+                      : `${gameState.winner === 0 ? 'South (You)' : (gameMode === 'pve' ? activeBot.name : 'North')} Wins (${gameState.board[P1_STORE]} - ${gameState.board[P2_STORE]})!`}
+                  </span>
+                </div>
+                <button
+                  data-testid="game-over-review-btn"
+                  onClick={() => {
+                    haptics.tap();
+                    setGameReviewOpen(true);
+                  }}
+                  className="flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition active:scale-95"
+                >
+                  <Trophy className="w-3.5 h-3.5" />
+                  <span>Review Match 🏆</span>
+                </button>
               </div>
             )}
           </div>
@@ -1651,8 +1910,27 @@ export default function App() {
                 <span className="opacity-40">•</span>
                 <span className="font-bold text-emerald-500">P2: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span>
               </div>
-              <div className={`text-[10px] ${theme.cardTextMuted}`}>
-                Blunders: P1({matchStats.p1Blunders}) / P2({matchStats.p2Blunders})
+              <div className="flex items-center gap-2">
+                <div className={`text-[10px] ${theme.cardTextMuted}`}>
+                  Blunders: P1({matchStats.p1Blunders}) / P2({matchStats.p2Blunders})
+                </div>
+                {(gameState.isGameOver || gameMovesHistory.length >= 2) && (
+                  <button
+                    onClick={() => {
+                      haptics.tap();
+                      setGameReviewOpen(true);
+                    }}
+                    data-testid="analysis-review-btn"
+                    className={`px-2 py-0.5 rounded-lg border text-[10px] font-bold transition flex items-center gap-1 ${
+                      currentSkin === 'porcelain'
+                        ? 'bg-amber-600/10 text-amber-800 border-amber-700/30 hover:bg-amber-600/20'
+                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                    }`}
+                  >
+                    <Trophy className="w-3 h-3 text-amber-400" />
+                    <span>Review Game</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1991,6 +2269,24 @@ export default function App() {
               </button>
             </div>
 
+            {/* Phone Haptics (Vibration) */}
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-1.5">
+                <Smartphone className="w-3.5 h-3.5 opacity-70" />
+                <span className="font-semibold">Phone Haptics (Vibration):</span>
+              </div>
+              <button
+                onClick={() => handleToggleHaptics(!hapticsEnabled)}
+                className={`px-3 py-1 rounded-xl border text-xs font-semibold transition ${
+                  hapticsEnabled
+                    ? 'bg-amber-600/20 text-amber-400 border-amber-500/30'
+                    : `${theme.cardTextMuted} border-white/10`
+                }`}
+              >
+                {hapticsEnabled ? "Vibration On" : "Vibration Off"}
+              </button>
+            </div>
+
             {/* Game Mode */}
             <div className="flex flex-col gap-1.5 pt-2 border-t border-white/5">
               <label className={`text-[11px] font-semibold ${theme.cardTextMuted}`}>Game Mode</label>
@@ -2165,14 +2461,18 @@ export default function App() {
 
       </main>
 
-      {/* Permanently Docked Sticky Bottom Navigation Bar */}
+      {/* Permanently Docked Sticky Bottom Navigation Bar (5 Fixed Items) */}
       <nav 
-        className={`fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t py-1 px-3 flex lg:hidden items-center justify-around shadow-2xl transition-colors ${theme.thumbBarBg} ${theme.thumbBarBorder}`}
+        className={`fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t py-1 px-2 flex lg:hidden items-center justify-between shadow-2xl transition-colors ${theme.thumbBarBg} ${theme.thumbBarBorder}`}
         style={{ paddingBottom: 'max(0.6rem, env(safe-area-inset-bottom))' }}
       >
         <button
-          onClick={() => setMobileTab('board')}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+          onClick={() => {
+            haptics.tap();
+            setMobileTab('board');
+          }}
+          data-testid="bottom-board-btn"
+          className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition active:scale-95 ${
             mobileTab === 'board' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
@@ -2181,8 +2481,12 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setMobileTab('analysis')}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+          onClick={() => {
+            haptics.tap();
+            setMobileTab('analysis');
+          }}
+          data-testid="bottom-analysis-btn"
+          className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition active:scale-95 ${
             mobileTab === 'analysis' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
@@ -2190,34 +2494,43 @@ export default function App() {
           <span className="text-[10px] font-semibold mt-0.5">Analysis</span>
         </button>
 
-        {/* 1-Tap Toggle for Move Hints / Best Move Indicators */}
-        <button
-          onClick={() => setShowMoveHints(!showMoveHints)}
-          title={showMoveHints ? "Move hints are visible" : "Move hints are hidden"}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            showMoveHints ? 'text-amber-500 font-bold' : theme.cardTextMuted
-          }`}
-        >
-          {showMoveHints ? <Eye className="w-5 h-5 text-amber-500" /> : <EyeOff className="w-5 h-5" />}
-          <span className="text-[10px] font-semibold mt-0.5">{showMoveHints ? "Hints On" : "Hints Off"}</span>
-        </button>
-
         {/* 1-Tap Toggle for Coach Mode */}
         <button
-          onClick={() => setTutorMode(!tutorMode)}
+          onClick={() => {
+            haptics.tap();
+            setTutorMode(!tutorMode);
+          }}
           data-testid="tutor-toggle"
-          title={tutorMode ? "Coach mode active" : "Coach mode off"}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            tutorMode ? 'text-emerald-500 font-bold' : theme.cardTextMuted
+          title={tutorMode ? "Coach mode active (will intervene on blunders)" : "Coach mode off"}
+          className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition active:scale-95 ${
+            tutorMode ? 'text-emerald-400 font-bold' : theme.cardTextMuted
           }`}
         >
           <Sparkles className="w-5 h-5" />
           <span className="text-[10px] font-semibold mt-0.5">{tutorMode ? "Coach On" : "Coach Off"}</span>
         </button>
 
+        {/* Rules Button in Mobile Nav (Kept on tray only per user request) */}
         <button
-          onClick={() => setMobileTab('settings')}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+          onClick={() => {
+            haptics.tap();
+            setRulesOpen(true);
+          }}
+          data-testid="bottom-rules-btn"
+          title="How to Play Mancala (Quick Guide)"
+          className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition active:scale-95 ${theme.cardTextMuted} hover:text-white`}
+        >
+          <BookOpen className="w-5 h-5 text-amber-400" />
+          <span className="text-[10px] font-semibold mt-0.5">Rules</span>
+        </button>
+
+        <button
+          onClick={() => {
+            haptics.tap();
+            setMobileTab('settings');
+          }}
+          data-testid="bottom-settings-btn"
+          className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition active:scale-95 ${
             mobileTab === 'settings' ? theme.tabActiveText : theme.cardTextMuted
           }`}
         >
@@ -2225,6 +2538,25 @@ export default function App() {
           <span className="text-[10px] font-semibold mt-0.5">Settings</span>
         </button>
       </nav>
+
+      {/* Visual Rules & How to Play Modal */}
+      <RulesModal
+        isOpen={rulesOpen}
+        onClose={() => setRulesOpen(false)}
+        currentSkin={currentSkin}
+      />
+
+      {/* Post-Match Game Review Modal */}
+      <GameReviewModal
+        isOpen={gameReviewOpen}
+        onClose={() => setGameReviewOpen(false)}
+        onRematch={() => {
+          setGameReviewOpen(false);
+          handleResetGame();
+        }}
+        reviewData={gameReviewData}
+        colorblindSafe={colorblindSafe}
+      />
 
       {/* Pre-Flight Diagnostics Modal */}
       {diagnosticsOpen && (
