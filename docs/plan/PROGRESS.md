@@ -395,3 +395,27 @@ Addressed UX feedback regarding desktop layout, visual pit/store hierarchy, acce
   - Mobile $393 \times 852$ & $360 \times 740$: 0 horizontal overflow (`scrollWidth === innerWidth === 360px`), 5-item bottom tray strictly maintained.
 - **Commit**: `c67a57e` ("feat(ui): responsive 2-column desktop dashboard, vertical store troughs, and settings drawer").
 
+---
+
+## Production Polish & Red Team Remediations: Zero-Scroll, CLS Elimination & Theme Matrix
+
+### 1. Objectives & Scope
+Addressed deep gameplay UX, layout shift, ambiguous count badges, and multi-theme visual fidelity:
+- **Elimination of Cumulative Layout Shift (CLS)**: Re-anchored `BotDialogueBubble` as an `absolute top-2 left-1/2 -translate-x-1/2 z-40` overlay directly above North's area. Eliminates the ~60px board jump when the bot banter appears or dismisses (`diff: 0px` layout shift).
+- **Resolved Ambiguous Pebble Count Badges**: Expanded organic pebble clustering in `PebbleCluster` up to 10 pebbles in responsive 2x4/2x5 grids without any `+{extra}` badge, eliminating confusion where players mistook `+2` or `+3` on North pits as a score advantage or tactical capture badge (`[+2 Cap]`). Pits rely exclusively on the etched count numeral badge at the base of each pit.
+- **Active Sowing Drop Feedback**: Added `isSown` and `isCaptured` drop ripple animations to `PitButton.tsx` (`animate-drop-ripple` and `animate-pulse`) so stones dropping into pits provide real-time tactile feedback matching `StorePit`.
+- **Elimination of Table Horizontal Scrollbar**: Replaced `overflow-x-auto` with `overflow-hidden` and removed rigid `min-w-[460px]` in `AnalysisPanel.tsx`, ensuring the candidate moves table fits comfortably on desktop with zero horizontal scroll.
+- **Full 6-Theme Matrix Verification**: Verified zero page scrolling (`scrollHeight === clientHeight`) and captured viewport screenshots across all 6 artisanal skins: Walnut, Clay (Porcelain), Slate (Obsidian), Contrast (High-Contrast, WCAG AAA), Emerald, and Amethyst.
+- **Mobile 360px/393px Verification**: Confirmed strict zero horizontal scroll (`scrollWidth === innerWidth === 360px`) across `Board`, `Analysis`, and `Settings` mobile tabs.
+- **Next Iteration Roadmap**: Created `next_iteration.md` detailing full assessment, red team audit, and concrete roadmaps for serverless WebRTC friend play, bot opening books, procedural audio synthesis, and PWA offline sync.
+
+### 2. Verification Evidence
+- **TypeScript Typecheck (`npx tsc --noEmit`)**: Clean (0 errors).
+- **Vitest Unit & Fuzz Suite (`npm test`)**: **33 test files, 261 / 261 tests passed** (100%).
+- **Production Build (`npm run build`)**: Clean build in 28.45s (0 errors).
+- **App Line Boundary**: `src/App.tsx` strictly maintained at **296 lines** (< 300 lines limit).
+- **Git Commits**:
+  - `3320877`: `fix(ux): eliminate CLS on bot dialogue, remove confusing +extra pebble badge, add active sowing ripples, eliminate candidate table horizontal scroll`
+  - `22aa594`: `chore: add data-testid to theme selector buttons in Header`
+
+
