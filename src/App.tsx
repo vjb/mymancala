@@ -16,6 +16,7 @@ import { TurnBanner } from './components/shell/TurnBanner';
 import { BottomTray } from './components/shell/BottomTray';
 import { LiveAnnouncer } from './components/shell/LiveAnnouncer';
 import { Board } from './components/board/Board';
+import { BotDialogueBubble } from './components/board/BotDialogueBubble';
 import { CoachPanel } from './components/panels/CoachPanel';
 import { AnalysisPanel } from './components/panels/AnalysisPanel';
 import { SettingsPanel } from './components/panels/SettingsPanel';
@@ -57,6 +58,7 @@ function MancalaGame() {
   const [expandedAnalysisPit, setExpandedAnalysisPit] = useState<number | null>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [gameReviewOpen, setGameReviewOpen] = useState(false);
+  const [botSelectOpen, setBotSelectOpen] = useState(false);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
@@ -128,6 +130,7 @@ function MancalaGame() {
     onOpenTutorial: () => setTutorialOpen(true),
     onOpenAudience: () => setAudienceOpen(true),
     onOpenLegend: () => setLegendOpen(true),
+    onOpenBotModal: () => setBotSelectOpen(true),
   });
 
   return (
@@ -180,29 +183,38 @@ function MancalaGame() {
               theme={theme} currentSkin={currentSkin}
             />
 
-            <Board
-              displayBoard={game.displayBoard} currentPlayer={game.state.currentPlayer}
-              isGameOver={game.state.isGameOver} animatingState={game.animatingState}
-              isMoveLocked={game.isMoveLocked} analysisResults={game.analysisResults}
-              showHints={lenses.bestMoveMarks} showThreats={lenses.threatPits}
-              hoverPreview={game.hoverPreview} hoveredPit={game.hoveredPit}
-              setHoveredPit={game.setHoveredPit} tutorWarning={game.tutorWarning}
-              lastMovedPit={game.state.lastMovedPit} gameMode={game.state.gameMode}
-              onPitClick={game.handlePitClick} onSandboxAdjust={game.handleSandboxPitAdjust}
-              theme={theme} currentSkin={currentSkin} bigMode={bigMode} tapTwice={tapTwice}
-            />
+            <div className="relative w-full">
+              {game.state.gameMode === 'pve' && game.botDialogue && (
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
+                  <BotDialogueBubble
+                    dialogue={game.botDialogue} bot={activeBot}
+                    currentSkin={currentSkin} theme={theme}
+                    onDismiss={() => game.setBotDialogue(null)}
+                  />
+                </div>
+              )}
+
+              <Board
+                displayBoard={game.displayBoard} currentPlayer={game.state.currentPlayer}
+                isGameOver={game.state.isGameOver} animatingState={game.animatingState}
+                isMoveLocked={game.isMoveLocked} analysisResults={game.analysisResults}
+                showHints={lenses.bestMoveMarks} showThreats={lenses.threatPits}
+                hoverPreview={game.hoverPreview} hoveredPit={game.hoveredPit}
+                setHoveredPit={game.setHoveredPit} tutorWarning={game.tutorWarning}
+                lastMovedPit={game.state.lastMovedPit} gameMode={game.state.gameMode}
+                onPitClick={game.handlePitClick} onSandboxAdjust={game.handleSandboxPitAdjust}
+                theme={theme} currentSkin={currentSkin} bigMode={bigMode} tapTwice={tapTwice}
+              />
+            </div>
 
             <ActionBar
               canUndo={game.state.gameMovesHistory.length > 0 && !game.state.isGameOver}
-              onUndo={game.handleUndoMove}
-              showHints={lenses.bestMoveMarks}
+              onUndo={game.handleUndoMove} showHints={lenses.bestMoveMarks}
               onToggleHints={() => setLens('bestMoveMarks', !lenses.bestMoveMarks)}
-              onResetGame={game.handleResetGame}
-              gameMode={game.state.gameMode}
-              botName={activeBot.name}
-              isAiThinking={game.isAiThinking}
-              theme={theme}
-              currentSkin={currentSkin}
+              onResetGame={game.handleResetGame} gameMode={game.state.gameMode}
+              botName={activeBot.name} isAiThinking={game.isAiThinking}
+              theme={theme} currentSkin={currentSkin}
+              onOpenBotModal={() => setBotSelectOpen(true)}
             />
 
             {game.tutorWarning && (
@@ -233,10 +245,12 @@ function MancalaGame() {
               onNavigateTab={(tab) => setMobileTab(tab)} isExact={game.isExactAnalysis}
             />
 
-            {/* Settings View: on mobile under Settings tab; on desktop below Analysis */}
-            <div className={mobileTab === 'settings' ? 'block' : 'hidden lg:block'}>
-              <SettingsPanel {...settingsProps} mobileHidden={false} />
-            </div>
+            {/* Settings View: strictly in slide-over drawer on desktop; mobile tab only on small screens */}
+            {mobileTab === 'settings' && (
+              <div className="lg:hidden">
+                <SettingsPanel {...settingsProps} mobileHidden={false} />
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -256,19 +270,14 @@ function MancalaGame() {
       />
 
       <AppModals
-        rulesOpen={rulesOpen} setRulesOpen={setRulesOpen}
-        gameReviewOpen={gameReviewOpen} setGameReviewOpen={setGameReviewOpen}
-        diagnosticsOpen={diagnosticsOpen} setDiagnosticsOpen={setDiagnosticsOpen}
-        tutorialOpen={tutorialOpen} setTutorialOpen={setTutorialOpen}
-        audienceOpen={audienceOpen} setAudienceOpen={setAudienceOpen}
-        legendOpen={legendOpen} setLegendOpen={setLegendOpen}
-        currentSkin={currentSkin} gameReviewData={gameReviewData}
-        colorblindSafe={colorblindSafe}
-        onRematch={() => { setGameReviewOpen(false); game.handleResetGame(); }}
-        onPracticeMistakes={() => setMobileTab('analysis')}
-        diagResults={diagResults} isDiagRunning={isDiagRunning}
-        handleRunDiagnostics={handleRunDiagnostics}
-        handleSelectProfile={handleSelectProfile}
+        rulesOpen={rulesOpen} setRulesOpen={setRulesOpen} gameReviewOpen={gameReviewOpen} setGameReviewOpen={setGameReviewOpen}
+        diagnosticsOpen={diagnosticsOpen} setDiagnosticsOpen={setDiagnosticsOpen} tutorialOpen={tutorialOpen} setTutorialOpen={setTutorialOpen}
+        audienceOpen={audienceOpen} setAudienceOpen={setAudienceOpen} legendOpen={legendOpen} setLegendOpen={setLegendOpen}
+        botSelectOpen={botSelectOpen} setBotSelectOpen={setBotSelectOpen} selectedBotId={game.state.selectedBotId} onSelectBot={game.handleSetBot}
+        currentSkin={currentSkin} gameReviewData={gameReviewData} colorblindSafe={colorblindSafe}
+        onRematch={() => { setGameReviewOpen(false); game.handleResetGame(); }} onPracticeMistakes={() => setMobileTab('analysis')}
+        diagResults={diagResults} isDiagRunning={isDiagRunning} handleRunDiagnostics={handleRunDiagnostics}
+        handleSelectProfile={handleSelectProfile} theme={theme}
       />
 
       <footer className={`hidden sm:block border-t ${theme.headerBorder} py-3 px-4 text-center text-xs ${theme.cardTextMuted} transition-colors`}>

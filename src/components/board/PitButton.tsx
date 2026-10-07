@@ -167,6 +167,9 @@ export const PitButton: React.FC<PitButtonProps> = ({
     t
   );
 
+  const isSown = animatingState?.currentPit === pitIndex && animatingState.phase === 'sow';
+  const isCaptured = animatingState?.phase === 'capture' && animatingState.capturedPit === pitIndex;
+
   return (
     <button
       data-testid={`pit-${pitIndex}`}
@@ -183,18 +186,22 @@ export const PitButton: React.FC<PitButtonProps> = ({
       className={`relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-150 select-none touch-manipulation border ${theme.pitBg} ${theme.pitBorder} ${theme.pitShadowClass} ${
         bigMode ? 'min-h-[56px] min-w-[56px] h-28 sm:h-40' : 'min-h-[50px] min-w-[44px] h-24 sm:h-36'
       } ${
-        isLegal
+        isSown
+          ? 'ring-2 ring-amber-400 bg-amber-400/25 scale-[1.04] shadow-[0_0_18px_rgba(251,191,36,0.6)] animate-drop-ripple'
+          : isCaptured
+          ? 'ring-2 ring-rose-500 bg-rose-500/25 scale-[0.98] shadow-[0_0_18px_rgba(244,63,94,0.6)] animate-pulse'
+          : isLegal
           ? `cursor-pointer ${theme.pitHoverBorder} hover:scale-[1.02] active:scale-95 focus:outline-hidden focus:ring-2 focus:ring-yellow-400`
           : 'cursor-default opacity-85 focus:outline-hidden'
       } ${highlightStyle.ringClass}`}
     >
       {/* Pit Header & Single Highlight Badge */}
       <div className={`flex items-center justify-between w-full text-xs font-mono ${theme.cardTextMuted}`}>
-        <span className="font-bold">{label}</span>
+        <span className={`font-bold ${highlightStyle.badge ? 'hidden xs:inline sm:inline' : ''}`}>{label}</span>
 
         {highlightStyle.badge && (
           <span
-            className={`px-1.5 py-0.5 rounded text-xs font-extrabold border ${highlightStyle.badge.color}`}
+            className={`px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-extrabold border ${highlightStyle.badge.color} ${highlightStyle.badge ? 'mx-auto xs:mx-0' : ''}`}
           >
             {highlightStyle.badge.text}
           </span>

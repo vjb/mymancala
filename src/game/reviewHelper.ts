@@ -2,6 +2,8 @@ import { GameReviewData, MoveRecord, SwingMoment } from '../GameReviewModal';
 import { GameStateRecord } from './gameTypes';
 import { BotPersona } from '../bots';
 import { P1_STORE, P2_STORE } from '../engine';
+import { formatDescriptiveLabel } from '../rules/kalah';
+import { loadRatingProfile, calculateRatingDelta, BOT_RATINGS } from '../trainer/rating';
 
 export function computeGameReviewData(state: GameStateRecord, activeBot: BotPersona): GameReviewData {
   const p1Moves = state.gameMovesHistory.filter(m => m.player === 0);
@@ -14,8 +16,17 @@ export function computeGameReviewData(state: GameStateRecord, activeBot: BotPers
   };
   const p1Acc = calcAcc(p1Moves);
   const p2Acc = calcAcc(p2Moves);
-  const p1Elo = Math.round(800 + (p1Acc / 100) * 850 + (activeBot.depth * 40));
-  const p2Elo = Math.round(800 + (p2Acc / 100) * 850 + (activeBot.depth * 40));
+
+  // Persistent Elo rating ladder integration
+  const ratingProfile = loadRatingProfile();
+  const botRating = BOT_RATINGS[activeBot.id.toLowerCase()] || (800 + activeBot.depth * 130);
+  let ratingDelta = 0;
+  if (state.gameMode === 'pve' && state.isGameOver) {
+    const outcome: 1 | 0.5 | 0 = state.winner === 0 ? 1 : state.winner === 1 ? 0 : 0.5;
+    ratingDelta = calculateRatingDelta(ratingProfile.rating, botRating, outcome, ratingProfile.gamesPlayed);
+  }
+  const p1Elo = ratingProfile.rating;
+  const p2Elo = botRating;
 
   const countGrades = (moves: MoveRecord[]) => ({
     best: moves.filter(m => m.classification === 'Best' || m.classification === 'Brilliant' || (m as any).grade === 'best').length,
@@ -32,11 +43,13 @@ export function computeGameReviewData(state: GameStateRecord, activeBot: BotPers
       pit: m.pit,
       lossStones: m.equityLoss ? Math.round(m.equityLoss * 10) / 10 : 0,
       grade: ((m.classification?.toLowerCase() as any) || 'good') as any,
+      bestPit: m.bestPit,
+      boardBeforeMove: m.boardBeforeMove,
       description: m.classification === 'Blunder'
-        ? `Pit ${m.pit} was a severe blunder (-${((m.equityLoss || 0) * 10).toFixed(1)} stones)`
+        ? `${formatDescriptiveLabel(m.pit)} was a severe blunder (-${((m.equityLoss || 0) * 10).toFixed(1)} stones)`
         : m.classification === 'Mistake'
-          ? `Pit ${m.pit} conceded equity (-${((m.equityLoss || 0) * 10).toFixed(1)} stones)`
-          : `Turn ${idx + 1}: Inaccuracy on Pit ${m.pit}`
+          ? `${formatDescriptiveLabel(m.pit)} conceded equity (-${((m.equityLoss || 0) * 10).toFixed(1)} stones)`
+          : `Turn ${idx + 1}: Inaccuracy on ${formatDescriptiveLabel(m.pit)}`
     }))
     .filter(m => m.lossStones > 0.5)
     .sort((a, b) => b.lossStones - a.lossStones)
@@ -50,6 +63,7 @@ export function computeGameReviewData(state: GameStateRecord, activeBot: BotPers
     p2Accuracy: p2Acc,
     p1Elo,
     p2Elo,
+    ratingDelta,
     p1Counts: countGrades(p1Moves),
     p2Counts: countGrades(p2Moves),
     totalMoves: state.gameMovesHistory.length,

@@ -4,6 +4,7 @@ import { PRESET_ORDER, PRESETS, LENSES, LensState, PresetId, LensId } from '../.
 import { GameMode, SowSpeed, CoachSensitivity } from '../../game/gameTypes';
 import { RulesConfig } from '../../engine';
 import { SkinTheme, THEMES } from '../../theme';
+import { isSkinUnlocked, SKIN_UNLOCK_REGISTRY } from '../../theme/unlocks';
 import { FontScale } from '../../lib/a11y';
 import { useTranslation, Locale } from '../../i18n';
 import { VARIANT_METADATA } from '../../rules';
@@ -53,6 +54,8 @@ export interface SettingsPanelProps {
   onOpenTutorial?: () => void;
   onOpenAudience?: () => void;
   onOpenLegend?: () => void;
+  onOpenBotModal?: () => void;
+  selectedBotName?: string;
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({
@@ -62,6 +65,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onToggleLens,
   tutorMode,
   coachSensitivity,
+  onOpenBotModal,
+  selectedBotName,
   onChangeCoachSensitivity,
   soundEnabled,
   onToggleSound,
@@ -182,24 +187,33 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
       {/* Skin / Theme Selector */}
       {onSelectSkin && (
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex flex-col gap-1.5 text-xs">
           <span className="font-semibold">Board Skin:</span>
-          <div className="flex gap-1 flex-wrap">
-            {(['walnut', 'porcelain', 'obsidian', 'high-contrast'] as SkinTheme[]).map((skin) => (
-              <button
-                key={skin}
-                onClick={() => onSelectSkin(skin)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition capitalize ${
-                  currentSkin === skin
-                    ? 'bg-amber-400 text-black font-extrabold border-amber-300'
-                    : currentSkin === 'porcelain'
-                    ? 'bg-[#ede5d8] border-[#dbd0c0] text-[#2c2723] hover:bg-[#e2d9cb]'
-                    : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
-                }`}
-              >
-                {THEMES[skin]?.name || skin}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-1.5">
+            {(['walnut', 'porcelain', 'obsidian', 'high-contrast', 'emerald', 'amethyst'] as SkinTheme[]).map((skin) => {
+              const unlocked = isSkinUnlocked(skin);
+              const info = SKIN_UNLOCK_REGISTRY[skin];
+              return (
+                <button
+                  key={skin}
+                  onClick={() => unlocked && onSelectSkin(skin)}
+                  disabled={!unlocked}
+                  title={unlocked ? (THEMES[skin]?.name || skin) : `Locked: ${info?.description || 'Unlock via streak or puzzles'}`}
+                  className={`px-2 py-1.5 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1 ${
+                    currentSkin === skin
+                      ? 'bg-amber-400 text-black font-extrabold border-amber-300 shadow-xs'
+                      : !unlocked
+                      ? 'opacity-40 cursor-not-allowed bg-black/20 border-white/5 text-zinc-500'
+                      : currentSkin === 'porcelain'
+                      ? 'bg-[#ede5d8] border-[#dbd0c0] text-[#2c2723] hover:bg-[#e2d9cb]'
+                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                  }`}
+                >
+                  <span className="truncate">{THEMES[skin]?.name || skin}</span>
+                  {!unlocked && <span className="text-[10px]" aria-label="locked">🔒</span>}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -504,6 +518,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               {t('settings.sideNorth')}
             </button>
           </div>
+        </div>
+      )}
+
+      {/* PvE AI Opponent Selection */}
+      {gameMode === 'pve' && onOpenBotModal && (
+        <div className={`flex items-center justify-between p-2.5 rounded-xl border text-xs ${
+          currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
+        }`}>
+          <div>
+            <div className="font-semibold">AI Opponent</div>
+            <div className={`text-[11px] ${theme.cardTextMuted}`}>{selectedBotName || 'Greedy Gary'}</div>
+          </div>
+          <button
+            onClick={onOpenBotModal}
+            data-testid="settings-bot-modal-btn"
+            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500/30 transition active:scale-95"
+          >
+            Change Opponent
+          </button>
         </div>
       )}
 

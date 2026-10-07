@@ -1,4 +1,4 @@
-import { GameStateRecord, GameAction } from './gameTypes';
+import { GameStateRecord, GameAction, MatchStats } from './gameTypes';
 import { createInitialState, simulateMove } from '../engine';
 import { DEFAULT_BOT_ID, BOT_PERSONAS } from '../bots';
 
@@ -95,7 +95,9 @@ export function gameReducer(state: GameStateRecord, action: GameAction): GameSta
           freeTurn: earnedFreeTurn,
           captures: capturedStones,
           classification,
-          equityLoss: chosenEval.equityLoss
+          equityLoss: chosenEval.equityLoss,
+          boardBeforeMove: action.payload.boardBeforeMove,
+          bestPit: action.payload.bestPit
         }
       ];
 
@@ -146,6 +148,16 @@ export function gameReducer(state: GameStateRecord, action: GameAction): GameSta
         });
       }
 
+      const slicedMovesHistory = state.gameMovesHistory.slice(0, targetHistory.length);
+      const recomputedStats: MatchStats = {
+        p1Moves: slicedMovesHistory.filter(m => m.player === 0).length,
+        p2Moves: slicedMovesHistory.filter(m => m.player === 1).length,
+        p1TotalLoss: slicedMovesHistory.filter(m => m.player === 0).reduce((sum, m) => sum + (m.equityLoss || 0), 0),
+        p2TotalLoss: slicedMovesHistory.filter(m => m.player === 1).reduce((sum, m) => sum + (m.equityLoss || 0), 0),
+        p1Blunders: slicedMovesHistory.filter(m => m.player === 0 && m.classification === 'Blunder').length,
+        p2Blunders: slicedMovesHistory.filter(m => m.player === 1 && m.classification === 'Blunder').length
+      };
+
       return {
         ...state,
         board: currentBoard,
@@ -155,7 +167,8 @@ export function gameReducer(state: GameStateRecord, action: GameAction): GameSta
         moveHistory: newMoveHistory,
         lastMovedPit: targetHistory.length > 0 ? targetHistory[targetHistory.length - 1].pit : null,
         lastMoveSummary: null,
-        gameMovesHistory: state.gameMovesHistory.slice(0, targetHistory.length)
+        gameMovesHistory: slicedMovesHistory,
+        matchStats: recomputedStats
       };
     }
 

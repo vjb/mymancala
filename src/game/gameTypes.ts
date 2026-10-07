@@ -114,6 +114,8 @@ export type GameAction =
         capturedStones: number;
         earnedFreeTurn: boolean;
         activeBotName?: string;
+        boardBeforeMove?: number[];
+        bestPit?: number;
       };
     }
   | { type: 'UNDO_MOVE' }

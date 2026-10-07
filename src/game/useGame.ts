@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef, useReducer } from 'react';
 import { GameStateRecord, GameAction, GameMode, SowSpeed, CoachSensitivity, TutorWarning, AnimatingState } from './gameTypes';
 import { gameReducer, createInitialGameState } from './gameReducer';
-import { P1_STORE, P2_STORE, P1_PITS, P2_PITS, simulateMove, RulesConfig, MoveSimulationResult, EvaluatedMove } from '../engine';
+import { P1_STORE, P2_STORE, P1_PITS, P2_PITS, simulateMove, RulesConfig, MoveSimulationResult, EvaluatedMove, analyzeAllMoves } from '../engine';
 import { kalahRuleSet, createKalahRuleSet } from '../rules';
 import { searchClient } from '../workers/searchClient';
 import { saveGameSession, loadGameSession, clearSavedGame, replayGameFromHistory, SavedGameV1 } from '../lib/storage';
@@ -290,11 +290,20 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
       }
 
       // Record evaluation PR stats
-      const chosenEval = analysisResults.find(m => m.pit === pitIndex);
       const currentBoard = [...state.board];
       const player = state.currentPlayer;
       const initialStones = currentBoard[pitIndex];
       const result = simulateMove(currentBoard, player, pitIndex, state.rules);
+
+      let chosenEval = analysisResults.find(m => m.pit === pitIndex);
+      let bestMovePit = analysisResults[0]?.pit;
+      if (!chosenEval) {
+        const fastEvals = analyzeAllMoves(currentBoard, player, Math.min(2, state.searchDepth), state.rules);
+        chosenEval = fastEvals.find(m => m.pit === pitIndex) || fastEvals[0];
+        if (bestMovePit === undefined && fastEvals[0]) {
+          bestMovePit = fastEvals[0].pit;
+        }
+      }
 
       if (chosenEval) {
         const activeBot = BOT_PERSONAS[state.selectedBotId];
@@ -306,7 +315,9 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
             pitIndex,
             capturedStones: result.capturedStones,
             earnedFreeTurn: result.earnedFreeTurn,
-            activeBotName: activeBot?.name
+            activeBotName: activeBot?.name,
+            boardBeforeMove: currentBoard,
+            bestPit: bestMovePit ?? pitIndex
           }
         });
       }
@@ -585,9 +596,14 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
     setTutorWarning(null);
     setShowCoachDetails(false);
 
-    if (state.gameMode === 'pve' && state.currentPlayer === state.humanPlayer && state.moveHistory.length >= 2) {
-      dispatch({ type: 'UNDO_MOVE' });
-      dispatch({ type: 'UNDO_MOVE' });
+    if (state.gameMode === 'pve') {
+      const lastMove = state.moveHistory[state.moveHistory.length - 1];
+      if (lastMove && lastMove.player !== state.humanPlayer && state.moveHistory.length >= 2) {
+        dispatch({ type: 'UNDO_MOVE' });
+        dispatch({ type: 'UNDO_MOVE' });
+      } else {
+        dispatch({ type: 'UNDO_MOVE' });
+      }
     } else {
       dispatch({ type: 'UNDO_MOVE' });
     }
@@ -686,6 +702,7 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
     totalBoardStones,
     hasEarnedFreeTurn,
     botDialogue,
+    setBotDialogue,
     executeMove,
     handlePitClick,
     handleResetGame,
@@ -699,6 +716,8 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
     handleSetBot: (botId: string) => {
       haptics.tap();
       dispatch({ type: 'SET_BOT_ID', payload: botId });
+      const bot = BOT_PERSONAS[botId];
+      if (bot) dispatch({ type: 'SET_SEARCH_DEPTH', payload: bot.depth });
       const quote = getBotReaction(botId, 'start');
       triggerBotDialogue('start', quote);
     },

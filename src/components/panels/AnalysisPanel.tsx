@@ -381,17 +381,27 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
       </div>
 
       {/* Desktop Candidates Table */}
-      <div className="hidden sm:block overflow-x-auto mt-2">
-        <table className="w-full text-left text-xs min-w-[460px]">
+      <div className="hidden sm:block overflow-hidden mt-2">
+        <div className="flex items-center justify-between pb-1 px-1 text-xs">
+          <span className={`font-mono font-bold uppercase tracking-wider text-[11px] ${theme.cardTextMuted}`}>Candidate Moves</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold border ${
+            isExact
+              ? (currentSkin === 'porcelain' ? 'bg-emerald-100 text-emerald-950 border-emerald-400' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30')
+              : (currentSkin === 'porcelain' ? 'bg-stone-200 text-stone-800 border-stone-400' : 'bg-white/10 text-slate-300 border-white/15')
+          }`}>
+            {isExact ? 'Exact (Solved)' : `Estimate (d=${searchDepth})`}
+          </span>
+        </div>
+        <table className="w-full text-left text-xs table-auto">
           <thead>
             <tr className={`border-b ${theme.cardBorder} ${theme.cardTextMuted} font-mono uppercase text-xs`}>
-              <th className="py-2.5 px-2">Rank</th>
-              <th className="py-2.5 px-2">Pit Action</th>
-              <th className={`${showWinPercent ? '' : 'hidden'} py-2.5 px-2`}>Win %</th>
-              <th className={`${showWinPercent ? '' : 'hidden'} py-2.5 px-2`}>Equity Diff</th>
-              <th className="py-2.5 px-2">Grade</th>
-              <th className="py-2.5 px-2 hidden sm:table-cell">{showMainLine ? 'Bonus / Line Lookahead' : 'Bonus'}</th>
-              <th className="py-2.5 px-2 text-right">Action</th>
+              <th className="py-2 px-1 sm:px-1.5">#</th>
+              <th className="py-2 px-1.5 sm:px-2">Pit</th>
+              <th className={`${showWinPercent ? '' : 'hidden'} py-2 px-1 sm:px-1.5`}>Win %</th>
+              <th className={`${showWinPercent ? '' : 'hidden'} py-2 px-1 sm:px-1.5`}>Diff</th>
+              <th className="py-2 px-1 sm:px-1.5">Grade</th>
+              <th className="py-2 px-1 sm:px-1.5 hidden xl:table-cell">{showMainLine ? 'Line / Bonus' : 'Bonus'}</th>
+              <th className="py-2 px-1 sm:px-1.5 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5 font-mono">
@@ -418,46 +428,46 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
                       } ${isExpanded ? 'bg-white/10' : ''}`}
                       title="Click to view tactical breakdown"
                     >
-                      <td className="py-2.5 px-2 font-bold opacity-80">
+                      <td className="py-2 px-1 sm:px-1.5 font-bold opacity-80">
                         #{move.rank}
                       </td>
-                      <td className="py-2.5 px-2 font-bold">
-                        <div className="flex items-center gap-1.5">
-                          <span>{move.label}</span>
+                      <td className="py-2 px-1.5 sm:px-2 font-bold">
+                        <div className="flex items-center gap-1">
+                          <span className="truncate">{move.label}</span>
                           <span className="text-xs opacity-70">
                             {isExpanded ? <ChevronUp className="w-3.5 h-3.5 inline text-amber-400" /> : <ChevronDown className="w-3.5 h-3.5 inline text-slate-400" />}
                           </span>
                         </div>
-                        <div className={`sm:hidden text-xs font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
+                        <div className={`xl:hidden text-xs font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
                           {move.freeTurn && <span className={`${currentSkin === 'porcelain' ? 'text-emerald-800' : 'text-emerald-500'} font-bold`}>[Free Turn]</span>}
                           {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
                           {showMainLine && <PVDisplay pv={move.pv} moveLabel={move.label} themeSkin={currentSkin} layout={layout} />}
                         </div>
                       </td>
-                      <td className={`${showWinPercent ? '' : 'hidden'} py-2.5 px-2 font-semibold`}>
+                      <td className={`${showWinPercent ? '' : 'hidden'} py-2 px-1 sm:px-1.5 font-semibold`}>
                         {isExact
                           ? (move.winProb === 1 ? '100%' : move.winProb === 0.5 ? '50%' : '0%')
                           : `${(move.winProb * 100).toFixed(1)}%`}
                       </td>
-                      <td className={`${showWinPercent ? '' : 'hidden'} py-2.5 px-2`}>
+                      <td className={`${showWinPercent ? '' : 'hidden'} py-2 px-1 sm:px-1.5`}>
                         <span className={move.equityLoss === 0 ? (currentSkin === 'porcelain' ? 'text-emerald-800 font-semibold' : 'text-emerald-500 font-semibold') : (currentSkin === 'porcelain' ? 'text-rose-800' : 'text-rose-400')}>
-                          {move.equityLoss === 0 ? '0.000' : `-${(move.equityLoss * 100).toFixed(1)}%`}
+                          {move.equityLoss === 0 ? '0.0%' : `-${(move.equityLoss * 100).toFixed(1)}%`}
                         </span>
                       </td>
-                      <td className="py-2.5 px-2">
+                      <td className="py-2 px-1 sm:px-1.5">
                         {renderGradeBadge(move.classification, move.badgeColor)}
                       </td>
-                      <td className={`py-2.5 px-2 hidden sm:table-cell text-xs ${theme.cardTextMuted}`}>
+                      <td className={`py-2 px-1 sm:px-1.5 hidden xl:table-cell text-xs ${theme.cardTextMuted}`}>
                         {move.freeTurn && <span className={`${currentSkin === 'porcelain' ? 'text-emerald-800' : 'text-emerald-500'} font-bold mr-1.5`}>[Free Turn]</span>}
                         {move.captures > 0 && <span className="text-amber-500 font-bold mr-1.5">[+{move.captures} Cap]</span>}
                         {showMainLine && <PVDisplay pv={move.pv} moveLabel={move.label} themeSkin={currentSkin} layout={layout} />}
                       </td>
-                      <td className="py-2.5 px-2 text-right" onClick={(e) => e.stopPropagation()}>
+                      <td className="py-2 px-1 sm:px-1.5 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
                           data-testid={`eval-play-pit-${move.pit}`}
                           onClick={() => onPlayMove(move.pit)}
                           disabled={isGameOver}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
+                          className={`px-2 py-0.5 rounded-lg text-xs font-semibold border transition ${
                             currentSkin === 'porcelain'
                               ? 'bg-white hover:bg-[#ded5c6] text-[#2c2723] border-[#cdc3b2]'
                               : 'bg-white/10 hover:bg-white/20 text-white border-white/15'

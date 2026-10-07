@@ -6,6 +6,7 @@ import { TutorialModal } from '../modals/TutorialModal';
 import { AudiencePickerModal, AudienceProfile } from '../modals/AudiencePickerModal';
 import { HighlightLegendModal } from '../modals/HighlightLegendModal';
 import { ReplayModal } from '../modals/ReplayModal';
+import { BotSelectModal } from '../modals/BotSelectModal';
 import { InstallPrompt } from '../pwa/InstallPrompt';
 import { SkinTheme } from '../../theme';
 import { DiagnosticResult } from '../../preflight-diagnostics';
@@ -32,6 +33,11 @@ export interface AppModalsProps {
   isDiagRunning: boolean;
   handleRunDiagnostics: () => void;
   handleSelectProfile: (profile: AudienceProfile) => void;
+  botSelectOpen?: boolean;
+  setBotSelectOpen?: (open: boolean) => void;
+  selectedBotId?: string;
+  onSelectBot?: (botId: string) => void;
+  theme?: any;
 }
 
 export const AppModals: React.FC<AppModalsProps> = ({
@@ -56,6 +62,11 @@ export const AppModals: React.FC<AppModalsProps> = ({
   isDiagRunning,
   handleRunDiagnostics,
   handleSelectProfile,
+  botSelectOpen = false,
+  setBotSelectOpen,
+  selectedBotId = 'gary',
+  onSelectBot,
+  theme
 }) => {
   const [replayOpen, setReplayOpen] = useState(() => {
     try {
@@ -133,6 +144,16 @@ export const AppModals: React.FC<AppModalsProps> = ({
         hasCompletedFirstGame={gameReviewData?.totalMoves > 0}
         theme={{ cardBorder: 'border-white/10' }}
       />
+      {botSelectOpen && setBotSelectOpen && onSelectBot && (
+        <BotSelectModal
+          isOpen={botSelectOpen}
+          onClose={() => setBotSelectOpen(false)}
+          selectedBotId={selectedBotId}
+          onSelectBot={onSelectBot}
+          currentSkin={currentSkin}
+          theme={theme || { cardBg: 'bg-zinc-900', cardBorder: 'border-white/10' }}
+        />
+      )}
     </>
   );
 };

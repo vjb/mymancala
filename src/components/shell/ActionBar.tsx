@@ -14,6 +14,7 @@ interface ActionBarProps {
   isAiThinking: boolean;
   theme: any;
   currentSkin: SkinTheme;
+  onOpenBotModal?: () => void;
 }
 
 export const ActionBar: React.FC<ActionBarProps> = ({
@@ -26,7 +27,8 @@ export const ActionBar: React.FC<ActionBarProps> = ({
   botName,
   isAiThinking,
   theme,
-  currentSkin
+  currentSkin,
+  onOpenBotModal
 }) => {
   const { t } = useTranslation();
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
@@ -74,19 +76,38 @@ export const ActionBar: React.FC<ActionBarProps> = ({
         </button>
       </div>
 
-      {/* Center: Bot Status Indicator */}
-      <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl border text-xs font-semibold ${
-        currentSkin === 'porcelain'
-          ? 'bg-stone-100 border-[#d8cfbe] text-[#2c2723]'
-          : currentSkin === 'high-contrast'
-          ? 'bg-black border border-white text-white'
-          : 'bg-black/20 border-white/10 text-white/90'
-      }`}>
-        <Bot className="w-3.5 h-3.5 opacity-80" />
-        <span>
-          {gameMode === 'pve' ? `Opponent: ${botName}` : 'Two Player Pass & Play'}
-        </span>
-      </div>
+      {/* Center: Bot Status / Interactive Opponent Selector */}
+      {gameMode === 'pve' && onOpenBotModal ? (
+        <button
+          onClick={onOpenBotModal}
+          data-testid="action-bot-select-btn"
+          title="Change AI Opponent Persona"
+          className={`flex items-center gap-1.5 px-3 py-1 sm:py-1.5 rounded-xl border text-xs font-semibold transition active:scale-95 ${
+            currentSkin === 'porcelain'
+              ? 'bg-stone-100 hover:bg-stone-200 border-[#d8cfbe] text-[#2c2723]'
+              : currentSkin === 'high-contrast'
+              ? 'bg-black hover:bg-zinc-900 border border-white text-white'
+              : 'bg-white/10 hover:bg-white/15 border-white/15 text-white/90 shadow-xs'
+          }`}
+        >
+          <Bot className="w-3.5 h-3.5 text-amber-400" />
+          <span className="font-bold">Opponent: {botName}</span>
+          <span className="text-[10px] opacity-60 underline ml-0.5 hidden xs:inline">Change</span>
+        </button>
+      ) : (
+        <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl border text-xs font-semibold ${
+          currentSkin === 'porcelain'
+            ? 'bg-stone-100 border-[#d8cfbe] text-[#2c2723]'
+            : currentSkin === 'high-contrast'
+            ? 'bg-black border border-white text-white'
+            : 'bg-black/20 border-white/10 text-white/90'
+        }`}>
+          <Bot className="w-3.5 h-3.5 opacity-80" />
+          <span>
+            {gameMode === 'pve' ? `Opponent: ${botName}` : 'Two Player Pass & Play'}
+          </span>
+        </div>
+      )}
 
       {/* Right: New Game Confirmation */}
       <div className="relative">

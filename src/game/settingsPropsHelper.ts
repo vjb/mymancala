@@ -2,6 +2,8 @@ import { SettingsPanelProps } from '../components/panels/SettingsPanel';
 import { LensState, LensId, PresetId, applyPreset } from '../lenses';
 import { eraseAllUserData } from '../lib/dataReset';
 
+import { BOT_PERSONAS } from '../bots';
+
 interface BuildSettingsPropsParams {
   settings: any;
   lenses: LensState;
@@ -14,6 +16,7 @@ interface BuildSettingsPropsParams {
   onOpenTutorial: () => void;
   onOpenAudience: () => void;
   onOpenLegend: () => void;
+  onOpenBotModal?: () => void;
 }
 
 export function buildSettingsProps(params: BuildSettingsPropsParams): SettingsPanelProps {
@@ -29,6 +32,7 @@ export function buildSettingsProps(params: BuildSettingsPropsParams): SettingsPa
     onOpenTutorial,
     onOpenAudience,
     onOpenLegend,
+    onOpenBotModal,
   } = params;
 
   return {
@@ -39,6 +43,8 @@ export function buildSettingsProps(params: BuildSettingsPropsParams): SettingsPa
     tutorMode: lenses.coach,
     coachSensitivity: game.state.coachSensitivity,
     onChangeCoachSensitivity: game.handleSetCoachSensitivity,
+    onOpenBotModal,
+    selectedBotName: BOT_PERSONAS[game.state.selectedBotId]?.name || 'Greedy Gary',
     soundEnabled: settings.soundEnabled,
     onToggleSound: () => settings.setSoundEnabled(!settings.soundEnabled),
     colorblindSafe: settings.colorblindSafe,

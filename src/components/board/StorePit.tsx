@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatingState } from '../../game/gameTypes';
 import { MoveSimulationResult } from '../../engine';
 import { SkinTheme } from '../../theme';
-import { PebbleCluster } from '../../Pebble';
+import { StorePebbleStack } from './StorePebbleStack';
 import { useTranslation } from '../../i18n';
 
 interface StorePitProps {
@@ -70,8 +70,8 @@ export const StorePit: React.FC<StorePitProps> = ({
         {label}
       </div>
 
-      <div className="flex-1 flex items-center justify-center w-full px-0.5">
-        <PebbleCluster count={stones} theme={currentSkin} player={player} maxVisible={14} />
+      <div className="flex-1 flex flex-col justify-end w-full px-0.5 overflow-hidden">
+        <StorePebbleStack count={stones} theme={currentSkin} player={player} maxVisible={24} />
       </div>
 
       <div className={`text-lg sm:text-2xl lg:text-3xl font-black font-mono ${storeText}`}>

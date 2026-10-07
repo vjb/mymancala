@@ -18,6 +18,8 @@ export interface MoveRecord {
   classification?: 'Best' | 'Good' | 'Inaccuracy' | 'Mistake' | 'Blunder' | string;
   grade?: MoveGrade;
   equityLoss?: number;
+  boardBeforeMove?: number[];
+  bestPit?: number;
 }
 
 export interface SwingMoment {
@@ -27,6 +29,7 @@ export interface SwingMoment {
   lossStones: number;
   grade: 'best' | 'good' | 'inaccuracy' | 'mistake' | 'blunder';
   bestPit?: number;
+  boardBeforeMove?: number[];
   description: string;
 }
 
@@ -38,6 +41,7 @@ export interface GameReviewData {
   p2Accuracy: number;
   p1Elo: number;
   p2Elo: number;
+  ratingDelta?: number;
   p1Counts: {
     best: number;
     good: number;
@@ -178,7 +182,7 @@ export const GameReviewModal: React.FC<GameReviewModalProps> = ({
         if (swing.lossStones >= 1.0) {
           recordMistake({
             rulesId: 'kalah',
-            position: gameState.board,
+            position: swing.boardBeforeMove && swing.boardBeforeMove.length === 14 ? swing.boardBeforeMove : gameState.board,
             turn: (swing.player as 0 | 1) ?? 0,
             played: swing.pit,
             best: swing.bestPit ?? ((swing.pit + 1) % 6),

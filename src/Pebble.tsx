@@ -97,38 +97,31 @@ interface PebbleClusterProps {
   maxVisible?: number;
 }
 
-export function PebbleCluster({ count, theme, player, maxVisible = 6 }: PebbleClusterProps) {
+export function PebbleCluster({ count, theme, player, maxVisible = 10 }: PebbleClusterProps) {
   if (count === 0) return <div className="h-9 sm:h-12" />;
 
   const visibleCount = Math.min(count, maxVisible);
-  const extra = count - visibleCount;
 
   // Responsive grid layout:
   // 1-2 stones: 1 or 2 items centered
   // 3-4 stones: 2x2 grid
   // 5-6 stones: 2x3 grid
-  const gridCols = visibleCount <= 1 ? 'grid-cols-1' : visibleCount <= 4 ? 'grid-cols-2' : 'grid-cols-3';
+  // 7-10 stones: 2x4 or 2x5 grid
+  const gridCols = visibleCount <= 1 
+    ? 'grid-cols-1' 
+    : visibleCount <= 4 
+    ? 'grid-cols-2' 
+    : visibleCount <= 6
+    ? 'grid-cols-3'
+    : 'grid-cols-4 sm:grid-cols-5';
 
   return (
     <div className="flex flex-col items-center justify-center my-auto min-h-[36px] sm:min-h-[48px] py-1">
-      <div className={`grid ${gridCols} gap-1 place-items-center`}>
+      <div className={`grid ${gridCols} gap-0.5 sm:gap-1 place-items-center`}>
         {Array.from({ length: visibleCount }).map((_, i) => (
           <Pebble key={i} theme={theme} player={player} index={i} />
         ))}
       </div>
-      {extra > 0 && (
-        <span className={`text-xs font-mono font-bold leading-none px-1.5 py-0.5 mt-0.5 rounded-full border shadow-xs ${
-          theme === 'high-contrast'
-            ? 'bg-black text-white border-white'
-            : theme === 'porcelain'
-            ? 'bg-[#ede5d8] text-[#4a3e35] border-[#c8bea7]'
-            : theme === 'walnut'
-            ? 'bg-[#2a180e] text-[#fbbf24] border-[#4a2e1d]'
-            : 'bg-[#181a24] text-sky-300 border-[#2d3244]'
-        }`}>
-          +{extra}
-        </span>
-      )}
     </div>
   );
 }

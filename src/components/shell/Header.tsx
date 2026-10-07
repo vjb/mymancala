@@ -58,41 +58,29 @@ export const Header: React.FC<HeaderProps> = ({
           <div className={`flex items-center rounded-xl p-0.5 border text-xs ${
             currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/10'
           }`}>
-            <button
-              onClick={() => onSelectSkin('walnut')}
-              title="Warm Walnut"
-              className={`px-2 py-1 rounded-lg font-semibold transition ${
-                currentSkin === 'walnut' 
-                  ? 'bg-[#3b2316] text-amber-200 shadow-xs' 
-                  : `${theme.cardTextMuted} hover:opacity-100`
-              }`}
-            >
-              Walnut
-            </button>
-
-            <button
-              onClick={() => onSelectSkin('porcelain')}
-              title="Nordic Clay"
-              className={`px-2 py-1 rounded-lg font-semibold transition ${
-                currentSkin === 'porcelain' 
-                  ? 'bg-white text-[#2c2723] shadow-xs' 
-                  : `${theme.cardTextMuted} hover:opacity-100`
-              }`}
-            >
-              Clay
-            </button>
-
-            <button
-              onClick={() => onSelectSkin('obsidian')}
-              title="Midnight Slate"
-              className={`px-2 py-1 rounded-lg font-semibold transition ${
-                currentSkin === 'obsidian' 
-                  ? 'bg-[#202330] text-sky-200 shadow-xs' 
-                  : `${theme.cardTextMuted} hover:opacity-100`
-              }`}
-            >
-              Slate
-            </button>
+            {[
+              { id: 'walnut', label: 'Walnut' },
+              { id: 'porcelain', label: 'Clay' },
+              { id: 'obsidian', label: 'Slate' },
+              { id: 'high-contrast', label: 'Contrast' },
+              { id: 'emerald', label: 'Emerald' },
+              { id: 'amethyst', label: 'Amethyst' }
+            ].map((s) => (
+              <button
+                key={s.id}
+                onClick={() => onSelectSkin(s.id as SkinTheme)}
+                title={s.label}
+                className={`px-1.5 sm:px-2 py-1 rounded-lg font-semibold transition text-xs ${
+                  currentSkin === s.id
+                    ? currentSkin === 'porcelain'
+                      ? 'bg-white text-[#2c2723] shadow-xs'
+                      : 'bg-white/20 text-white font-bold shadow-xs'
+                    : `${theme.cardTextMuted} hover:opacity-100`
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
           </div>
 
           {/* Settings Drawer Button */}
