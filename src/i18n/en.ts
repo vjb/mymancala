@@ -8,6 +8,8 @@ export const en = {
   'app.continueGame': 'Continue Game',
   'app.newGameConfirm': 'New Game',
   'app.footer': 'Mancala Analytical Engine • Handcrafted Artisanal Themes & Minimax PV Rollouts',
+  'action.undo': 'Undo',
+  'action.hint': 'Hint',
 
   // Skins
   'skin.walnut': 'Walnut',

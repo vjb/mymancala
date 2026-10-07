@@ -11,6 +11,8 @@ export const es: TranslationCatalog = {
   'app.continueGame': 'Continuar partida',
   'app.newGameConfirm': 'Nueva partida',
   'app.footer': 'Motor Analítico de Mancala • Temas Artesanales y Minimax PV',
+  'action.undo': 'Deshacer',
+  'action.hint': 'Pista',
 
   // Skins
   'skin.walnut': 'Nogal',

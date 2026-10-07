@@ -52,7 +52,7 @@ export const StorePit: React.FC<StorePitProps> = ({
       aria-label={ariaLabel}
       data-testid={`store-${storeIndex}`}
       title={title}
-      className={`${bigMode ? 'w-14 sm:w-28' : 'w-11 sm:w-24'} h-56 sm:h-80 rounded-2xl sm:rounded-3xl border flex flex-col items-center justify-between p-1 sm:p-3 select-none shrink-0 transition-all duration-200 ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
+      className={`${bigMode ? 'w-14 sm:w-28 lg:w-32' : 'w-12 sm:w-24 lg:w-28'} h-60 sm:h-84 lg:h-96 rounded-3xl sm:rounded-4xl border-2 flex flex-col items-center justify-between p-1.5 sm:p-3 select-none shrink-0 transition-all duration-200 shadow-inner ${theme.storeBg} ${theme.storeBorder} ${theme.pitShadowClass} ${
         isSown
           ? isP1
             ? 'ring-2 ring-amber-400 bg-amber-950/70 scale-[1.03] shadow-[0_0_24px_rgba(251,191,36,0.7)] animate-drop-ripple'
@@ -66,7 +66,7 @@ export const StorePit: React.FC<StorePitProps> = ({
           : ''
       }`}
     >
-      <div className={`text-xs font-bold uppercase tracking-wider ${storeText}`}>
+      <div className={`text-xs sm:text-sm font-extrabold uppercase tracking-wider ${storeText}`}>
         {label}
       </div>
 
@@ -74,7 +74,7 @@ export const StorePit: React.FC<StorePitProps> = ({
         <PebbleCluster count={stones} theme={currentSkin} player={player} maxVisible={14} />
       </div>
 
-      <div className={`text-base sm:text-2xl font-black font-mono ${storeText}`}>
+      <div className={`text-lg sm:text-2xl lg:text-3xl font-black font-mono ${storeText}`}>
         {stones}
       </div>
 

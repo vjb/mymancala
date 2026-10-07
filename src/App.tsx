@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { loadLenses, saveLenses, detectPreset, applyPreset, toggleLens, LensId, LensState } from './lenses';
 import { runGNUPreflightSuite, DiagnosticResult } from './preflight-diagnostics';
-import { eraseAllUserData } from './lib/dataReset';
 import { haptics } from './haptics';
 import { I18nProvider, useTranslation } from './i18n';
 import { BOT_PERSONAS, DEFAULT_BOT_ID } from './bots';
@@ -11,6 +10,7 @@ import { AppModals } from './components/shell/AppModals';
 import { GameReviewData } from './GameReviewModal';
 import { AudienceProfile, ONBOARDING_STORAGE_KEY } from './components/modals/AudiencePickerModal';
 import { Header } from './components/shell/Header';
+import { ActionBar } from './components/shell/ActionBar';
 import { EvalGauge } from './components/shell/EvalGauge';
 import { TurnBanner } from './components/shell/TurnBanner';
 import { BottomTray } from './components/shell/BottomTray';
@@ -19,23 +19,19 @@ import { Board } from './components/board/Board';
 import { CoachPanel } from './components/panels/CoachPanel';
 import { AnalysisPanel } from './components/panels/AnalysisPanel';
 import { SettingsPanel } from './components/panels/SettingsPanel';
+import { SettingsDrawer } from './components/modals/SettingsDrawer';
 import { useGame } from './game/useGame';
 import { useUserSettings } from './game/useUserSettings';
 import { computeGameReviewData } from './game/reviewHelper';
+import { buildSettingsProps } from './game/settingsPropsHelper';
 
 function MancalaGame() {
   const { t } = useTranslation();
   const settings = useUserSettings();
   const {
     currentSkin, setCurrentSkin, theme,
-    soundEnabled, setSoundEnabled,
-    colorblindSafe, setColorblindSafe,
-    hapticsEnabled, handleToggleHaptics,
-    fontScale, setFontScale,
-    reducedMotion, setReducedMotion, isReducedMotion,
-    bigMode, setBigMode,
-    tapTwice, setTapTwice,
-    speechEnabled, setSpeechEnabled,
+    colorblindSafe, isReducedMotion,
+    bigMode, tapTwice,
   } = settings;
 
   const [lenses, setLenses] = useState<LensState>(() => loadLenses());
@@ -49,20 +45,12 @@ function MancalaGame() {
 
   const activePreset = detectPreset(lenses);
 
-  const isAnalysisEmpty = useMemo(() => {
-    return (
-      activePreset === 'justPlay' ||
-      (!lenses.advantageBar &&
-        !lenses.bestMoveMarks &&
-        !lenses.threatPits &&
-        !lenses.landingPreview &&
-        !lenses.coach &&
-        !lenses.explanations &&
-        !lenses.errorRate &&
-        !lenses.winPercent &&
-        !lenses.mainLine)
-    );
-  }, [activePreset, lenses]);
+  const isAnalysisEmpty = useMemo(() => (
+    activePreset === 'justPlay' ||
+    (!lenses.advantageBar && !lenses.bestMoveMarks && !lenses.threatPits &&
+      !lenses.landingPreview && !lenses.coach && !lenses.explanations &&
+      !lenses.errorRate && !lenses.winPercent && !lenses.mainLine)
+  ), [activePreset, lenses]);
 
   const [mobileTab, setMobileTab] = useState<'board' | 'analysis' | 'settings'>('board');
   const [evalBarCollapsed, setEvalBarCollapsed] = useState(false);
@@ -74,9 +62,7 @@ function MancalaGame() {
   const [legendOpen, setLegendOpen] = useState(false);
   const [audienceOpen, setAudienceOpen] = useState(() => {
     try {
-      if (typeof window !== 'undefined' && window.location.search.includes('onboarding')) {
-        return true;
-      }
+      if (typeof window !== 'undefined' && window.location.search.includes('onboarding')) return true;
       return !localStorage.getItem(ONBOARDING_STORAGE_KEY);
     } catch {
       return false;
@@ -98,20 +84,15 @@ function MancalaGame() {
 
   const handleRunDiagnostics = async () => {
     setIsDiagRunning(true);
-    const res = await runGNUPreflightSuite();
-    setDiagResults(res);
+    setDiagResults(await runGNUPreflightSuite());
     setIsDiagRunning(false);
   };
 
   const handleSelectProfile = (profile: AudienceProfile) => {
-    try {
-      localStorage.setItem(ONBOARDING_STORAGE_KEY, profile);
-    } catch {}
+    try { localStorage.setItem(ONBOARDING_STORAGE_KEY, profile); } catch {}
     setAudienceOpen(false);
-    if (profile === 'kid') setLenses(applyPreset('justPlay'));
-    else if (profile === 'casual') setLenses(applyPreset('hints'));
-    else if (profile === 'learner') setLenses(applyPreset('coach'));
-    else if (profile === 'analyst') setLenses(applyPreset('full'));
+    const presets: Record<AudienceProfile, any> = { kid: 'justPlay', casual: 'hints', learner: 'coach', analyst: 'full' };
+    if (presets[profile]) setLenses(applyPreset(presets[profile]));
   };
 
   const game = useGame({
@@ -133,12 +114,34 @@ function MancalaGame() {
     return `Player ${game.state.currentPlayer + 1}'s turn.`;
   }, [game.state.isGameOver, game.state.winner, game.state.lastMoveSummary, game.state.currentPlayer]);
 
+  const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
+
+  const settingsProps = buildSettingsProps({
+    settings,
+    lenses,
+    activePreset,
+    setLens,
+    setLenses,
+    game,
+    mobileHidden: mobileTab === 'analysis',
+    onOpenDiagnostics: () => setDiagnosticsOpen(true),
+    onOpenTutorial: () => setTutorialOpen(true),
+    onOpenAudience: () => setAudienceOpen(true),
+    onOpenLegend: () => setLegendOpen(true),
+  });
+
   return (
     <div className={`flex flex-col min-h-screen ${theme.appBg} ${theme.appText} transition-colors duration-300 overflow-x-hidden w-full`}>
       <LiveAnnouncer message={liveMessage} />
-      <Header currentSkin={currentSkin} onSelectSkin={setCurrentSkin} onReset={game.handleResetGame} theme={theme} />
+      <Header
+        currentSkin={currentSkin}
+        onSelectSkin={setCurrentSkin}
+        onReset={game.handleResetGame}
+        onOpenSettings={() => setSettingsDrawerOpen(true)}
+        theme={theme}
+      />
 
-      <main className="max-w-5xl mx-auto w-full p-2.5 sm:p-5 pb-24 lg:pb-8 flex-1 flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
+      <main className="max-w-7xl mx-auto w-full p-2.5 sm:p-5 pb-24 lg:pb-8 flex-1 flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
         {game.savedGamePrompt && (
           <div className="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between gap-3 text-xs">
             <span>You have an unfinished game in progress. Would you like to resume?</span>
@@ -149,96 +152,102 @@ function MancalaGame() {
           </div>
         )}
 
-        <EvalGauge
-          visible={lenses.advantageBar} collapsed={evalBarCollapsed}
-          onToggleCollapse={() => setEvalBarCollapsed(!evalBarCollapsed)}
-          stoneAdvantage={game.currentStoneAdvantage} barRatio={game.p1BarRatio}
-          showHints={lenses.bestMoveMarks} showErrorRate={lenses.errorRate}
-          matchStats={game.state.matchStats} currentPlayer={game.state.currentPlayer}
-          isGameOver={game.state.isGameOver} gameMode={game.state.gameMode}
-          humanPlayer={game.state.humanPlayer} searchDepth={game.state.searchDepth}
-          colorblindSafe={colorblindSafe} theme={theme} currentSkin={currentSkin}
-          isExact={game.isExactAnalysis}
-        />
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+          {/* Left Column (Cols 1-7 on Desktop): Arena & Controls */}
+          <div className={`lg:col-span-7 xl:col-span-7 flex flex-col gap-3 sm:gap-4 ${mobileTab !== 'board' ? 'hidden lg:flex' : 'flex'}`}>
+            <EvalGauge
+              visible={lenses.advantageBar} collapsed={evalBarCollapsed}
+              onToggleCollapse={() => setEvalBarCollapsed(!evalBarCollapsed)}
+              stoneAdvantage={game.currentStoneAdvantage} barRatio={game.p1BarRatio}
+              showHints={lenses.bestMoveMarks} showErrorRate={lenses.errorRate}
+              matchStats={game.state.matchStats} currentPlayer={game.state.currentPlayer}
+              isGameOver={game.state.isGameOver} gameMode={game.state.gameMode}
+              humanPlayer={game.state.humanPlayer} searchDepth={game.state.searchDepth}
+              colorblindSafe={colorblindSafe} theme={theme} currentSkin={currentSkin}
+              isExact={game.isExactAnalysis}
+            />
 
-        <section className={mobileTab !== 'board' ? 'hidden lg:block' : ''}>
-          <TurnBanner
-            currentPlayer={game.state.currentPlayer} totalStones={game.totalBoardStones}
-            showHints={lenses.bestMoveMarks} onToggleHints={() => setLens('bestMoveMarks', !lenses.bestMoveMarks)}
-            hasEarnedFreeTurn={game.hasEarnedFreeTurn} hoverPreview={game.hoverPreview}
-            isGameOver={game.state.isGameOver} winner={game.state.winner}
-            p1Score={game.state.board[P1_STORE]} p2Score={game.state.board[P2_STORE]}
-            gameMode={game.state.gameMode} humanPlayer={game.state.humanPlayer}
-            botName={activeBot.name} animatingState={game.animatingState}
-            isAiThinking={game.isAiThinking} searchDepth={game.state.searchDepth}
-            lastMoveSummary={game.state.lastMoveSummary} onOpenReview={() => setGameReviewOpen(true)}
-            theme={theme} currentSkin={currentSkin}
-          />
+            <TurnBanner
+              currentPlayer={game.state.currentPlayer} totalStones={game.totalBoardStones}
+              showHints={lenses.bestMoveMarks} onToggleHints={() => setLens('bestMoveMarks', !lenses.bestMoveMarks)}
+              hasEarnedFreeTurn={game.hasEarnedFreeTurn} hoverPreview={game.hoverPreview}
+              isGameOver={game.state.isGameOver} winner={game.state.winner}
+              p1Score={game.state.board[P1_STORE]} p2Score={game.state.board[P2_STORE]}
+              gameMode={game.state.gameMode} humanPlayer={game.state.humanPlayer}
+              botName={activeBot.name} animatingState={game.animatingState}
+              isAiThinking={game.isAiThinking} searchDepth={game.state.searchDepth}
+              lastMoveSummary={game.state.lastMoveSummary} onOpenReview={() => setGameReviewOpen(true)}
+              theme={theme} currentSkin={currentSkin}
+            />
 
-          <Board
-            displayBoard={game.displayBoard} currentPlayer={game.state.currentPlayer}
-            isGameOver={game.state.isGameOver} animatingState={game.animatingState}
-            isMoveLocked={game.isMoveLocked} analysisResults={game.analysisResults}
-            showHints={lenses.bestMoveMarks} showThreats={lenses.threatPits}
-            hoverPreview={game.hoverPreview} hoveredPit={game.hoveredPit}
-            setHoveredPit={game.setHoveredPit} tutorWarning={game.tutorWarning}
-            lastMovedPit={game.state.lastMovedPit} gameMode={game.state.gameMode}
-            onPitClick={game.handlePitClick} onSandboxAdjust={game.handleSandboxPitAdjust}
-            theme={theme} currentSkin={currentSkin} bigMode={bigMode} tapTwice={tapTwice}
-          />
-        </section>
+            <Board
+              displayBoard={game.displayBoard} currentPlayer={game.state.currentPlayer}
+              isGameOver={game.state.isGameOver} animatingState={game.animatingState}
+              isMoveLocked={game.isMoveLocked} analysisResults={game.analysisResults}
+              showHints={lenses.bestMoveMarks} showThreats={lenses.threatPits}
+              hoverPreview={game.hoverPreview} hoveredPit={game.hoveredPit}
+              setHoveredPit={game.setHoveredPit} tutorWarning={game.tutorWarning}
+              lastMovedPit={game.state.lastMovedPit} gameMode={game.state.gameMode}
+              onPitClick={game.handlePitClick} onSandboxAdjust={game.handleSandboxPitAdjust}
+              theme={theme} currentSkin={currentSkin} bigMode={bigMode} tapTwice={tapTwice}
+            />
 
-        {game.tutorWarning && (
-          <CoachPanel
-            warning={game.tutorWarning} showDetails={game.showCoachDetails}
-            onToggleDetails={() => game.setShowCoachDetails(prev => !prev)}
-            onReconsider={game.handleTutorReconsider} onPlayBest={game.handleTutorPlayBest}
-            onConfirm={game.handleTutorConfirmAnyway} showExplanations={lenses.explanations}
-            currentSkin={currentSkin}
-          />
-        )}
+            <ActionBar
+              canUndo={game.state.gameMovesHistory.length > 0 && !game.state.isGameOver}
+              onUndo={game.handleUndoMove}
+              showHints={lenses.bestMoveMarks}
+              onToggleHints={() => setLens('bestMoveMarks', !lenses.bestMoveMarks)}
+              onResetGame={game.handleResetGame}
+              gameMode={game.state.gameMode}
+              botName={activeBot.name}
+              isAiThinking={game.isAiThinking}
+              theme={theme}
+              currentSkin={currentSkin}
+            />
 
-        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-5 ${mobileTab === 'board' ? 'hidden lg:grid' : ''}`}>
-          <AnalysisPanel
-            analysisResults={game.analysisResults} isAnalyzing={game.isAnalyzing}
-            searchDepth={game.state.searchDepth} matchStats={game.state.matchStats}
-            showErrorRate={lenses.errorRate} showWinPercent={lenses.winPercent}
-            showMainLine={lenses.mainLine} canReview={game.state.isGameOver || game.state.gameMovesHistory.length >= 2}
-            onOpenReview={() => setGameReviewOpen(true)} expandedPit={expandedAnalysisPit}
-            onToggleExpandPit={(pit) => setExpandedAnalysisPit(prev => prev === pit ? null : pit)}
-            onPlayMove={(pit) => game.executeMove(pit, true)} isGameOver={game.state.isGameOver}
-            board={game.state.board} currentPlayer={game.state.currentPlayer} rules={game.state.rules}
-            colorblindSafe={colorblindSafe} currentSkin={currentSkin} theme={theme}
-            mobileHidden={mobileTab === 'settings'} layout={kalahRuleSet.layout}
-            isAnalysisEmpty={isAnalysisEmpty} onApplyPreset={(p) => setLenses(applyPreset(p))}
-            onNavigateTab={(tab) => setMobileTab(tab)} isExact={game.isExactAnalysis}
-          />
+            {game.tutorWarning && (
+              <CoachPanel
+                warning={game.tutorWarning} showDetails={game.showCoachDetails}
+                onToggleDetails={() => game.setShowCoachDetails(prev => !prev)}
+                onReconsider={game.handleTutorReconsider} onPlayBest={game.handleTutorPlayBest}
+                onConfirm={game.handleTutorConfirmAnyway} showExplanations={lenses.explanations}
+                currentSkin={currentSkin}
+              />
+            )}
+          </div>
 
-          <SettingsPanel
-            activePreset={activePreset} onSelectPreset={(id) => setLenses(applyPreset(id))}
-            lenses={lenses} onToggleLens={setLens} tutorMode={lenses.coach}
-            coachSensitivity={game.state.coachSensitivity} onChangeCoachSensitivity={game.handleSetCoachSensitivity}
-            soundEnabled={soundEnabled} onToggleSound={() => setSoundEnabled(!soundEnabled)}
-            colorblindSafe={colorblindSafe} onToggleColorblind={() => setColorblindSafe(!colorblindSafe)}
-            hapticsEnabled={hapticsEnabled} onToggleHaptics={handleToggleHaptics}
-            gameMode={game.state.gameMode} onSelectMode={game.handleSetGameMode}
-            humanPlayer={game.state.humanPlayer} onSelectHumanPlayer={game.handleSetHumanPlayer}
-            isAiRunning={game.state.isAiRunning} onToggleAiRunning={() => game.handleSetAiRunning(!game.state.isAiRunning)}
-            searchDepth={game.state.searchDepth} onChangeDepth={game.handleSetSearchDepth}
-            sowSpeed={game.state.sowSpeed} onChangeSowSpeed={game.handleSetSowSpeed}
-            rules={game.state.rules} onChangeRules={game.handleSetRules}
-            onOpenDiagnostics={() => setDiagnosticsOpen(true)} currentSkin={currentSkin}
-            onSelectSkin={setCurrentSkin} theme={theme} mobileHidden={mobileTab === 'analysis'}
-            fontScale={fontScale} onChangeFontScale={setFontScale}
-            reducedMotion={reducedMotion} onChangeReducedMotion={setReducedMotion}
-            bigMode={bigMode} onToggleBigMode={setBigMode}
-            tapTwice={tapTwice} onToggleTapTwice={setTapTwice}
-            speechEnabled={speechEnabled} onToggleSpeech={setSpeechEnabled}
-            onEraseData={() => eraseAllUserData(true)} onOpenTutorial={() => setTutorialOpen(true)}
-            onOpenAudience={() => setAudienceOpen(true)} onOpenLegend={() => setLegendOpen(true)}
-          />
+          {/* Right Column (Cols 8-12 on Desktop): Analysis & History */}
+          <div className={`lg:col-span-5 xl:col-span-5 flex flex-col gap-4 ${mobileTab === 'board' ? 'hidden lg:flex' : 'flex'}`}>
+            <AnalysisPanel
+              analysisResults={game.analysisResults} isAnalyzing={game.isAnalyzing}
+              searchDepth={game.state.searchDepth} matchStats={game.state.matchStats}
+              showErrorRate={lenses.errorRate} showWinPercent={lenses.winPercent}
+              showMainLine={lenses.mainLine} canReview={game.state.isGameOver || game.state.gameMovesHistory.length >= 2}
+              onOpenReview={() => setGameReviewOpen(true)} expandedPit={expandedAnalysisPit}
+              onToggleExpandPit={(pit) => setExpandedAnalysisPit(prev => prev === pit ? null : pit)}
+              onPlayMove={(pit) => game.executeMove(pit, true)} isGameOver={game.state.isGameOver}
+              board={game.state.board} currentPlayer={game.state.currentPlayer} rules={game.state.rules}
+              colorblindSafe={colorblindSafe} currentSkin={currentSkin} theme={theme}
+              mobileHidden={mobileTab === 'settings'} layout={kalahRuleSet.layout}
+              isAnalysisEmpty={isAnalysisEmpty} onApplyPreset={(p) => setLenses(applyPreset(p))}
+              onNavigateTab={(tab) => setMobileTab(tab)} isExact={game.isExactAnalysis}
+            />
+
+            {/* Settings View: on mobile under Settings tab; on desktop below Analysis */}
+            <div className={mobileTab === 'settings' ? 'block' : 'hidden lg:block'}>
+              <SettingsPanel {...settingsProps} mobileHidden={false} />
+            </div>
+          </div>
         </div>
       </main>
+
+      <SettingsDrawer
+        isOpen={settingsDrawerOpen}
+        onClose={() => setSettingsDrawerOpen(false)}
+        settingsProps={settingsProps}
+        theme={theme}
+        currentSkin={currentSkin}
+      />
 
       <BottomTray
         mobileTab={mobileTab} onSelectTab={(tab) => { haptics.tap(); setMobileTab(tab); }}

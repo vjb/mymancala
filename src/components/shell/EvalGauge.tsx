@@ -97,95 +97,21 @@ export const EvalGauge: React.FC<EvalGaugeProps> = ({
 
       {!collapsed ? (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-6 pt-1">
-          {/* Player 2 (North / Top) */}
+          {/* Player 1 (You / South) on Left */}
           <div className="flex items-center justify-between sm:justify-start space-x-2.5 w-full sm:w-auto">
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center border text-base ${
-                currentPlayer === 1 && !isGameOver
-                  ? 'ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                  : 'bg-black/10 border-white/10 opacity-70'
-              }`}>
-                <Bot className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div>
-                <div className={`text-floor text-xs font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
-                  <span>{gameMode === 'pve' ? 'Computer (Engine)' : 'North (P2)'}</span>
-                  {gameMode === 'pve' && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-black/10 font-bold">
-                      {isExact ? 'Solved' : `Depth ${searchDepth}`}
-                    </span>
-                  )}
-                </div>
-                <div className={`text-xs sm:text-sm font-extrabold tracking-tight ${
-                  stoneAdvantage < -0.2 ? (currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400') : stoneAdvantage > 0.2 ? theme.cardTextMuted : ''
-                }`}>
-                  {isExact ? (
-                    stoneAdvantage < 0
-                      ? `+${Math.abs(stoneAdvantage)} stones`
-                      : stoneAdvantage > 0
-                      ? `-${stoneAdvantage}`
-                      : 'Even (±0)'
-                  ) : (
-                    stoneAdvantage < -0.2 
-                      ? `about +${Math.abs(stoneAdvantage).toFixed(1)} stones` 
-                      : stoneAdvantage > 0.2 
-                      ? `about -${stoneAdvantage.toFixed(1)}` 
-                      : 'Even (±0.0)'
-                  )}
-                </div>
-              </div>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center border text-base shrink-0 ${
+              currentPlayer === 0 && !isGameOver
+                ? `ring-2 ring-amber-500/60 bg-amber-500/20 border-amber-500 ${theme.storeP1Text}`
+                : 'bg-black/10 border-white/10 opacity-70'
+            }`}>
+              <User className="w-4 h-4" />
             </div>
-          </div>
-
-          {/* Smooth Balance Bar */}
-          <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1">
-            <div data-testid="eval-lead-label" className="flex justify-between text-floor text-xs font-semibold">
-              <span className={currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400'}>
-                South: {isExact ? (stoneAdvantage === 0 ? '±0' : stoneAdvantage > 0 ? `+${stoneAdvantage}` : `${stoneAdvantage}`) : (Math.abs(stoneAdvantage) < 0.25 ? '±0.0' : stoneAdvantage > 0 ? `+${stoneAdvantage.toFixed(1)}` : stoneAdvantage.toFixed(1))}
-              </span>
-              <span className={`text-floor text-xs font-mono ${theme.cardTextMuted}`}>
-                {Math.abs(stoneAdvantage) < 0.25 ? 'Even Match' : stoneAdvantage > 0 ? 'South Ahead' : 'Computer Ahead'}
-              </span>
-              <span className={currentSkin === 'porcelain' ? 'text-[#3b6654]' : 'text-emerald-400'}>
-                North: {isExact ? (stoneAdvantage === 0 ? '±0' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage)}` : `-${stoneAdvantage}`) : (Math.abs(stoneAdvantage) < 0.25 ? '±0.0' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage).toFixed(1)}` : `-${stoneAdvantage.toFixed(1)}`)}
-              </span>
-            </div>
-
-            <div className={`h-2.5 sm:h-3 rounded-full border ${theme.barBg} overflow-hidden flex shadow-inner relative`}>
-              <div 
-                className={`h-full transition-all duration-500 ease-out ${
-                  colorblindSafe 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
-                    : theme.barP1
-                }`}
-                style={{ width: `${barRatio * 100}%` }}
-              />
-              <div 
-                className={`h-full transition-all duration-500 ease-out ${
-                  colorblindSafe 
-                    ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
-                    : theme.barP2
-                }`}
-                style={{ width: `${(1 - barRatio) * 100}%` }}
-              />
-              <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider}`} />
-            </div>
-
-            <div className={`${showErrorRate ? 'flex' : 'hidden'} justify-between text-floor text-xs font-mono ${theme.cardTextMuted}`}>
-              <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
-              <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
-            </div>
-          </div>
-
-          {/* Player 1 (South / Bottom) */}
-          <div className="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
-            <div className="text-left sm:text-right">
-              <div className={`text-floor text-xs font-semibold flex items-center justify-start sm:justify-end gap-1 ${theme.cardTextMuted}`}>
-                {gameMode === 'pve' && humanPlayer === 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-black/10 font-bold">You</span>}
-                <span>South (P1)</span>
+            <div>
+              <div className={`text-floor text-xs font-semibold flex items-center gap-1 ${theme.cardTextMuted}`}>
+                <span>{gameMode === 'pve' && humanPlayer === 0 ? 'You' : 'Player 1'}</span>
               </div>
               <div className={`text-xs sm:text-sm font-extrabold tracking-tight ${
-                stoneAdvantage > 0.25 ? (currentSkin === 'porcelain' ? 'text-[#b85038]' : 'text-amber-400') : stoneAdvantage < -0.25 ? theme.cardTextMuted : ''
+                stoneAdvantage > 0.25 ? theme.storeP1Text : stoneAdvantage < -0.25 ? theme.cardTextMuted : ''
               }`}>
                 {isExact ? (
                   stoneAdvantage > 0 
@@ -202,26 +128,109 @@ export const EvalGauge: React.FC<EvalGaugeProps> = ({
                 )}
               </div>
             </div>
-            <div className={`w-7 h-7 rounded-xl flex items-center justify-center border ${
-              currentPlayer === 0 && !isGameOver
-                ? 'ring-2 ring-amber-500/60 bg-amber-500/20 border-amber-500 text-amber-300'
+          </div>
+
+          {/* Smooth Balance Bar with Embedded Numbers */}
+          <div className="w-full flex-1 max-w-lg mx-auto flex flex-col gap-1">
+            <div data-testid="eval-lead-label" className="flex justify-between text-floor text-xs font-semibold">
+              <span className={theme.storeP1Text}>
+                {gameMode === 'pve' && humanPlayer === 0 ? 'You' : 'P1'}: {isExact ? (stoneAdvantage === 0 ? '±0' : stoneAdvantage > 0 ? `+${stoneAdvantage}` : `${stoneAdvantage}`) : (Math.abs(stoneAdvantage) < 0.25 ? '±0.0' : stoneAdvantage > 0 ? `+${stoneAdvantage.toFixed(1)}` : stoneAdvantage.toFixed(1))}
+              </span>
+              <span className={`text-floor text-xs font-mono ${theme.cardTextMuted}`}>
+                {Math.abs(stoneAdvantage) < 0.25 ? 'Even Match' : stoneAdvantage > 0 ? (gameMode === 'pve' && humanPlayer === 0 ? 'You Ahead' : 'P1 Ahead') : (gameMode === 'pve' ? 'Computer Ahead' : 'P2 Ahead')}
+              </span>
+              <span className={theme.storeP2Text}>
+                {gameMode === 'pve' ? 'Bot' : 'P2'}: {isExact ? (stoneAdvantage === 0 ? '±0' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage)}` : `-${stoneAdvantage}`) : (Math.abs(stoneAdvantage) < 0.25 ? '±0.0' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage).toFixed(1)}` : `-${stoneAdvantage.toFixed(1)}`)}
+              </span>
+            </div>
+
+            <div className={`h-4 sm:h-5 rounded-full border ${theme.barBg} overflow-hidden flex shadow-inner relative items-center`}>
+              <div 
+                className={`h-full transition-all duration-500 ease-out flex items-center justify-start pl-2 text-xs select-none overflow-hidden ${
+                  currentSkin === 'high-contrast' || currentSkin === 'porcelain'
+                    ? 'text-black font-black'
+                    : 'text-white font-bold drop-shadow-xs'
+                } ${
+                  colorblindSafe 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-500' 
+                    : theme.barP1
+                }`}
+                style={{ width: `${barRatio * 100}%` }}
+              >
+                {barRatio >= 0.18 && `${(barRatio * 100).toFixed(0)}%`}
+              </div>
+              <div 
+                className={`h-full transition-all duration-500 ease-out flex items-center justify-end pr-2 text-xs select-none overflow-hidden ${
+                  currentSkin === 'high-contrast' || currentSkin === 'porcelain'
+                    ? 'text-black font-black'
+                    : 'text-white font-bold drop-shadow-xs'
+                } ${
+                  colorblindSafe 
+                    ? 'bg-gradient-to-l from-orange-500 to-amber-500' 
+                    : theme.barP2
+                }`}
+                style={{ width: `${(1 - barRatio) * 100}%` }}
+              >
+                {(1 - barRatio) >= 0.18 && `${((1 - barRatio) * 100).toFixed(0)}%`}
+              </div>
+              <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider}`} />
+            </div>
+
+            <div className={`${showErrorRate ? 'flex' : 'hidden'} justify-between text-floor text-xs font-mono ${theme.cardTextMuted}`}>
+              <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
+              <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
+            </div>
+          </div>
+
+          {/* Player 2 (Computer / North) on Right */}
+          <div className="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
+            <div className="text-left sm:text-right">
+              <div className={`text-floor text-xs font-semibold flex items-center justify-start sm:justify-end gap-1 ${theme.cardTextMuted}`}>
+                <span>{gameMode === 'pve' ? 'Computer' : 'Player 2'}</span>
+                {gameMode === 'pve' && (
+                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-black/10 font-bold">
+                    {isExact ? 'Solved' : `Depth ${searchDepth}`}
+                  </span>
+                )}
+              </div>
+              <div className={`text-xs sm:text-sm font-extrabold tracking-tight ${
+                stoneAdvantage < -0.2 ? theme.storeP2Text : stoneAdvantage > 0.2 ? theme.cardTextMuted : ''
+              }`}>
+                {isExact ? (
+                  stoneAdvantage < 0
+                    ? `+${Math.abs(stoneAdvantage)} stones`
+                    : stoneAdvantage > 0
+                    ? `-${stoneAdvantage}`
+                    : 'Even (±0)'
+                ) : (
+                  stoneAdvantage < -0.2 
+                    ? `about +${Math.abs(stoneAdvantage).toFixed(1)} stones` 
+                    : stoneAdvantage > 0.2 
+                    ? `about -${stoneAdvantage.toFixed(1)}` 
+                    : 'Even (±0.0)'
+                )}
+              </div>
+            </div>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center border text-base shrink-0 ${
+              currentPlayer === 1 && !isGameOver
+                ? `ring-2 ring-emerald-500/60 bg-emerald-500/20 border-emerald-500 ${theme.storeP2Text}`
                 : 'bg-black/10 border-white/10 opacity-70'
             }`}>
-              <User className="w-3.5 h-3.5" />
+              <Bot className="w-4 h-4" />
             </div>
           </div>
         </div>
       ) : (
         /* Collapsed Focus Mode Ribbon */
         <div className="flex items-center justify-between text-xs py-0.5">
-          <span className={currentSkin === 'porcelain' ? 'text-[#b85038] font-bold' : 'text-amber-400 font-bold'}>
-            South: {Math.abs(stoneAdvantage) < 0.25 ? 'Even (±0.0)' : stoneAdvantage > 0 ? `+${stoneAdvantage.toFixed(1)}` : stoneAdvantage.toFixed(1)}
+          <span className={`${theme.storeP1Text} font-bold`}>
+            {gameMode === 'pve' && humanPlayer === 0 ? 'You' : 'P1'}: {Math.abs(stoneAdvantage) < 0.25 ? 'Even (±0.0)' : stoneAdvantage > 0 ? `+${stoneAdvantage.toFixed(1)}` : stoneAdvantage.toFixed(1)}
           </span>
           <span className={`text-floor text-xs font-mono ${theme.cardTextMuted}`}>
             PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}
           </span>
-          <span className={currentSkin === 'porcelain' ? 'text-[#3b6654] font-bold' : 'text-emerald-400 font-bold'}>
-            North: {Math.abs(stoneAdvantage) < 0.25 ? 'Even (±0.0)' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage).toFixed(1)}` : `-${stoneAdvantage.toFixed(1)}`}
+          <span className={`${theme.storeP2Text} font-bold`}>
+            {gameMode === 'pve' ? 'Bot' : 'P2'}: {Math.abs(stoneAdvantage) < 0.25 ? 'Even (±0.0)' : stoneAdvantage < 0 ? `+${Math.abs(stoneAdvantage).toFixed(1)}` : `-${stoneAdvantage.toFixed(1)}`}
           </span>
         </div>
       )}

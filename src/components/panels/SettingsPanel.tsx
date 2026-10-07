@@ -8,7 +8,7 @@ import { FontScale } from '../../lib/a11y';
 import { useTranslation, Locale } from '../../i18n';
 import { VARIANT_METADATA } from '../../rules';
 
-interface SettingsPanelProps {
+export interface SettingsPanelProps {
   activePreset: PresetId | 'custom';
   onSelectPreset: (id: PresetId) => void;
   lenses: LensState;

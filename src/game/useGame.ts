@@ -575,6 +575,24 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
     triggerBotDialogue('start');
   };
 
+  const handleUndoMove = () => {
+    if (state.moveHistory.length === 0 || state.isGameOver || animatingState || isAiThinking) return;
+    haptics.tap();
+    sounds.playSow(0);
+    activeAnimationId.current++;
+    setAnimatingState(null);
+    setVisualBoard(null);
+    setTutorWarning(null);
+    setShowCoachDetails(false);
+
+    if (state.gameMode === 'pve' && state.currentPlayer === state.humanPlayer && state.moveHistory.length >= 2) {
+      dispatch({ type: 'UNDO_MOVE' });
+      dispatch({ type: 'UNDO_MOVE' });
+    } else {
+      dispatch({ type: 'UNDO_MOVE' });
+    }
+  };
+
   const handleTutorReconsider = () => {
     setTutorWarning(null);
     setShowCoachDetails(false);
@@ -671,6 +689,7 @@ export function useGame({ lenses, onGameOver, isReducedMotion = false }: UseGame
     executeMove,
     handlePitClick,
     handleResetGame,
+    handleUndoMove,
     handleTutorReconsider,
     handleTutorPlayBest,
     handleTutorConfirmAnyway,

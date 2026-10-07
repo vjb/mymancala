@@ -52,6 +52,20 @@ export function Pebble({ theme, player, index }: PebbleProps) {
       : player === 'p2'
       ? 'bg-gradient-to-tr from-[#264e3c] via-[#4a7c64] to-[#a3c9b7] border-[#91c0ab]/60 shadow-[0_2px_4px_rgba(20,50,35,0.3)]'
       : 'bg-gradient-to-tr from-[#6e6357] via-[#8c8072] to-[#c7bcb0] border-[#b8ab9b]/40 shadow-[0_2px_4px_rgba(50,40,30,0.2)]';
+  } else if (theme === 'emerald') {
+    // Nephrite Jade (P1) vs Desert Amber (P2)
+    stoneClasses = player === 'p1'
+      ? 'bg-gradient-to-tr from-[#064e3b] via-[#059669] to-[#6ee7b7] border-[#34d399]/60 shadow-[0_2px_4px_rgba(0,0,0,0.7)]'
+      : player === 'p2'
+      ? 'bg-gradient-to-tr from-[#b45309] via-[#d97706] to-[#fde68a] border-[#fcd34d]/60 shadow-[0_2px_4px_rgba(0,0,0,0.7)]'
+      : 'bg-gradient-to-tr from-[#042f2e] via-[#0d9488] to-[#99f6e4] border-[#5eead4]/50 shadow-[0_2px_4px_rgba(0,0,0,0.6)]';
+  } else if (theme === 'amethyst') {
+    // Royal Amethyst (P1) vs Celestial Amber (P2)
+    stoneClasses = player === 'p1'
+      ? 'bg-gradient-to-tr from-[#581c87] via-[#9333ea] to-[#e9d5ff] border-[#c084fc]/60 shadow-[0_2px_4px_rgba(0,0,0,0.7)]'
+      : player === 'p2'
+      ? 'bg-gradient-to-tr from-[#b45309] via-[#d97706] to-[#fef08a] border-[#fde047]/60 shadow-[0_2px_4px_rgba(0,0,0,0.7)]'
+      : 'bg-gradient-to-tr from-[#3b0764] via-[#7e22ce] to-[#f3e8ff] border-[#d8b4fe]/50 shadow-[0_2px_4px_rgba(0,0,0,0.6)]';
   } else {
     // Sapphire Crystal (P1) vs Topaz Quartz (P2)
     stoneClasses = player === 'p1'

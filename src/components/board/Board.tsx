@@ -136,10 +136,18 @@ export const Board: React.FC<BoardProps> = ({
             })}
           </div>
 
-          {/* Sowing Flow Indicator (Hard floor >= 12px) */}
-          <div className="flex items-center justify-between px-2 pt-0.5 pb-0.5 text-xs font-mono font-semibold text-zinc-400/80">
-            <span>{t('board.ccwFlow')}</span>
-            <span>{t('board.ownStorePoints')}</span>
+          {/* Center Inlay & Dynamic Flow Indicator */}
+          <div className="flex items-center justify-between px-3 py-1 text-xs font-mono font-semibold min-h-[22px]">
+            {hoverPreview ? (
+              <>
+                <span className="text-amber-400/90 animate-pulse">{t('board.ccwFlow')}</span>
+                <span className="text-emerald-400/90 animate-pulse">{t('board.ownStorePoints')}</span>
+              </>
+            ) : (
+              <div className="w-full flex items-center justify-center opacity-25">
+                <div className="h-px w-32 bg-gradient-to-r from-transparent via-current to-transparent" />
+              </div>
+            )}
           </div>
 
           {/* South Row (Indices 0 to 5) */}

@@ -11,6 +11,8 @@ export const ar: TranslationCatalog = {
   'app.continueGame': 'متابعة اللعبة',
   'app.newGameConfirm': 'لعبة جديدة',
   'app.footer': 'محرك تحليل المنقلة • سمات حرفية ودحرجات مينيماكس',
+  'action.undo': 'تراجع',
+  'action.hint': 'تلميح',
 
   // Skins
   'skin.walnut': 'خشب الجوز',

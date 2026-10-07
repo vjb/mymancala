@@ -1,11 +1,12 @@
 import React from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Settings } from 'lucide-react';
 import { SkinTheme } from '../../theme';
 
 interface HeaderProps {
   currentSkin: SkinTheme;
   onSelectSkin: (skin: SkinTheme) => void;
   onReset: () => void;
+  onOpenSettings?: () => void;
   theme: any;
 }
 
@@ -13,11 +14,12 @@ export const Header: React.FC<HeaderProps> = ({
   currentSkin,
   onSelectSkin,
   onReset,
+  onOpenSettings,
   theme
 }) => {
   return (
     <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2 transition-colors w-full overflow-hidden`}>
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         {/* Brand Mark */}
         <div className="flex items-center space-x-2 shrink-0">
           <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold border shadow-xs ${
@@ -92,6 +94,23 @@ export const Header: React.FC<HeaderProps> = ({
               Slate
             </button>
           </div>
+
+          {/* Settings Drawer Button */}
+          {onOpenSettings && (
+            <button
+              onClick={onOpenSettings}
+              data-testid="header-settings-btn"
+              title="Settings & Options"
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-xs font-bold transition shadow-xs ${
+                currentSkin === 'porcelain'
+                  ? 'bg-stone-200 hover:bg-stone-300 text-stone-800 border-stone-300'
+                  : 'bg-white/10 hover:bg-white/15 text-white border-white/15'
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Settings</span>
+            </button>
+          )}
 
           {/* Quick Reset Button */}
           <button

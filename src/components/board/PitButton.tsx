@@ -207,7 +207,7 @@ export const PitButton: React.FC<PitButtonProps> = ({
       {/* Etched Count Numerals (Guaranteed >= 12px at scale M) */}
       <div
         data-testid={`pit-count-${pitIndex}`}
-        className={`text-xs sm:text-base font-mono font-extrabold px-1.5 py-0.5 rounded-lg border ${theme.pitCountBg} ${theme.pitCountText}`}
+        className={`text-xs sm:text-base font-mono font-black px-2.5 py-0.5 rounded-xl border shadow-sm ${theme.pitCountBg} ${theme.pitCountText}`}
       >
         {stones}
       </div>
