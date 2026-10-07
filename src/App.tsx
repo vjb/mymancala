@@ -28,6 +28,10 @@ import { haptics } from './haptics';
 import { BOT_PERSONAS, DEFAULT_BOT_ID, getBotReaction, BotReactionEvent } from './bots';
 import { GameReviewModal, GameReviewData, MoveRecord } from './GameReviewModal';
 import { RulesModal } from './RulesModal';
+import {
+  LENSES, PRESETS, PRESET_ORDER, LensId, LensState, PresetId,
+  applyPreset, detectPreset, toggleLens, loadLenses, saveLenses
+} from './lenses';
 
 export default function App() {
   const [stonesConfig, setStonesConfig] = useState(4);
@@ -123,30 +127,23 @@ export default function App() {
     }
   };
   
-  // Coach & Evaluation Visibility Controls (Decoupled & Persisted!)
-  const [tutorMode, setTutorMode] = useState(() => {
-    try {
-      const saved = localStorage.getItem('mancala_tutor_mode');
-      return saved !== null ? saved === 'true' : true;
-    } catch {
-      return true;
-    }
-  });
+  // Lenses: every trainer stat is individually toggleable (persisted). Presets are bundles.
+  const [lenses, setLenses] = useState<LensState>(() => loadLenses());
   useEffect(() => {
-    try { localStorage.setItem('mancala_tutor_mode', String(tutorMode)); } catch {}
-  }, [tutorMode]);
+    saveLenses(lenses);
+  }, [lenses]);
+  const setLens = useCallback((id: LensId, value?: boolean) => {
+    setLenses(prev => toggleLens(prev, id, value));
+  }, []);
+  const activePreset = detectPreset(lenses);
 
-  const [showMoveHints, setShowMoveHints] = useState(() => {
-    try {
-      const saved = localStorage.getItem('mancala_show_hints');
-      return saved !== null ? saved === 'true' : false;
-    } catch {
-      return false;
-    }
-  });
-  useEffect(() => {
-    try { localStorage.setItem('mancala_show_hints', String(showMoveHints)); } catch {}
-  }, [showMoveHints]);
+  // Existing code reads these two; they now live inside the lens state.
+  const tutorMode = lenses.coach;
+  const showMoveHints = lenses.bestMoveMarks;
+  const setTutorMode = (v: boolean) => {
+    setLenses(prev => ({ ...prev, coach: v, explanations: v ? true : prev.explanations }));
+  };
+  const setShowMoveHints = (v: boolean) => setLens('bestMoveMarks', v);
 
   const [evalBarCollapsed, setEvalBarCollapsed] = useState(false);
   const [coachSensitivity, setCoachSensitivity] = useState<'all' | 'blunders_only'>(() => {
@@ -947,7 +944,7 @@ export default function App() {
         {/* Live Stone Advantage & Focus / Zen Mode Card */}
         <section 
           data-testid="eval-gauge"
-          className={`${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
+          className={`${lenses.advantageBar ? '' : 'hidden'} ${theme.cardBg} border ${theme.cardBorder} rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-lg backdrop-blur-md transition-colors`}
         >
           {/* Header Row: Title & Collapse Button */}
           <div className="flex items-center justify-between pb-1.5 mb-1 border-b border-white/5">
@@ -1041,7 +1038,7 @@ export default function App() {
                   <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 ${theme.barDivider}`} />
                 </div>
 
-                <div className={`flex justify-between text-[9px] font-mono ${theme.cardTextMuted}`}>
+                <div className={`${lenses.errorRate ? 'flex' : 'hidden'} justify-between text-[9px] font-mono ${theme.cardTextMuted}`}>
                   <span>PR: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)} ({matchStats.p1Blunders} blunders)</span>
                   <span>PR: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)} ({matchStats.p2Blunders} blunders)</span>
                 </div>
@@ -1806,7 +1803,7 @@ export default function App() {
             </div>
 
             {/* Natural Language Summary Banner */}
-            <div className={`p-2.5 sm:p-3 rounded-xl border text-xs sm:text-[13px] leading-relaxed flex items-start gap-2.5 ${
+            <div className={`${lenses.explanations ? 'flex' : 'hidden'} p-2.5 sm:p-3 rounded-xl border text-xs sm:text-[13px] leading-relaxed items-start gap-2.5 ${
               currentSkin === 'porcelain'
                 ? 'bg-white/70 border-[#f0c08a]/60 text-[#4c3116]'
                 : 'bg-black/30 border-white/10 text-slate-100'
@@ -1818,7 +1815,7 @@ export default function App() {
             </div>
 
             {/* "Why?" Toggle Button */}
-            <div className="flex items-center justify-between border-t border-white/10 pt-2">
+            <div className={`${lenses.explanations ? 'flex' : 'hidden'} items-center justify-between border-t border-white/10 pt-2`}>
               <button
                 type="button"
                 onClick={() => setShowCoachDetails(prev => !prev)}
@@ -1838,7 +1835,7 @@ export default function App() {
             </div>
 
             {/* Expandable Tactical Breakdown Card */}
-            {showCoachDetails && (
+            {lenses.explanations && showCoachDetails && (
               <div className={`grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3 p-3 rounded-xl border animate-in fade-in duration-150 ${
                 currentSkin === 'porcelain'
                   ? 'bg-[#faf2e6] border-[#e8d2b8]'
@@ -1903,7 +1900,7 @@ export default function App() {
             <div className={`flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl border text-[11px] font-mono mt-3 mb-1 ${
               currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
             }`}>
-              <div className="flex items-center space-x-2">
+              <div className={`${lenses.errorRate ? 'flex' : 'hidden'} items-center space-x-2`}>
                 <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 <span className="font-semibold">Session Rating:</span>
                 <span className="font-bold text-amber-500">P1: {calcPR(matchStats.p1TotalLoss, matchStats.p1Moves)}</span>
@@ -1911,7 +1908,7 @@ export default function App() {
                 <span className="font-bold text-emerald-500">P2: {calcPR(matchStats.p2TotalLoss, matchStats.p2Moves)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className={`text-[10px] ${theme.cardTextMuted}`}>
+                <div className={`${lenses.errorRate ? '' : 'hidden'} text-[10px] ${theme.cardTextMuted}`}>
                   Blunders: P1({matchStats.p1Blunders}) / P2({matchStats.p2Blunders})
                 </div>
                 {(gameState.isGameOver || gameMovesHistory.length >= 2) && (
@@ -1973,10 +1970,10 @@ export default function App() {
                         </div>
 
                         <div className="flex items-center space-x-1.5 shrink-0">
-                          <span className="text-xs font-bold font-mono">
+                          <span className={`${lenses.winPercent ? '' : 'hidden'} text-xs font-bold font-mono`}>
                             {(move.winProb * 100).toFixed(1)}%
                           </span>
-                          <span className={`text-[10px] font-mono ${move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}`}>
+                          <span className={`${lenses.winPercent ? '' : 'hidden'} text-[10px] font-mono ${move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}`}>
                             {move.equityLoss === 0 ? '0.0%' : `-${(move.equityLoss * 100).toFixed(1)}%`}
                           </span>
                           <div>
@@ -2008,7 +2005,7 @@ export default function App() {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
                           {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
-                          <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join(' → ')}</span>
+                          {lenses.mainLine && <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join(' → ')}</span>}
                         </div>
                         <span className={`text-[9px] underline opacity-75 shrink-0 ${
                           currentSkin === 'porcelain' ? 'text-amber-800' : 'text-amber-300'
@@ -2064,10 +2061,10 @@ export default function App() {
                   <tr className={`border-b ${theme.cardBorder} ${theme.cardTextMuted} font-mono uppercase text-[10px]`}>
                     <th className="py-2.5 px-2">Rank</th>
                     <th className="py-2.5 px-2">Pit Action</th>
-                    <th className="py-2.5 px-2">Win %</th>
-                    <th className="py-2.5 px-2">Equity Diff</th>
+                    <th className={`${lenses.winPercent ? '' : 'hidden'} py-2.5 px-2`}>Win %</th>
+                    <th className={`${lenses.winPercent ? '' : 'hidden'} py-2.5 px-2`}>Equity Diff</th>
                     <th className="py-2.5 px-2">Grade</th>
-                    <th className="py-2.5 px-2 hidden sm:table-cell">Bonus / PV Lookahead</th>
+                    <th className="py-2.5 px-2 hidden sm:table-cell">{lenses.mainLine ? 'Bonus / PV Lookahead' : 'Bonus'}</th>
                     <th className="py-2.5 px-2 text-right">Action</th>
                   </tr>
                 </thead>
@@ -2108,13 +2105,13 @@ export default function App() {
                               <div className={`sm:hidden text-[9px] font-normal ${theme.cardTextMuted} mt-0.5 flex flex-wrap gap-1 items-center`}>
                                 {move.freeTurn && <span className="text-emerald-500 font-bold">[Free Turn]</span>}
                                 {move.captures > 0 && <span className="text-amber-500 font-bold">[+{move.captures} Cap]</span>}
-                                <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join('→')}</span>
+                                {lenses.mainLine && <span className="opacity-60">{move.pv.map(p => `P${p+1}`).join('→')}</span>}
                               </div>
                             </td>
-                            <td className="py-2.5 px-2 font-semibold">
+                            <td className={`${lenses.winPercent ? '' : 'hidden'} py-2.5 px-2 font-semibold`}>
                               {(move.winProb * 100).toFixed(1)}%
                             </td>
-                            <td className="py-2.5 px-2">
+                            <td className={`${lenses.winPercent ? '' : 'hidden'} py-2.5 px-2`}>
                               <span className={move.equityLoss === 0 ? 'text-emerald-500 font-semibold' : 'text-rose-400'}>
                                 {move.equityLoss === 0 ? '0.000' : `-${(move.equityLoss * 100).toFixed(1)}%`}
                               </span>
@@ -2125,7 +2122,7 @@ export default function App() {
                             <td className={`py-2.5 px-2 hidden sm:table-cell text-[10px] ${theme.cardTextMuted}`}>
                               {move.freeTurn && <span className="text-emerald-500 font-bold mr-1.5">[Free Turn]</span>}
                               {move.captures > 0 && <span className="text-amber-500 font-bold mr-1.5">[+{move.captures} Cap]</span>}
-                              <span className="opacity-60">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>
+                              {lenses.mainLine && <span className="opacity-60">PV: {move.pv.map(p => `P${p+1}`).join(' → ')}</span>}
                             </td>
                             <td className="py-2.5 px-2 text-right" onClick={(e) => e.stopPropagation()}>
                               <button
@@ -2194,31 +2191,58 @@ export default function App() {
               <h3 className="font-bold text-xs sm:text-sm">Game Settings & Controls</h3>
             </div>
 
-            {/* Move Hints & Coach Controls */}
-            <div className={`flex flex-col gap-2 p-3 rounded-xl border ${
+            {/* What do you want to see? Presets + per-stat lenses */}
+            <div className={`flex flex-col gap-2.5 p-3 rounded-xl border ${
               currentSkin === 'porcelain' ? 'bg-[#ede5d8] border-[#dbd0c0]' : 'bg-black/30 border-white/5'
             }`}>
-              <span className="text-xs font-bold">Coach & Hint Controls</span>
-              
-              <label className="flex items-center justify-between text-xs cursor-pointer">
-                <span>Show Move Hints on Board (★ / #)</span>
-                <input 
-                  type="checkbox" 
-                  checked={showMoveHints}
-                  onChange={(e) => setShowMoveHints(e.target.checked)}
-                  className="rounded accent-amber-500 w-4 h-4 cursor-pointer"
-                />
-              </label>
+              <span className="text-xs font-bold">What do you want to see?</span>
+              <span className={`text-[11px] ${theme.cardTextMuted}`}>
+                Pick a style, then fine-tune anything below.
+              </span>
 
-              <label className="flex items-center justify-between text-xs cursor-pointer">
-                <span>Coach Mode (Intervene on Errors)</span>
-                <input 
-                  type="checkbox" 
-                  checked={tutorMode}
-                  onChange={(e) => setTutorMode(e.target.checked)}
-                  className="rounded accent-emerald-500 w-4 h-4 cursor-pointer"
-                />
-              </label>
+              <div className="grid grid-cols-2 gap-1.5" role="group" aria-label="Display presets">
+                {PRESET_ORDER.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    data-testid={`preset-${id}`}
+                    aria-pressed={activePreset === id}
+                    onClick={() => {
+                      haptics.tap();
+                      setLenses(applyPreset(id));
+                    }}
+                    className={`text-left p-2 rounded-xl border transition active:scale-95 ${
+                      activePreset === id
+                        ? 'bg-amber-500/20 border-amber-500/60 text-amber-300'
+                        : `${theme.cardTextMuted} border-white/10 hover:border-white/25`
+                    }`}
+                  >
+                    <div className="text-xs font-bold">{PRESETS[id].label}</div>
+                    <div className="text-[11px] opacity-80 leading-snug">{PRESETS[id].description}</div>
+                  </button>
+                ))}
+              </div>
+              {activePreset === 'custom' && (
+                <span className="text-[11px] text-amber-400 font-semibold">Custom mix</span>
+              )}
+
+              <div className="flex flex-col gap-2 pt-1 border-t border-white/5">
+                {LENSES.map((lens) => (
+                  <label key={lens.id} className="flex items-center justify-between gap-3 text-xs cursor-pointer">
+                    <span className="flex flex-col">
+                      <span className="font-semibold">{lens.label}</span>
+                      <span className={`text-[11px] ${theme.cardTextMuted}`}>{lens.description}</span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      data-testid={`lens-${lens.id}`}
+                      checked={lenses[lens.id]}
+                      onChange={(e) => setLens(lens.id, e.target.checked)}
+                      className="rounded accent-amber-500 w-5 h-5 cursor-pointer shrink-0"
+                    />
+                  </label>
+                ))}
+              </div>
 
               {tutorMode && (
                 <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5">
